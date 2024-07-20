@@ -1,4 +1,5 @@
 # ChemostratigraPy
+
 |Build Status| |Coverage|
 
 .. |Build Status| image:: https://github.com/sedmonsond/ChemostratigraPy/workflows/pytest/badge.svg
