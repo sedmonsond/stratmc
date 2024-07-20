@@ -1,0 +1,172 @@
+name: pytest
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+
+jobs:
+  pytest:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        floatx: [float64]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    env:
+      AESARA_FLAGS: floatX=${{ matrix.floatx }},gcc__cxxflags='-march=native'
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache conda
+        uses: actions/cache@v1
+        env:
+          # Increase this value to reset cache if environment-dev-py39.yml has not changed
+          CACHE_NUMBER: 0
+        with:
+          path: ~/conda_pkgs_dir
+          key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
+            hashFiles('conda-envs/environment-dev.yml') }}
+      - name: Cache multiple paths
+        uses: actions/cache@v2
+        env:
+          # Increase this value to reset cache if requirements.txt has not changed
+          CACHE_NUMBER: 0
+        with:
+          path: |
+            ~/.cache/pip
+            $RUNNER_TOOL_CACHE/Python/*
+            ~\AppData\Local\pip\Cache
+          key: ${{ runner.os }}-build-${{ matrix.python-version }}-${{
+            hashFiles('requirements.txt') }}
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: chemostratigrapy-dev
+          channel-priority: strict
+          environment-file: conda-envs/environment-dev.yml
+          use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
+      # - name: Install jax specific dependencies and pymc dev
+      #   run: |
+      #     conda activate lig-dev-py39
+      #     pip install "jax==0.2.24"
+      #     pip install "jaxlib==0.1.73"
+      #     pip install "numpyro==0.8.0"
+      #     pip install git+https://github.com/blakedyer/pymc
+      - name: Install chemostratigrapy
+        run: |
+          conda activate chemostratigrapy-dev
+          python setup.py install
+
+      - name: Run pytest
+        shell: bash -l {0}
+        run: |
+          conda activate chemostratigrapy-dev
+          python -m pytest --cov=chemostratigrapy --cov-report=xml --cov-report term chemostratigrapy/tests/
+
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          directory: ./coverage/reports/
+          env_vars: OS,PYTHON
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          name: codecov-umbrella
+          path_to_write_report: ./coverage/codecov_report.txt
+          verbose: true
+
+      # - name: Run tests
+      #   run: |
+      #     python -m pytest -vv --cov=pymc --cov-report=xml --cov-report term --durations=50 $TEST_SUBSET
+# jobs:
+#   pytest:
+#     strategy:
+#       matrix:
+#         floatx: [float64]
+#       fail-fast: false
+#     runs-on: ubuntu-latest
+#     env:
+#       AESARA_FLAGS: floatX=${{ matrix.floatx }},gcc__cxxflags='-march=native'
+#       MKL_THREADING_LAYER: GNU
+#       MKL_NUM_THREADS: 1
+#       OMP_NUM_THREADS: 1
+#     defaults:
+#       run:
+#         shell: bash -l {0}
+#     # Steps represent a sequence of tasks that will be executed as part of the job
+#     steps:
+#       - name: Check out repository code
+#         uses: actions/checkout@v2
+#
+#       - name: Setup Python
+#         uses: actions/setup-python@v2
+#         with:
+#           python-version: 3.9.7
+#
+#       - name: Setup environment
+#         uses: conda-incubator/setup-miniconda@v2
+#         with:
+#           miniconda-version: "latest"
+#           activate-environment: lig-dev-py39
+#           channels: conda-forge,defaults
+#           channel-priority: strict
+#           environment-file: conda-envs/environment-dev.yml
+#
+#       - name: Check versions
+#         shell: bash -l {0}
+#         run: |
+#           conda activate lig-dev-py39
+#           python -m pip install --upgrade pip
+#           pip install jaxlib
+#           pip install jax
+#           pip install git+https://github.com/pymc-devs/pymc
+#           pip install "numpyro>=0.8.0"
+#           python -c 'import arviz as az; print(az.__version__)'
+#           python -c 'import jax; print(jax.__version__)'
+#           python -c 'import jaxlib; print(jaxlib.__version__)'
+#           python -c 'import aesara; print(aesara.__version__)'
+#           python -c 'import numpyro; print(numpyro.__version__)'
+#           python -c 'import pymc; print(pymc.__version__)'
+#           python -c 'import pytest; print(pytest.__version__)'
+#
+#
+#
+
+      #     python -c 'import aesara; print(aesara.config.__str__(print_doc=False))'
+      #     python -c 'import aesara; assert(aesara.config.blas__ldflags != "")'
+      #
+      # - name: Check versions
+      #   shell: bash -l {0}
+      #   run: |
+      #     conda activate lig-dev-py39
+      #     pip show aesara
+      #     pip show jaxlib
+      #     pip show jax
+      #     pip show pymc
+      #     conda install pytest
+      #
+      # - name: Run pytest
+      #   shell: bash -l {0}
+      #   run: |
+      #     conda activate lig-dev-py39
+      #     $CONDA/envs/lig-dev-py39/bin/pytest --cov=lig_sea_level lig_sea_level/tests/ --cov-report=xml
+      #
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v2
+      #   with:
+      #     directory: ./coverage/reports/
+      #     env_vars: OS,PYTHON
+      #     fail_ci_if_error: false
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     files: ./coverage.xml
+      #     name: codecov-umbrella
+      #     path_to_write_report: ./coverage/codecov_report.txt
+      #     verbose: true
