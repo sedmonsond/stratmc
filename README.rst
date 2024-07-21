@@ -1,5 +1,10 @@
 # ChemostratigraPy
 
+.. image:: chemostratigrapy.svg
+    :height: 100px
+    :alt: ChemostratigraPy logo
+    :align: center
+
 |Build Status| |Coverage|
 
 .. |Build Status| image:: https://github.com/sedmonsond/ChemostratigraPy/workflows/pytest/badge.svg
