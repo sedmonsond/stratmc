@@ -1,2 +1,6 @@
-
+*.nc
+*.pkl
+*.pyc
+.ipynb_checkpoints*
 push_docs.sh
+stratmc/notebooks/*

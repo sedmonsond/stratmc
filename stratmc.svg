@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 1492 454" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-2794.98,-5741.68)">
+        <g id="StratMC" transform="matrix(0.16573,0,0,0.125839,2794.98,5741.68)">
+            <rect x="0" y="0" width="9000" height="3600" style="fill:none;"/>
+            <g transform="matrix(6.03391,-9.5905e-17,-1.48021e-13,7.94665,-20647.8,-8976.19)">
+                <text x="3433px" y="1495.4px" style="font-family:'OctoberDL-Regular', 'October Devanagari';font-size:395.833px;fill:rgb(207,207,207);stroke:black;stroke-width:8.33px;">S<tspan x="3668.52px " y="1495.4px ">t</tspan></text>
+                <text x="3819.73px" y="1495.4px" style="font-family:'OctoberDL-Regular', 'October Devanagari';font-size:395.833px;fill:none;">r</text>
+                <text x="3961.83px" y="1495.4px" style="font-family:'OctoberDL-Regular', 'October Devanagari';font-size:395.833px;fill:rgb(207,207,207);stroke:black;stroke-width:8.33px;">a<tspan x="4177.17px " y="1495.4px ">t</tspan></text>
+                <g transform="matrix(395.833,0,0,395.833,4906.69,1495.4)">
+                </g>
+                <text x="4328.38px" y="1495.4px" style="font-family:'OctoberDL-Regular', 'October Devanagari';font-size:395.833px;fill:rgb(13,125,145);stroke:black;stroke-width:8.33px;">MC</text>
+            </g>
+            <g transform="matrix(0.2611,0,0,1.34127,1636.06,-438.736)">
+                <rect x="3440" y="1438" width="1599" height="217" style="fill:rgb(13,125,145);stroke:black;stroke-width:67.64px;stroke-linecap:round;stroke-miterlimit:1.5;"/>
+            </g>
+            <g transform="matrix(0.198108,0,0,1.34127,1852.75,-140.244)">
+                <rect x="3440" y="1438" width="1599" height="217" style="fill:rgb(13,125,145);stroke:black;stroke-width:68.54px;stroke-linecap:round;stroke-miterlimit:1.5;"/>
+            </g>
+            <g transform="matrix(0.134375,-1.42959e-17,1.42166e-16,-3.84666,2071.99,8452.92)">
+                <rect x="3440" y="1438" width="1599" height="217" style="fill:rgb(13,125,145);stroke:black;stroke-width:24.32px;stroke-linecap:round;stroke-miterlimit:1.5;"/>
+            </g>
+            <g transform="matrix(0.134375,-1.42959e-17,1.42166e-16,-3.84666,2071.99,8452.92)">
+                <rect x="3440" y="1438" width="1599" height="217" style="fill:rgb(13,125,145);stroke:black;stroke-width:24.32px;stroke-linecap:round;stroke-miterlimit:1.5;"/>
+            </g>
+            <g transform="matrix(0.44352,0,0,1.34127,1008.54,-728.062)">
+                <rect x="3440" y="1438" width="1599" height="217" style="fill:rgb(13,125,145);stroke:black;stroke-width:64.02px;stroke-linecap:round;stroke-miterlimit:1.5;"/>
+            </g>
+        </g>
+    </g>
+</svg>
