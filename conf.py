@@ -146,7 +146,7 @@ html_theme_options = {
 html_context = {
     "default_mode": "light",
     "github_user": "sedmonsond",
-    "github_repo": "bayesian_chemostrat",
+    "github_repo": "stratmc",
     "github_version": "main",
     # "doc_path": "docs/source/",
 }
