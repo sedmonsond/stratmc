@@ -1,14 +1,14 @@
 .. _model_target: 
 
-******************
-Model Description
-******************
+*****************************************
+Model Description *(under construction)*
+*****************************************
 
 .. toctree::
   :hidden:
   :maxdepth: 2
 
-This page summarizes key aspects of the inference model, with an emphasis on the geological assumptions encoded in the statistical framework. Users should refer to Edmonsond & Dyer (under review, *Geoscientific Model Development*) for an extended technical description of the model, guidance on choosing priors for key model parameters, synthetic proof-of-concept experiments, and advice on interpreting the results.  
+This page summarizes key aspects of the inference model, with an emphasis on the geological assumptions encoded in the statistical framework. Users should refer to Edmonsond & Dyer (submitted to *Geoscientific Model Development*) for an extended technical description of the model, guidance on choosing priors for key model parameters, synthetic proof-of-concept experiments, and advice on interpreting the results.  
 
 Key features
 =============

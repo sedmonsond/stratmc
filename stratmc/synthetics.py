@@ -8,11 +8,8 @@ from scipy.stats import gaussian_kde
 import sys
 pd.options.mode.chained_assignment = None
 
-from stratmc.config import JITTER_DEFAULT, TRACERS
+from stratmc.config import JITTER_DEFAULT
 from stratmc.model import build_model
-
-if type(TRACERS) == str:
-    TRACERS = list([TRACERS])
 
 def make_excursion(time, amplitude, baseline = 0, rising_time = None, rate_offset = True, excursion_duration = None, min_duration = 1,
                     smooth = False, smoothing_factor = 10, seed = None):
@@ -220,7 +217,7 @@ def make_excursion(time, amplitude, baseline = 0, rising_time = None, rate_offse
 
     return interp_proxy
 
-def synthetic_sections(true_time, true_proxy, num_sections, num_samples, max_section_thickness, proxies = [TRACERS[0]], noise = False, noise_amp = 0.1, min_constraints = 2, max_constraints = 3, seed = None, **kwargs):
+def synthetic_sections(true_time, true_proxy, num_sections, num_samples, max_section_thickness, proxies = ['d13c'], noise = False, noise_amp = 0.1, min_constraints = 2, max_constraints = 3, seed = None, **kwargs):
 
     """
     Function for generating synthetic proxy observations and age constraints using a predefined proxy signal.
@@ -410,7 +407,7 @@ def synthetic_sections(true_time, true_proxy, num_sections, num_samples, max_sec
 
     return ages_df, sample_df
 
-def synthetic_signal_to_df(proxy_vec, heights, section_ages, section_names, ages, age_std, age_heights, age_section_names, proxies = [TRACERS[0]]):
+def synthetic_signal_to_df(proxy_vec, heights, section_ages, section_names, ages, age_std, age_heights, age_section_names, proxies = ['d13c']):
     
     """
     Helper function for generating artificial sample and age data using :py:meth:`synthetic_sections() <stratmc.synthetics>`.
@@ -495,7 +492,7 @@ def synthetic_signal_to_df(proxy_vec, heights, section_ages, section_names, ages
 
     return ages_df, sample_df
 
-def synthetic_observations_from_prior(age_vector, ages_df, sample_heights = None,  uniform_heights = False, samples_per_section = 20, proxies = TRACERS, proxy_std = 0.1, seed = None, ls_dist = 'Wald', ls_min = 0, ls_mu = 20, ls_lambda = 50, ls_sigma = 50, var_sigma = 10, white_noise_sigma = 1e-1,  gp_mean_mu = 0, gp_mean_sigma = 10, approximate = False, hsgp_m = 15, hsgp_c = 1.3, offset_type = 'section', offset_prior = 'Laplace', offset_alpha = 0, offset_beta = 1, offset_sigma = 1, offset_mu = 0, offset_b = 2, noise_type = 'section', noise_prior = 'HalfCauchy', noise_beta = 1, noise_sigma = 1, noise_nu = 1, **kwargs):
+def synthetic_observations_from_prior(age_vector, ages_df, sample_heights = None,  uniform_heights = False, samples_per_section = 20, proxies = ['d13c'], proxy_std = 0.1, seed = None, ls_dist = 'Wald', ls_min = 0, ls_mu = 20, ls_lambda = 50, ls_sigma = 50, var_sigma = 10, white_noise_sigma = 1e-1,  gp_mean_mu = 0, gp_mean_sigma = 10, approximate = False, hsgp_m = 15, hsgp_c = 1.3, offset_type = 'section', offset_prior = 'Laplace', offset_alpha = 0, offset_beta = 1, offset_sigma = 1, offset_mu = 0, offset_b = 2, noise_type = 'section', noise_prior = 'HalfCauchy', noise_beta = 1, noise_sigma = 1, noise_nu = 1, **kwargs):
 
     """
     Given age constraints for a set of stratigraphic sections in ``ages_df``, generate synthetic proxy observations by sampling the model prior. Accepts all arguments that can be passed to :py:meth:`build_model() <stratmc.model.build_model>` in :py:mod:`stratmc.model`. 
@@ -753,7 +750,7 @@ def synthetic_signal_from_prior(ages, num_signals = 100, ls_dist = 'Wald', ls_mi
     return signals, prior
 
 
-def quantify_signal_recovery(full_trace, true_signal, proxy = TRACERS[0], mode = 'posterior'): 
+def quantify_signal_recovery(full_trace, true_signal, proxy = 'd13c', mode = 'posterior'): 
 
     """
     Calculates the likelihood of the true signal (for synthetic tests, where the true signal is known) given draws from the posterior (default) or prior. The likelihood is evaluated at each age (the posterior signal and the true signal must be evaluated at the same ages). Provides a measure of signal recovery.
