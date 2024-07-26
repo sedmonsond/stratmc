@@ -1,0 +1,57 @@
+# name: stratmc-dev
+# channels:
+# - conda-forge
+# - defaults
+# dependencies:
+# # Base dependencies
+# - arviz>=0.13.0
+# - cachetools>=4.2.1
+# - cloudpickle
+# - cython
+# - fastprogress>=0.2.0
+# - h5py>=2.7
+# - "libblas=*=*accelerate"; sys_platform == 'darwin' and platform_machine == 'arm64'
+# - matplotlib
+# - pandas>=0.24.0
+# - pip
+# - pybind11
+# - python-graphviz
+# - networkx
+# - scikit-learn
+# - scipy>=1.4.1
+# - seaborn==0.12.2
+# - typing-extensions>=3.7.4
+# - xarray
+# - pip:
+#   - blackjax
+#   - jax
+#   - numpyro
+#   - pymc>=5.16.2
+#   - sphinx-inline-tabs
+#   - sphinx-panels
+#   - tensorflow
+#   - tensorflow-metal
+#   - tensorflow-probability
+#   - tqdm
+# # Extra dependencies for dev, testing and docs build
+# - dill
+# - ipykernel
+# - ipython
+# - ipywidgets
+# - jupyter-sphinx
+# - myst-nb
+# - numpydoc
+# - polyagamma
+# - pre-commit>=2.8.0
+# - pydata-sphinx-theme
+# - pytest-cov>=2.5
+# - pytest>=3.0
+# - sphinx>=1.5
+# - sphinx-copybutton
+# - sphinx-inline-tabs
+# - sphinx-togglebutton
+# - sphinx-design
+# - sphinx-notfound-page
+# - sphinx-remove-toctrees
+# - sphinxext-rediraffe
+# - watermark
