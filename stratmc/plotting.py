@@ -944,7 +944,7 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
                      xerr = 2*ages_df['age_std'][ages_df['section']==section],
                      color = cs[section], fmt = 'none', capsize = 3)
 
-        section_ages_df = ages_df[ages_df['section']==section]
+        section_ages_df = ages_df[(ages_df['section']==section) & (~ages_df['Exclude?'])]
         ax.scatter(section_ages_df['age'][(~section_ages_df['intermediate intrusive?']) & (~section_ages_df['intermediate detrital?'])],
                     section_ages_df['height'][(~section_ages_df['intermediate intrusive?']) & (~section_ages_df['intermediate detrital?'])],
                     color = cs[section],
@@ -1171,7 +1171,7 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
                     zorder = 2)
             
             if plot_constraints: 
-                section_ages_df = ages_df[ages_df['section']==section]
+                section_ages_df = ages_df[(ages_df['section']==section) & (~ages_df['Exclude?'])]
                 for h in section_ages_df['height'].ravel(): 
                     ax.axhline(h, color = cs[section], linestyle = 'dashed', zorder = -1)
                     
@@ -1239,7 +1239,7 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
                     zorder = 2)
             
             if plot_constraints: 
-                section_ages_df = ages_df[ages_df['section']==section]
+                section_ages_df = ages_df[(ages_df['section']==section)  & (~ages_df['Exclude?'])]
                 for age in section_ages_df['age'].ravel(): 
                     ax.axhline(age, color = cs[section], linestyle = 'dashed', zorder = -1)
             

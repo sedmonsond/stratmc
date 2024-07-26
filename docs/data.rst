@@ -16,6 +16,7 @@ Functions for importing and processing proxy and age constraint data.
     save_object
     save_trace
     combine_traces
+    drop_chains
     accumulation_rate
     downsample
     upsample

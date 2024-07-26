@@ -17,12 +17,16 @@ import xarray as xr
 os.environ["AESARA_FLAGS"] = "mode=FAST_RUN,device=cpu,floatX=float64"
 
 from stratmc.config import JITTER_DEFAULT
-from stratmc.data import clean_data
+from stratmc.data import clean_data, drop_chains
+from stratmc.tests import check_inference
 
 
-def get_trace(model, gp, ages, proxies = ['d13c'], approximate = False, name="", chains = 8, draws = 1000, tune = 1000, prior_draws = 1000, target_accept = 0.8, sampler = 'numpyro', nuts_kwargs = None, seed = None, save = True):
+def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approximate = False, name="", chains = 8, draws = 1000, tune = 1000, prior_draws = 1000, target_accept = 0.8, sampler = 'numpyro', nuts_kwargs = None, seed = None, save = True, **kwargs):
     """
     Sample the prior and posterior distributions for a :class:`pymc.model.core.Model` returned by :py:meth:`build_model() <stratmc.model.build_model>` in :py:mod:`stratmc.model`. By default, uses :py:func:`pymc.sampling.jax.sample_numpyro_nuts() <pymc.sampling.jax.sample_numpyro_nuts>` to sample the posterior; change ``sampler`` to 'blackjax` to use :py:func:`pymc.sampling.jax.sample_blackjax_nuts() <pymc.sampling.jax.sample_blackjax_nuts>`.
+
+    After the posterior has been sampled, runs :py:meth:`check_inference() <stratmc.tests.check_inference>` in :py:mod:`stratmc.tests` to check that superposition is never violated in the posterior. Any chains with superposition violations are removed from the trace before it is returned (if ``save = True``, both the original and 'cleaned' traces are saved to the ``traces`` subfolder), and a warning is printed. See py:meth:`check_inferece() <stratmc.tests.check_inference>` for details; superposition issues are rare, and typically are related to minor violations of detrital or intrusive age constraints. 
+
 
     Parameters
     ----------
@@ -34,6 +38,15 @@ def get_trace(model, gp, ages, proxies = ['d13c'], approximate = False, name="",
 
     ages: numpy.array
         array of ages at which to sample the posterior distribution of the proxy signal.
+
+    sample_df: pandas.DataFrame
+        :class:`pandas.DataFrame` containing proxy data for all sections.
+
+    ages_df: pandas.DataFrame
+        :class:`pandas.DataFrame` containing age constraints for all sections.
+
+    sections:: list or numpy.array of str, optional
+        List of sections to include in the inference model. Defaults to all sections in ``sample_df``.
 
     proxies: str or list of str, optional 
         List of proxies included in the model. Defaults to 'd13c'. 
@@ -77,6 +90,11 @@ def get_trace(model, gp, ages, proxies = ['d13c'], approximate = False, name="",
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples. 
 
     """
+
+    if 'sections' in kwargs:
+        sections = list(kwargs['sections'])
+    else:
+        sections = list(np.unique(sample_df['section']))
 
     if type(proxies) == str:
         proxies = list([proxies])
@@ -152,6 +170,16 @@ def get_trace(model, gp, ages, proxies = ['d13c'], approximate = False, name="",
         full_trace.to_netcdf("traces/" + str(name) + '_' + tstamp + ".nc")
         # delete the temporary backup
         os.remove("traces/temp/" + str(name) + '_' + tstamp + ".nc")
+
+    bad_chains = check_inference(full_trace, sample_df, ages_df, quiet = True)
+    if len(bad_chains) > 0: 
+        print('Superposition violated in chains ' + str(bad_chains) + '. These chains were removed from the trace; the original trace (with the bad chains) is saved in the `traces` folder. To investigate the cause of the superposition violation, load the original trace and run the functions in the `stratmc.tests` module with `quiet = False`.')
+        
+        full_trace = drop_chains(full_trace, bad_chains)
+
+        # save the clean version
+        if save: 
+            full_trace.to_netcdf("traces/" + 'clean_' + str(name) + '_' + tstamp + ".nc")
 
     return full_trace
 
@@ -233,7 +261,7 @@ def extend_age_model(full_trace, sample_df, ages_df, new_proxies, new_proxy_df =
         new_heights = np.sort(new_heights)
         
         # heights of radiometric age constraints 
-        section_ages_df = ages_df[ages_df['section']==section]
+        section_ages_df = ages_df[(ages_df['section']==section) & (~ages_df['Exclude?']) & (~ages_df['intermediate detrital?'])  & (~ages_df['intermediate intrusive?'])]
         age_heights = section_ages_df['height'].values
         
         # heigts at which to interpolate age models
@@ -455,8 +483,8 @@ def age_range_to_height(full_trace, sample_df, ages_df, lower_age, upper_age, **
         sample_heights = np.sort(sample_heights)
 
         # heights of radiometric age constraints 
-        sample_ages_df = ages_df[ages_df['section']==section]
-        age_heights = sample_ages_df['height'].values
+        section_ages_df =  ages_df[(ages_df['section']==section) & (~ages_df['Exclude?']) & (~ages_df['intermediate detrital?'])  & (~ages_df['intermediate intrusive?'])]
+        age_heights = section_ages_df['height'].values
 
         # sample age posterior - shape (samples x draws)
         sample_age_post = az.extract(full_trace.posterior)[str(section) + '_ages'].values
@@ -548,8 +576,6 @@ def map_ages_to_section(full_trace, sample_df, ages_df, include_radiometric_ages
     .. todo:: 
         reconsider how interpolation works -- more computationally expensive, but should probably 1) calculate the interpolated age at each section height, then 2) calculate the interpolated proxy value at that age -- all for each draw. then we have a distribution of proxy values for each height, which we can plot
          
-        or 1) interpolate the heights to each age, then 2) use the proxy value from the posterior for that age. but then we don't have a proxy distribution for each height (we have a height distribution for each age, and a proxy distribution for each age -- which can't both be plotted)
-    
     Parameters
     ----------
     full_trace: arviz.InferenceData
@@ -609,8 +635,9 @@ def map_ages_to_section(full_trace, sample_df, ages_df, include_radiometric_ages
         sample_heights = np.sort(np.unique(sample_heights))
 
         # heights of radiometric age constraints 
-        sample_ages_df = ages_df[( ages_df['section']==section) & (~ages_df['intermediate detrital?']) & (~ages_df['intermediate intrusive?'])]
-        age_heights = sample_ages_df['height'].values
+        
+        section_ages_df = ages_df[(ages_df['section']==section) & (~ages_df['Exclude?']) & (~ages_df['intermediate detrital?'])  & (~ages_df['intermediate intrusive?'])]
+        age_heights = section_ages_df['height'].values
 
         # sample age posterior - shape = (samples x draws)
         sample_age_post = az.extract(full_trace.posterior)[str(section) + '_ages'].values

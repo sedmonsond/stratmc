@@ -6,9 +6,6 @@ Functions for checking that the inference model is working correctly. Run within
 
 .. currentmodule:: stratmc.tests
 
-.. todo:: 
-    Set up pytest with Github, and write simple tests to check for: 1) positive ages, 2) superposition (within each draw, for both samples and depositional age constraints), and 3) enforcement of detrital/intrusive radiometric age constraints
-
 .. todo::
     Write a master function that can be run after every inference (ideally inside of get_trace) to check that there are no issues
 

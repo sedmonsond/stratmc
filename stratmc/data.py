@@ -373,6 +373,17 @@ def combine_traces(trace_list):
 
     return combined_trace
 
+def drop_chains(full_trace, chains): 
+
+    all_chains = list(full_trace.posterior.chain.values)
+
+    for chain in chains: 
+        all_chains.remove(chain)
+    
+    full_trace_clean = full_trace.sel(chain = all_chains, inplace = False)
+
+    return full_trace_clean
+
 
 def save_trace(trace, path):
     """
@@ -509,7 +520,7 @@ def accumulation_rate(full_trace, sample_df, ages_df, method = 'all', age_model 
         for section in sections:
             section_df = sample_df[sample_df['section']==section]
             sample_heights = section_df['height'].values * 1000 # convert meters to mm
-            age_heights = age_heights = ages_df[ages_df['section']==section]['height'] * 1000 # convert meters to mm
+            age_heights = ages_df['height'][(ages_df['section']==section) & (~ages_df['Exclude?']) & (~ages_df['intermediate detrital?'])  & (~ages_df['intermediate intrusive?'])] * 1000 # convert meters to mm
 
             duration[section] = []
             rate[section] = []
@@ -583,7 +594,7 @@ def accumulation_rate(full_trace, sample_df, ages_df, method = 'all', age_model 
             
             section_df = sample_df[sample_df['section']==section]
             sample_heights = section_df['height'].values
-            age_heights = age_heights = ages_df[ages_df['section']==section]['height']
+            age_heights = ages_df['height'][(ages_df['section']==section) & (~ages_df['Exclude?']) & (~ages_df['intermediate detrital?'])  & (~ages_df['intermediate intrusive?'])]
 
             # shape (samples x draws)
             if age_model == 'posterior':

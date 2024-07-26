@@ -68,6 +68,9 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
     ages_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing age constraints for all sections. Load from .csv file using :py:meth:`load_data() <stratmc.data.load_data> in :py:mod:`stratmc.data`.
 
+    sections:: list or numpy.array of str, optional
+        List of sections to include in the inference model. Defaults to all sections in ``sample_df``.
+
     proxies: str or list of str, optional
         Column or columns containing proxy data in ``sample_df``. Defaults to 'd13c'. 
         
@@ -339,7 +342,6 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
         
     if 'sections' in kwargs:
         sections = list(kwargs['sections'])
-        
     else:
         sections = list(np.unique(sample_df['section']))
             
@@ -1148,7 +1150,7 @@ def superposition(age_dist, age_dist_names, model, section_age_df, section):
     for i in np.arange(1, age_dist.shape.eval()[0]):
         slope = 10
         pm.Potential("superposition_"+str(section)+'_'+str(i),
-        shared(-1000) * pm.math.invlogit(slope * ((age_dist[i] - 0.25) - age_dist[i-1]))) # if issues with consistent enforcement, consider adjusting the slope (already increased multiplier)
+        shared(-10000) * pm.math.invlogit(slope * ((age_dist[i]) - age_dist[i-1]))) # if issues with consistent enforcement, consider adjusting the slope (already increased multiplier)
 
     for i in np.arange(0, len(section_age_df['height'])-1).tolist():
         lower_label = age_dist_names[i] #str(section+'_'+str(i)+'_'+'radiometric_age') 
@@ -1233,7 +1235,7 @@ def intermediate_detrital_potential(detrital_age_dist, detrital_age_dist_name, m
     slope = 10
     #for idx in list(overlying_sample_idx):
         
-    pm.Potential('detrital_max_'  + str(section) + '_' + str(detrital_age_dist_name), shared(-100) * pm.math.invlogit(slope * ((sample_age_dist_sorted[overlying_sample_idx] - 0.25) - detrital_age_dist)))
+    pm.Potential('detrital_max_'  + str(section) + '_' + str(detrital_age_dist_name), shared(-100) * pm.math.invlogit(slope * ((sample_age_dist_sorted[overlying_sample_idx]) - detrital_age_dist)))
         
     # get initial values for sample ages 
     rv_var_samples = model[sample_age_dist_name]
@@ -1366,7 +1368,7 @@ def intermediate_intrusive_potential(intrusive_age_dist, intrusive_age_dist_name
     slope = 10
     #for idx in list(underlying_sample_idx):
         
-    pm.Potential('intrusive_min_'  + str(section) + '_' + str(intrusive_age_dist_name), shared(-100) * pm.math.invlogit(slope * ((intrusive_age_dist - 0.25) - sample_age_dist_sorted[underlying_sample_idx])))
+    pm.Potential('intrusive_min_'  + str(section) + '_' + str(intrusive_age_dist_name), shared(-100) * pm.math.invlogit(slope * ((intrusive_age_dist) - sample_age_dist_sorted[underlying_sample_idx])))
         
     # get initial values for sample ages 
     rv_var_samples = model[sample_age_dist_name]
