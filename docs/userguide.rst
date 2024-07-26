@@ -11,7 +11,7 @@ To get started, explore the following pages:
     Model description <model_description>
     Example notebooks<examples>
     Installation <installation>
-    API Reference<docs/api>
+    API Reference<api>
     Data table format <datatable>
 
     

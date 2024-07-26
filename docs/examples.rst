@@ -1,18 +1,18 @@
-**************
-Examples
-**************
+*************************
+Examples *(coming soon)*
+*************************
 
 .. todo:: 
   Make example notebook with model construction, sampling, and basic plotting functions (single proxy example)
 
 .. todo:: 
-  make multiproxy notebook
+  make multiproxy example notebook
 
 .. todo::
-  make HSGP notebook
+  make HSGP example notebook
 
 .. todo::
-    make deep sea notebook
+  deep sea d18O inversion notebook
 
 .. todo::
   Link to jupyter notebooks (formatted for docs, see https://jupyterbook.org/en/stable/web/index.html) for each example

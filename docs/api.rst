@@ -6,9 +6,9 @@ API Reference
    :maxdepth: 3
     
     Data Processing<data>
-    Model<model>
-    Inference<inference>
-    Plotting<plotting>
+    Statistical model <model>
+    Inference <inference>
+    Plotting <plotting>
     Synthetic signals <synthetics>
     Tests and checks <tests>
     

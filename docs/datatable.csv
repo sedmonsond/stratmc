@@ -1,8 +1,8 @@
 ``section``,Name of the **section** this data belongs to (type ``string``).
 ``height``,"Height of sample in section (in meters). For sections where stratigraphic position instead is described by **depth**, leave blank."
 ``depth``,"Depth of sample in core (in meters). For sections where stratigraphic position instead is described by **height**, leave blank."
-``proxy``,Proxy value for sample (replace column header with name of proxy)
-``proxy_std``,"1-:math:`\sigma`uncertainty of proxy measurement (in column header, `proxy` must match the name of the column with associated proxy value); if not provided, defaults to 0.1 "
+``proxy``,Proxy value for sample (replace column header with name of proxy). 
+``proxy_std``,"1-:math:`\sigma` uncertainty of proxy measurement (in column header, **proxy** must match name of the column with the associated proxy value). If not provided, defaults to 0.1."
 ``offset_group``,"Only required if custom groups of samples share an offset term in the model (otherwise, all samples from the same section will share an offset term). Set to the same value (``string`` or ``float``) for all samples from the same group."
 ``noise_group``,"Only required if custom groups of samples share a noise term in the model (otherwise, all samples from the same section will share a noise term). Set to the same value (``string`` or ``float``) for all samples from the same group. "
 ``Exclude?``,Whether to exclude sample from the inference (``True`` or ``False``). Optional; defaults to ``False`` if not provided. 
