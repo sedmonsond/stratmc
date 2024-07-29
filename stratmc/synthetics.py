@@ -8,7 +8,6 @@ from scipy.stats import gaussian_kde
 import sys
 pd.options.mode.chained_assignment = None
 
-from stratmc.config import JITTER_DEFAULT
 from stratmc.model import build_model
 
 def make_excursion(time, amplitude, baseline = 0, rising_time = None, rate_offset = True, excursion_duration = None, min_duration = 1,
@@ -19,23 +18,23 @@ def make_excursion(time, amplitude, baseline = 0, rising_time = None, rate_offse
 
     Parameters
     ----------
-    time: numpy.array
+    time: numpy.array(float)
         Time vector over which to generate proxy signal.
 
-    amplitude: float or list/numpy.array of float
+    amplitude: float, list(float), or numpy.array(float)
         Amplitude of excursion; pass a list or array to generate multiple excursions.
 
     baseline: float, optional
         Baseline proxy value; defaults to 0.
 
-    rising_time: float or list/numpy.array of float, optional
+    rising_time: float, list(float), or numpy.array(float), optional
         Fraction of excursion duration spent on the rising limb (linear increase/decrease toward peak).
         Must be between 0 and 1. If not provided, randomly generated if ``rate_offset`` is ``True`` and set to 0.5 if ``rate_offset`` is  ``False``. Pass a list to specify different rising times for each excursion.
 
     rate_offset: bool, optional
         If ``False``, rising and falling limbs of excursion have equal duration. If ``True``, the fraction of the excursion duration spent on the rising limb is set by ``rising_time``. Defaults to ``False``.
 
-    excursion_duration: float or list/numpy.array of float, optional
+    excursion_duration: float, list(float), or numpy.array(float), optional
         Duration of excursion; pass a list or array to generate multiple excursions. Random if not provided.
 
     min_duration: float, optional 
@@ -224,10 +223,10 @@ def synthetic_sections(true_time, true_proxy, num_sections, num_samples, max_sec
 
     Parameters
     ----------
-    true_time: numpy.array
+    true_time: numpy.array(float)
         True time vector for input signal.
 
-    true_proxy: numpy.array
+    true_proxy: numpy.array(float)
         True proxy vector for input signal.
 
     num_sections: int
@@ -239,7 +238,7 @@ def synthetic_sections(true_time, true_proxy, num_sections, num_samples, max_sec
     max_section_thickness: float
         Maximum thickness of synthetic sections.
 
-    proxies: str or list of str, optional
+    proxies: str or list(str), optional
         Column name(s) for synthetic proxy observations in ``sample_df``; defaults to 'd13c'.
 
     noise: bool, optional
@@ -259,10 +258,10 @@ def synthetic_sections(true_time, true_proxy, num_sections, num_samples, max_sec
 
     Returns
     -------
-    sample_df: pd.DataFrame
+    sample_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing proxy data for synthetic sections.
 
-    ages_df: pd.DataFrame
+    ages_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing age constraints for synthetic sections.
     """
 
@@ -438,15 +437,15 @@ def synthetic_signal_to_df(proxy_vec, heights, section_ages, section_names, ages
     age_section_names: np.array of str
         Array of section names corresponding to age constraints in ``ages``.
 
-    proxies: str or list of str, optional
+    proxies: str or list(str), optional
         Name(s) of proxies; defaults to `d13c`.
 
     Returns
     -------
-    sample_df: pd.DataFrame
+    sample_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing proxy data for synthetic sections.
 
-    ages_df: pd.DataFrame
+    ages_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing age constraints for synthetic sections.
     """
 
@@ -492,32 +491,32 @@ def synthetic_signal_to_df(proxy_vec, heights, section_ages, section_names, ages
 
     return ages_df, sample_df
 
-def synthetic_observations_from_prior(age_vector, ages_df, sample_heights = None,  uniform_heights = False, samples_per_section = 20, proxies = ['d13c'], proxy_std = 0.1, seed = None, ls_dist = 'Wald', ls_min = 0, ls_mu = 20, ls_lambda = 50, ls_sigma = 50, var_sigma = 10, white_noise_sigma = 1e-1,  gp_mean_mu = 0, gp_mean_sigma = 10, approximate = False, hsgp_m = 15, hsgp_c = 1.3, offset_type = 'section', offset_prior = 'Laplace', offset_alpha = 0, offset_beta = 1, offset_sigma = 1, offset_mu = 0, offset_b = 2, noise_type = 'section', noise_prior = 'HalfCauchy', noise_beta = 1, noise_sigma = 1, noise_nu = 1, **kwargs):
+def synthetic_observations_from_prior(age_vector, ages_df, sample_heights = None,  uniform_heights = False, samples_per_section = 20, proxies = ['d13c'], proxy_std = 0.1, seed = None, ls_dist = 'Wald', ls_min = 0, ls_mu = 20, ls_lambda = 50, ls_sigma = 50, var_sigma = 10, white_noise_sigma = 1e-1,  gp_mean_mu = 0, gp_mean_sigma = 10, approximate = False, hsgp_m = 15, hsgp_c = 1.3, offset_type = 'section', offset_prior = 'Laplace', offset_alpha = 0, offset_beta = 1, offset_sigma = 1, offset_mu = 0, offset_b = 2, noise_type = 'section', noise_prior = 'HalfCauchy', noise_beta = 1, noise_sigma = 1, noise_nu = 1, jitter = 0.001, **kwargs):
 
     """
     Given age constraints for a set of stratigraphic sections in ``ages_df``, generate synthetic proxy observations by sampling the model prior. Accepts all arguments that can be passed to :py:meth:`build_model() <stratmc.model.build_model>` in :py:mod:`stratmc.model`. 
 
     Parameters
     ----------
-    age_vector: np.array
+    age_vector: np.array(float)
         Vector of ages at which to evaluate synthetic proxy signal(s).
 
     ages_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing age constraints for synthetic sections.
 
-    sample_heights: dict, optional
-        Sample heights for each stratigraphic section in ``ages_df``; must be a dictionary of ``np.array`` or ``list`` with section names as keys. Defaults to ``None``, which results in either uniformly spaced or randomly spaced sample heights (depending on the ``uniform_heights`` argument). 
+    sample_heights: dict{list(float) or numpy.array(float)}, optional
+        Sample heights for each stratigraphic section in ``ages_df``; must be a dictionary with section names as keys. Defaults to ``None``, which results in either uniformly spaced or randomly spaced sample heights (depending on the ``uniform_heights`` argument). 
 
     uniform_heights: bool, optional
         Whether to generate uniformly spaced (set to ``True``) or randomly spaced (set to ``False``) sample heights if dictionary of ``sample_heights`` not provided; defaults to ``False`` (randomly spaced samples). 
 
-    samples_per_section: int or dict, optional
+    samples_per_section: int or dict(int), optional
         Number of samples per section to generate if ``sample_heights`` not provided; either an integer (if the same for all sections) or a dictionary with section names as keys. Defaults to 20. 
 
-    proxies: list, optional
+    proxies: list(str), optional
         List of proxies to generate synthetic observations for; defaults to `d13c`.
 
-    proxy_std: float or dict, optional
+    proxy_std: float or dict(float), optional
         Measurement uncertainty for each proxy; pass a dictionary of floats with the elements of ``proxies`` as keys to use a different value for each proxy, or an integer to use the same value for all proxies. Defaults to 0.1.
 
     seed: int, optional
@@ -525,10 +524,10 @@ def synthetic_observations_from_prior(age_vector, ages_df, sample_heights = None
 
     Returns
     -------
-    signals: dict
+    signals: dict(float)
         Tracers signals drawn from the model prior (evaluated at the points in ``age_vector``) used to generate synthetic observations; dictionary keys are ``proxies``. 
 
-    sample_df: pd.DataFrame
+    sample_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing proxy data for synthetic stratigraphic sections.
     
     prior: arviz.InferenceData
@@ -650,13 +649,14 @@ def synthetic_observations_from_prior(age_vector, ages_df, sample_heights = None
                             noise_nu = noise_nu,
                             hsgp_m = hsgp_m, 
                             hsgp_c = hsgp_c, 
+                            jitter = jitter,
                             proxy_observed = False
                             )
     
     with model:
         # single draw from the prior 
         for proxy in proxies:
-            f_pred = gp[proxy].conditional('f_pred_' + proxy, Xnew = age_vector, jitter = JITTER_DEFAULT)
+            f_pred = gp[proxy].conditional('f_pred_' + proxy, Xnew = age_vector, jitter = jitter)
 
         prior = pm.sample_prior_predictive(samples = 1, random_seed = seed)
 
@@ -680,7 +680,7 @@ def synthetic_signal_from_prior(ages, num_signals = 100, ls_dist = 'Wald', ls_mi
 
     Parameters
     ----------
-    ages: numpy.array
+    ages: numpy.array(float)
         Array of ages over which to condition the signal. 
         
     num_signals: int, optional
@@ -715,7 +715,7 @@ def synthetic_signal_from_prior(ages, num_signals = 100, ls_dist = 'Wald', ls_mi
 
     Returns
     -------
-    signal: numpy.ndarray
+    signal: numpy.ndarray(float)
         Array with shape ``ages x number of signals`` containing the ``n = num_signals`` synthetic signals drawn from the prior. 
     """
     
@@ -757,7 +757,7 @@ def quantify_signal_recovery(full_trace, true_signal, proxy = 'd13c', mode = 'po
 
     Parameters
     ----------
-    full_trace: arviz.InferenceData or list of arviz.InferenceData
+    full_trace: arviz.InferenceData or list(arviz.InferenceData)
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`. If passed as a list, the posterior draws for all traces will be combined when calculating `posterior_likelihood`. 
 
     true_signal: np.array
@@ -816,13 +816,13 @@ def sample_age_recovery(full_trace, sample_df, sections = None, mode = 'posterio
 
     Parameters
     ----------
-    full_trace: arviz.InferenceData or list of arviz.InferenceData
+    full_trace: arviz.InferenceData or list(arviz.InferenceData)
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`. If passed as a list, the posterior draws for all traces will be combined when calculating `posterior_likelihood`. 
 
-    sample_df: pd.DataFrame
+    sample_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing proxy data for synthetic sections.
 
-    sections: list, optional
+    sections: list(str) or numpy.array(str), optional
         List of sections to evaluate; defaults to all sections in sample_df.
 
     mode: str, optional
@@ -830,13 +830,24 @@ def sample_age_recovery(full_trace, sample_df, sections = None, mode = 'posterio
 
     Returns
     -------
-    posterior_likelihood: dict or np.array 
+    posterior_likelihood: dict{float} or np.array(float)
         Posterior likelihoods for the true age of each sample. Returned as an array if only one section is evaluated, or a dictionary of arrays if multiple sections are evaluated.
         
     """
 
+    # get list of proxies included in model from full_trace
+    variables = [
+            l
+            for l in list(full_trace["posterior"].data_vars.keys())
+            if (f"{'gp_ls_'}" in l) and (f"{'unshifted'}" not in l)
+            ]
+
+    proxies = []
+    for var in variables:
+        proxies.append(var[6:])
+
     if sections is None:
-        sections = np.unique(sample_df['section'])
+        sections = np.unique(sample_df.dropna(subset = proxies, how = 'all')['section'])
         
     if len(sections) > 1:
         posterior_likelihood = {}
@@ -899,13 +910,13 @@ def sample_age_residuals(full_trace, sample_df, sections = None, mode = 'posteri
 
     Parameters
     ----------
-    full_trace: arviz.InferenceData or list of arviz.InferenceData
+    full_trace: arviz.InferenceData or list(arviz.InferenceData)
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`. If passed as a list, the posterior draws for all traces will be combined when calculating `age_residuals`. 
 
-    sample_df: pd.DataFrame
+    sample_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing proxy data for synthetic sections.
          
-    sections: list, optional
+    sections: list(str) or numpy.array(str), optional
         List of sections to evaluate; defaults to all sections in sample_df.
 
     mode: str, optional
@@ -917,9 +928,19 @@ def sample_age_residuals(full_trace, sample_df, sections = None, mode = 'posteri
         Sample age residuals; shape is (number of samples, number of posterior draws). Returned as an array if only one section is evaluated, or a dictionary of arrays if multiple sections are evaluated.
         
     """
+    # get list of proxies included in model from full_trace
+    variables = [
+            l
+            for l in list(full_trace["posterior"].data_vars.keys())
+            if (f"{'gp_ls_'}" in l) and (f"{'unshifted'}" not in l)
+            ]
 
+    proxies = []
+    for var in variables:
+        proxies.append(var[6:])
+        
     if sections is None:
-            sections = np.unique(sample_df['section'])
+            sections = np.unique(sample_df.dropna(subset = proxies, how = 'all')['section'])
 
     if len(sections) > 1:
         age_residuals = {}

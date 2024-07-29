@@ -2,12 +2,12 @@ from pytensor import shared
 import pytensor.tensor as at
 import jax.numpy as jnp
 import numpy as np
+import pandas as pd
 import pymc as pm
 import pymc.distributions.transforms as tr
 import sys
 
 from stratmc.data import clean_data
-from stratmc.config import JITTER_DEFAULT
 
 # wrapper for pytensor tensor sorting
 from pytensor.tensor.sort import SortOp
@@ -54,7 +54,7 @@ DIST_DICT = {
     "PolyaGamma": pm.PolyaGamma,
 }
 
-def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.1, approximate = False,  hsgp_m = 15, hsgp_c = 1.3, ls_dist = 'Wald', ls_min = 0, ls_mu = 20, ls_lambda = 50, ls_sigma = 50, var_sigma = 10,  white_noise_sigma = 1e-1, gp_mean_mu = None, gp_mean_sigma = None, offset_type = 'section', offset_prior = 'Laplace', offset_alpha = 0, offset_beta = 1, offset_sigma = 1, offset_mu = 0, offset_b = 2, noise_type = 'section', noise_prior = 'HalfCauchy', noise_beta = 1, noise_sigma = 1, noise_nu = 1, proxy_observed = True, **kwargs): 
+def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.1, approximate = False,  hsgp_m = 15, hsgp_c = 1.3, ls_dist = 'Wald', ls_min = 0, ls_mu = 20, ls_lambda = 50, ls_sigma = 50, var_sigma = 10,  white_noise_sigma = 1e-1, gp_mean_mu = None, gp_mean_sigma = None, offset_type = 'section', offset_prior = 'Laplace', offset_alpha = 0, offset_beta = 1, offset_sigma = 1, offset_mu = 0, offset_b = 2, noise_type = 'section', noise_prior = 'HalfCauchy', noise_beta = 1, noise_sigma = 1, noise_nu = 1,  jitter = 0.001, proxy_observed = True, **kwargs): 
     """
     Create a proxy signal (i.e., carbon isotope) :ref:`inference model <model_target>`.
     
@@ -63,73 +63,76 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
     Parameters
     ----------
     sample_df: pandas.DataFrame
-        :class:`pandas.DataFrame` containing proxy data for all sections. Load from .csv file using :py:meth:`load_data() <stratmc.data.load_data> in :py:mod:`stratmc.data`.
+        :class:`pandas.DataFrame` containing proxy data for all sections. Load from .csv file using :py:meth:`load_data() <stratmc.data.load_data>` in :py:mod:`stratmc.data`.
 
     ages_df: pandas.DataFrame
-        :class:`pandas.DataFrame` containing age constraints for all sections. Load from .csv file using :py:meth:`load_data() <stratmc.data.load_data> in :py:mod:`stratmc.data`.
+        :class:`pandas.DataFrame` containing age constraints for all sections. Load from .csv file using :py:meth:`load_data() <stratmc.data.load_data>` in :py:mod:`stratmc.data`.
 
-    sections:: list or numpy.array of str, optional
+    sections:: list(str) or numpy.array(str), optional
         List of sections to include in the inference model. Defaults to all sections in ``sample_df``.
 
-    proxies: str or list of str, optional
+    proxies: str or list(str), optional
         Column or columns containing proxy data in ``sample_df``. Defaults to 'd13c'. 
         
-    proxy_sigma_default: float or dict of float, optional
+    proxy_sigma_default: float or dict{float}, optional
         Measurement uncertainty (:math:`1\\sigma`) to use for proxy observations if not specified in ``proxy_std`` column of ``sample_df``. To set a different value for each proxy, pass a dictionary with proxy names as keys. Defaults to 0.1. 
 
     approximate: bool, optional
         Build model with an unapproximated latent GP (:class:`pymc.gp.Latent`) if ``False``, or a Hilbert space Gaussian process approximation (:class:`pymc.gp.HSGP`) if ``True``; defaults to ``False``. If using the HSGP approximation, also pass the ``hsgp_m`` and ``hsgp_c`` parameters (the defaults are unlikely to work well for all problems). Appropriate values for ``m`` and ``c`` can be estimated using :py:meth:`approx_hsgp_hyperparams() <pymc.gp.hsgp_approx.approx_hsgp_hyperparams>`. 
 
-    hsgp_m: int or dict of int, optional
-        Number of basis vectors to use in the HSGP approximation (see :class:`pymc.gp.HSGP`). Defaults to 15.
+    hsgp_m: int or dict{int}, optional
+        Number of basis vectors to use in the HSGP approximation (see :class:`pymc.gp.HSGP`). Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 15. 
 
-    hsgp_c: float or dict of float, optional
-        Proportion extension factor for the HSGP approximation (see :class:`pymc.gp.HSGP`). Defaults to 1.3.
+    hsgp_c: float or dict{float}, optional
+        Proportion extension factor for the HSGP approximation (see :class:`pymc.gp.HSGP`). Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 1.3. 
         
-    ls_dist: str or dict of str, optional
-        Prior distribution for the lengthscale hyperparameter of the exponential quadratic covariance kernel (:class:`pymc.gp.cov.ExpQuad <pymc.gp.cov.ExpQuad>`); set to ``Wald`` (:class:`pymc.Wald`) or ``HalfNormal`` (:class:`pymc.HalfNormal`). Defaults to ``Wald`` with ``mu = 20`` and ``lambda = 50``. To change ``mu`` and ``lambda``, pass the ``ls_mu`` and ``ls_lambda`` parameters. For ``HalfNormal``, the variance defaults to ``sigma = 50``; change by passing ``ls_sigma``.
+    ls_dist: str or dict{str}, optional
+        Prior distribution for the lengthscale hyperparameter of the exponential quadratic covariance kernel (:class:`pymc.gp.cov.ExpQuad <pymc.gp.cov.ExpQuad>`); set to ``Wald`` (:class:`pymc.Wald`) or ``HalfNormal`` (:class:`pymc.HalfNormal`). Defaults to ``Wald`` with ``mu = 20`` and ``lambda = 50``. To change ``mu`` and ``lambda``, pass the ``ls_mu`` and ``ls_lambda`` parameters. For ``HalfNormal``, the variance defaults to ``sigma = 50``; change by passing ``ls_sigma``. Pass as a dictionary with proxy names as keys to specify a different prior distribution for each proxy.
         
-    ls_min: float or dict of float, optional
-        Minimum value for the lengthscale hyperparameter of the :class:`pymc.gp.cov.ExpQuad` covariance kernel; shifts the lengthscale prior by ``ls_min``. Defaults to 0.
+    ls_min: float or dict{float}, optional
+        Minimum value for the lengthscale hyperparameter of the :class:`pymc.gp.cov.ExpQuad` covariance kernel; shifts the lengthscale prior by ``ls_min``. Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 0.
 
-    ls_mu: float or dict of float, optional
-        Mean (`mu`) of the :class:`pymc.gp.cov.ExpQuad` lengthscale prior if ``ls_dist = `Wald```. Defaults to 20.
+    ls_mu: float or dict{float}, optional
+        Mean (`mu`) of the :class:`pymc.gp.cov.ExpQuad` lengthscale prior if ``ls_dist = `Wald```. Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 20.
     
-    ls_lambda: float or dict of float, optional
-        Relative precision (`lam`) of the :class:`pymc.gp.cov.ExpQuad` lengthscale hyperparameter prior if ``ls_dist = `Wald```. Defaults to 50.
+    ls_lambda: float or dict{float}, optional
+        Relative precision (`lam`) of the :class:`pymc.gp.cov.ExpQuad` lengthscale hyperparameter prior if ``ls_dist = `Wald```. Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 50.
 
-    ls_sigma: float or dict of float, optional
-        Scale parameter (`sigma`) of the :class:`pymc.gp.cov.ExpQuad` lengthscale hyperparameter prior if ``ls_dist = `HalfNormal```. Defaults to 50.
+    ls_sigma: float or dict{float}, optional
+        Scale parameter (`sigma`) of the :class:`pymc.gp.cov.ExpQuad` lengthscale hyperparameter prior if ``ls_dist = `HalfNormal```. Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 50.
 
-    var_sigma: float or dict of float, optional
-        Scale parameter (`sigma') of the covariance kernel variance hyperparameter prior, which is a :class:`pymc.HalfNormal` distribution. Defaults to 10.
+    var_sigma: float or dict{float}, optional
+        Scale parameter (`sigma`) of the covariance kernel variance hyperparameter prior, which is a :class:`pymc.HalfNormal` distribution. Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 10.
 
-    white_noise_sigma: float or dict of float, optional
-        Amplitude of white noise component of GP covariance function; defaults to 0.1. Should be equal to or less than the proxy measurement uncertainty; use a smaller value for proxies with low-amplitude signals (e.g., Sr isotopes).
+    white_noise_sigma: float or dict{float}, optional
+        Amplitude of white noise component of GP covariance function. Defaults to 0.1. Should be equal to or less than the proxy measurement uncertainty; use a smaller value for proxies with low-amplitude signals (e.g., Sr isotopes). Pass as a dictionary with proxy names as keys to specify a different value for each proxy.
 
-    gp_mean_mu: float or dict of float, optional
-        Mean (`mu`) of the GP mean function prior, which is a :class:`pymc.Normal` distribution. Defaults to the mean of the observations for each proxy.
+    gp_mean_mu: float or dict{float}, optional
+        Mean (`mu`) of the GP mean function prior, which is a :class:`pymc.Normal` distribution. Defaults to the mean of the observations for each proxy. Pass as a dictionary with proxy names as keys to specify a different value for each proxy.
 
-    gp_mean_sigma: float or dict of float, optional
-        Standard deviation (`sigma`) of the GP mean function prior, which is a :class:`pymc.Normal` distribution. Defaults to twice the standard deviation of the observations for each proxy.
+    gp_mean_sigma: float or dict{float}, optional
+        Standard deviation (`sigma`) of the GP mean function prior, which is a :class:`pymc.Normal` distribution. Defaults to twice the standard deviation of the observations for each proxy. Pass as a dictionary with proxy names as keys to specify a different value for each proxy.
 
-    offset_type: str or dict of str, optional
-        Parameterize offset such that all samples from the same section have the same offset (set to ``section``), or such that custom sample groups share an offset term (set to ``groups``, and specify the group for each sample and proxy with a ``offset_group_proxy`` column in ``sample_df``). To omit the offset term, set to ``none``. Defaults to ``section``. 
+    offset_type: str or dict{str}, optional
+        Parameterize offset such that all samples from the same section have the same offset (set to ``section``), or such that custom sample groups share an offset term (set to ``groups``, and specify the group for each sample and proxy with a ``offset_group_proxy`` column in ``sample_df``). To omit the offset term, set to ``none``. Defaults to ``section``. Pass as a dictionary with proxy names as keys to specify a different offset type for each proxy. 
 
-    offset_prior: str or dict of str, optional
-        Type of distribution to use for the offset prior. Pass as a ``string`` to use the same prior for all proxies, or as a ``dict`` of ``string`` (with proxy names as keys) to specify a different prior distribution for each proxy. Defaults to ``Laplace`` (:class:'pymc.Laplace') with ``mu = 0`` and ``b = 2``. ``mu`` and ``b`` can be changed by passing ``offset_mu`` and ``offset_b``. To use other types of priors, pass the name of a distribution from :class:`pymc.distributions`, along with parameter values in ``offset_params``. 
+    offset_prior: str or dict{str}, optional
+        Type of distribution to use for the offset prior. Pass as a ``string`` to use the same prior for all proxies, or as a ``dict`` of ``string`` (with proxy names as keys) to specify a different prior distribution for each proxy. Defaults to ``Laplace`` (:class:`pymc.Laplace`) with ``mu = 0`` and ``b = 2``. ``mu`` and ``b`` can be changed by passing ``offset_mu`` and ``offset_b``. To use other types of priors, pass the name of a distribution from :class:`pymc.distributions`, along with parameter values in ``offset_params``. Pass as a dictionary with proxy names as keys to specify a different prior for each proxy.
         
-    offset_params: dict, optional
+    offset_params: dict{float} or dict{dict{float}}, optional
         Only required if using a custom ``offset_prior``. Pass as a dictionary to use the same parameters for all proxies, or as a dictionary of dictionaries (with proxy names as keys) to specify different parameters for each proxy. Keys are ``param_1_name``, ``param_1``, ``param_2_name``, and ``param_2`` (with parameter names corresponding to those required for the specified :class:`pymc.distributions` object). If only one parameter is required, use ``np.nan`` for ``param_2_name`` and ``param_2``. 
 
-    noise_type: str, optional
-        Parameterize noise as per-section (set to ``section``) or per-group (set to ``groups``, and specify the group for each sample and proxy with a ``noise_group_proxy`` column in ``sample_df``). Defaults to ``section``. 
+    noise_type: str or dict{str}, optional
+        Parameterize noise as per-section (set to ``section``) or per-group (set to ``groups``, and specify the group for each sample and proxy with a ``noise_group_proxy`` column in ``sample_df``). Defaults to ``section``. Pass as a dictionary with proxy names as keys to specify a different noise type for each proxy. 
 
-    noise_prior: str or dict of str, optional
-        Type of distribution to use for the noise prior. Pass as a ``string`` to use the same prior for all proxies, or as a ``dict`` of ``string`` (with proxy names as keys) to specify a different prior distribution for each proxy. Defaults to ``HalfCauchy`` (:class:'pymc.HalfCauchy') with ``beta = 1``. ``beta`` can be changed by passing ``noise_beta``. Other implemented priors (note that noise must be positive-only) are ``HalfNormal`` (:class:'pymc.HalfNormal'; defaults to ``noise_sigma = 1``) and ``HalfStudentT`` (:class:'pymc.HalfStudentT'; defaults to ``noise_nu = 1`` and ``noise_sigma`` = 1). 
+    noise_prior: str or dict{str}, optional
+        Type of distribution to use for the noise prior. Pass as a ``string`` to use the same prior for all proxies, or as a ``dict`` of ``string`` (with proxy names as keys) to specify a different prior distribution for each proxy. Defaults to ``HalfCauchy`` (:class:`pymc.HalfCauchy`) with ``beta = 1``. ``beta`` can be changed by passing ``noise_beta``. Other implemented priors (note that noise must be positive-only) are ``HalfNormal`` (:class:`pymc.HalfNormal`; defaults to ``noise_sigma = 1``) and ``HalfStudentT`` (:class:`pymc.HalfStudentT`; defaults to ``noise_nu = 1`` and ``noise_sigma`` = 1). 
         
-    superposition_dict: dict, optional
-        Optional; dictionary specifying superposition relationships between different section. Should only be used when superposition is not implicitly enforced by the age constraints; for example, when sections share the same minimum and maximum age constraints, but are from geological formations with a known stratigraphic relationship. Dictionary keys are section names, and the value for each key is a list of sections that must be older (stratigraphically lower).
+    superposition_dict: dict{list(str)}, optional
+        Optional; dictionary specifying superposition relationships between different sections. Should only be used when superposition is not implicitly enforced by the age constraints; for example, when sections share the same minimum and maximum age constraints, but are from geological formations with a known stratigraphic relationship. Dictionary keys are section names, and the value for each key is a list of sections that must be older (stratigraphically lower).
+
+    jitter: float, optional 
+        Value of ``jitter`` passed to :meth:`pymc.gp.Latent.prior`. Defaults to 0.001.
 
     proxy_observed: bool, optional
         Whether to pass observed values to the likelihood function; defaults to ``True``. Only set to ``False`` to generate synthetic observations from the model prior in :py:meth:`synthetic_observations_from_prior() <stratmc.synthetics>` in :py:mod:`stratmc.synthetics`.
@@ -234,6 +237,12 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
         for proxy in proxies:
             noise_sigma[proxy] = temp 
 
+    if type(noise_nu) != dict:
+        temp = noise_nu
+        noise_nu = {}
+        for proxy in proxies:
+            noise_nu[proxy] = temp 
+
     # create dictionaries to store offset and noise terms inside of model 
     offset_types = list(offset_type.values())
     if ('section' in offset_types) or  ('groups' in offset_types):
@@ -333,9 +342,9 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
     for proxy in proxies: 
         if proxy + '_std' not in list(sample_df.columns):
             sample_df[proxy + '_std'] = np.nan
-        
+
         idx = np.isnan(sample_df[proxy + '_std'])
-        sample_df[proxy + '_std'][idx] = proxy_sigma_default[proxy]
+        sample_df.loc[idx, proxy + '_std'] = proxy_sigma_default[proxy]
         
         if proxy + '_population_std' not in list(sample_df.columns):
             sample_df[proxy + '_population_std'] = np.nan
@@ -407,7 +416,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
     # for sample_df, 'exclude' now means exclude from the likelihood calculation, but keep track of age at that height
     sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)
 
-    # ignore sections that have no observations included in the inference
+    # ignore sections that have no observations included in the inference (samples w/ no observations were marked `Exclude? = True` in clean_data)
     data_sections = list(np.unique(sample_df[~sample_df['Exclude?']]['section']))
 
     for section in list(sections): 
@@ -516,10 +525,10 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                     param_2 = constraint_df['param_2'].values[0]
                     param_2_name = constraint_df['param_2_name'].values[0]
 
-                    if not np.isnan(param_1):
+                    if not pd.isna(param_1):
                         dist_args[param_1_name] = param_1
 
-                    if not np.isnan(param_2): 
+                    if not pd.isna(param_2): 
                         dist_args[param_2_name] = param_2
 
                     shared_constraints[constraint] = DIST_DICT[dist](constraint, **dist_args)
@@ -547,10 +556,10 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                         param_2 = offset_params[proxy]['param_2']
                         param_2_name = offset_params[proxy]['param_2_name']
 
-                        if not np.isnan(param_1):
+                        if not pd.isna(param_1):
                             dist_args[param_1_name] = param_1
 
-                        if not np.isnan(param_2): 
+                        if not pd.isna(param_2): 
                             dist_args[param_2_name] = param_2
 
                         offset_group_dict[proxy][group] = DIST_DICT[offset_prior[proxy]](group + '_group_offset_' + proxy, **dist_args, shape = 1)
@@ -649,10 +658,10 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                                 param_2 = section_age_df['param_2'].values[i]
                                 param_2_name = section_age_df['param_2_name'].values[i]
 
-                                if not np.isnan(param_1):
+                                if not pd.isna(param_1):
                                     dist_args[param_1_name] = param_1
 
-                                if not np.isnan(param_2): 
+                                if not pd.isna(param_2): 
                                     dist_args[param_2_name] = param_2
 
                                 radiometric_age[i] = DIST_DICT[dist](label + 'radiometric_age', **dist_args)
@@ -757,10 +766,10 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                                             param_2 = detrital_interval_df['param_2'].values[i]
                                             param_2_name = detrital_interval_df['param_2_name'].values[i]
 
-                                            if not np.isnan(param_1):
+                                            if not pd.isna(param_1):
                                                 dist_args[param_1_name] = param_1
 
-                                            if not np.isnan(param_2): 
+                                            if not pd.isna(param_2): 
                                                 dist_args[param_2_name] = param_2
 
                                             intermediate_detrital_age = DIST_DICT[dist](label + 'detrital_age_' + str(i), **dist_args)
@@ -839,10 +848,10 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                                             param_2 = intrusive_interval_df['param_2'].values[i]
                                             param_2_name = intrusive_interval_df['param_2_name'].values[i]
 
-                                            if not np.isnan(param_1):
+                                            if not pd.isna(param_1):
                                                 dist_args[param_1_name] = param_1
 
-                                            if not np.isnan(param_2): 
+                                            if not pd.isna(param_2): 
                                                 dist_args[param_2_name] = param_2
 
                                             intermediate_intrusive_age = DIST_DICT[dist](label + 'intrusive_age_' + str(i), **dist_args)
@@ -933,10 +942,10 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                             param_2 = offset_params[proxy]['param_2']
                             param_2_name = offset_params[proxy]['param_2_name']
 
-                            if not np.isnan(param_1):
+                            if not pd.isna(param_1):
                                 dist_args[param_1_name] = param_1
 
-                            if not np.isnan(param_2): 
+                            if not pd.isna(param_2): 
                                 dist_args[param_2_name] = param_2
 
                             section_offset[proxy] = DIST_DICT[offset_prior[proxy]](label + 'section_offset_' + proxy, **dist_args, shape = 1)
@@ -1067,7 +1076,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
             if not approximate:
                 f = gp[proxy].prior('f_' + proxy, X=ages[proxy_idx[proxy],None],
                              reparameterize=True,
-                             jitter = JITTER_DEFAULT)
+                             jitter = jitter)
 
             if approximate: 
                 f = gp[proxy].prior('f_' + proxy, X=ages[proxy_idx[proxy],None]) 
@@ -1150,11 +1159,11 @@ def superposition(age_dist, age_dist_names, model, section_age_df, section):
     for i in np.arange(1, age_dist.shape.eval()[0]):
         slope = 10
         pm.Potential("superposition_"+str(section)+'_'+str(i),
-        shared(-10000) * pm.math.invlogit(slope * ((age_dist[i]) - age_dist[i-1]))) # if issues with consistent enforcement, consider adjusting the slope (already increased multiplier)
+        shared(-100) * pm.math.invlogit(slope * ((age_dist[i]) - age_dist[i-1]))) 
 
     for i in np.arange(0, len(section_age_df['height'])-1).tolist():
-        lower_label = age_dist_names[i] #str(section+'_'+str(i)+'_'+'radiometric_age') 
-        upper_label = age_dist_names[i + 1] #str(section+'_'+str(i+1)+'_'+'radiometric_age')
+        lower_label = age_dist_names[i]
+        upper_label = age_dist_names[i + 1] 
 
         # note that model.initial_point returns transformed values, while model initial values are untransformed (?)
         # so we get the initial points, and then have to apply the backward transform to 'convert' them to initial values for the untransformed distributions and check if they are in superposition
@@ -1231,10 +1240,7 @@ def intermediate_detrital_potential(detrital_age_dist, detrital_age_dist_name, m
     
     overlying_sample_idx = np.where(sample_heights >= detrital_height)[0]
     
-    # not sure if this will work in 1 line, or if we have to add a separate pm.Potential function for each sample?
     slope = 10
-    #for idx in list(overlying_sample_idx):
-        
     pm.Potential('detrital_max_'  + str(section) + '_' + str(detrital_age_dist_name), shared(-100) * pm.math.invlogit(slope * ((sample_age_dist_sorted[overlying_sample_idx]) - detrital_age_dist)))
         
     # get initial values for sample ages 
@@ -1364,10 +1370,7 @@ def intermediate_intrusive_potential(intrusive_age_dist, intrusive_age_dist_name
     
     underlying_sample_idx = np.where(sample_heights <= intrusive_height)[0]
     
-    # not sure if this will work in 1 line, or if we have to add a separate pm.Potential function for each sample?
-    slope = 10
-    #for idx in list(underlying_sample_idx):
-        
+    slope = 10        
     pm.Potential('intrusive_min_'  + str(section) + '_' + str(intrusive_age_dist_name), shared(-100) * pm.math.invlogit(slope * ((intrusive_age_dist) - sample_age_dist_sorted[underlying_sample_idx])))
         
     # get initial values for sample ages 

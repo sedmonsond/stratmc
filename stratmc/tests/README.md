@@ -1,0 +1,1 @@
+Test suite run as Github action on commit. Test manually by navigating to this directory and running `pytest`; add `-re` for error messages. To install `stratmc` locally for testing, run: `python -m pip install -e stratmc`. 

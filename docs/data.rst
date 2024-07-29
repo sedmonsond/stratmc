@@ -9,7 +9,7 @@ Functions for importing and processing proxy and age constraint data.
 .. autosummary::
   :nosignatures:
   
-    load_data  
+    load_data
     combine_data
     load_object
     load_trace
@@ -18,8 +18,6 @@ Functions for importing and processing proxy and age constraint data.
     combine_traces
     drop_chains
     accumulation_rate
-    downsample
-    upsample
     clean_data
     depth_to_height
     combine_duplicates

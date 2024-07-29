@@ -3,8 +3,6 @@ import numpy as np
 import pandas as pd
 pd.options.mode.chained_assignment = None
 import pickle
-from scipy.stats import gaussian_kde
-from sklearn.cluster import KMeans
 import sys
     
 pd.options.mode.chained_assignment = None
@@ -18,15 +16,15 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
     Parameters
     ----------
     sample_file: str
-        Name of .csv file containing proxy data for all sections (without '.csv` extension). 
+        Path to .csv file containing proxy data for all sections (without '.csv` extension). 
 
     ages_file: str
-        Name of .csv file containing age constraints for all sections (without '.csv` extension).
+        Path to .csv file containing age constraints for all sections (without '.csv` extension).
         
-    proxies: str or list of str, optional
+    proxies: str or list(str), optional
         Tracer names (must match column headers in ``sample_file.csv``); defaults to 'd13c`.
     
-    proxy_sigma_default: float or dict of float, optional
+    proxy_sigma_default: float or dict{float}, optional
         Measurement uncertainty (:math:`1\\sigma`) to use for proxy observations if not specified in ``proxy_std`` column of ``sample_df``. To set a different value for each proxy, pass a dictionary with proxy names as keys. Defaults to 0.1. 
 
     drop_excluded_samples: bool, optional
@@ -47,8 +45,8 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
     if type(proxies) == str:
         proxies = list([proxies])
         
-    samples = pd.read_csv('data/' + sample_file + '.csv')
-    ages = pd.read_csv('data/' + ages_file + '.csv')
+    samples = pd.read_csv(sample_file + '.csv')
+    ages = pd.read_csv(ages_file + '.csv')
 
     samples['section']=samples['section'].apply(str)
     ages['section']=ages['section'].apply(str)
@@ -85,8 +83,13 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
         
     if 'Exclude?' not in list(samples.columns):
         samples['Exclude?'] = False
-    
-    sample_df, ages_df = depth_to_height(samples, ages)
+        
+    if ('depth' in list(samples.columns)) or ('depth' in list(ages.columns)):
+        sample_df, ages_df = depth_to_height(samples, ages)
+
+    else: 
+        sample_df = samples
+        ages_df = ages
     
     if drop_excluded_samples: 
         sample_df = sample_df[~sample_df['Exclude?']]
@@ -157,10 +160,10 @@ def clean_data(sample_df, ages_df, proxies, sections):
     ages_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing age constraints for all sections.
 
-    proxies: str or list of str
+    proxies: str or list(str)
         Tracers to include in the inference.
 
-    sections: list or numpy.array of str
+    sections: list(str) or numpy.array(str)
         List of sections to include in the inference (as named in ``sample_df`` and ``ages_df``).
 
     Returns
@@ -189,8 +192,7 @@ def clean_data(sample_df, ages_df, proxies, sections):
             exclude_idx.remove(idx)
 
         # if sample has no relevant proxy observations, exclude from inference
-
-        sample_df['Exclude?'].loc[exclude_idx] = True
+        sample_df.loc[exclude_idx, 'Exclude?'] = True
 
         sample_df = sample_df[sample_df['section'].isin(sections)]
 
@@ -222,10 +224,10 @@ def combine_duplicates(sample_df, proxies, proxy_sigma_default = 0.1):
     sample_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing proxy data for all sections.
 
-    proxies: list of str
+    proxies: list(str)
         List of proxies to include in the inference.
 
-    proxy_sigma_default: float or dict of float, optional
+    proxy_sigma_default: float or dict{float}, optional
         Measurement uncertainty (:math:`1\\sigma`) to use for proxy observations if not specified in ``proxy_std`` column of ``sample_df``. To set a different value for each proxy, pass a dictionary with proxy names as keys. Defaults to 0.1. 
 
     Returns
@@ -251,7 +253,7 @@ def combine_duplicates(sample_df, proxies, proxy_sigma_default = 0.1):
             sample_df[proxy + '_std'] = np.nan
 
         idx = np.isnan(sample_df[proxy + '_std'])
-        sample_df[proxy + '_std'][idx] = proxy_sigma_default[proxy]
+        sample_df.loc[idx, proxy + '_std'] = proxy_sigma_default[proxy]
         
     # don't consider excluded samples when averaging observations from same height -- remove from dataframe and add back later
     excluded_sample_df = sample_df[sample_df['Exclude?']]
@@ -321,7 +323,7 @@ def combine_data(dataframes):
 
     Parameters
     ----------
-    dataframes: list of pandas.DataFrame
+    dataframes: list(pandas.DataFrame)
         List of :class:`pandas.DataFrame` objects to merge.
 
     Returns
@@ -345,7 +347,7 @@ def combine_traces(trace_list):
 
     Parameters
     ----------
-    trace_list: list of str
+    trace_list: list(str)
        List of paths to :class:`arviz.InferenceData` objects (saved as NetCDF files) to be merged.
 
     Returns
@@ -374,6 +376,24 @@ def combine_traces(trace_list):
     return combined_trace
 
 def drop_chains(full_trace, chains): 
+
+    """
+    Remove a subset of chains from a :class:`arviz.InferenceData` object.
+
+    Parameters
+    ----------
+    full_trace: arviz.InferenceData
+        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
+
+    chains: list or np.array of int
+        Indices of chains to remove from ``full_trace``.
+
+    Returns
+    -------
+    full_trace_clean: arviz.InferenceData
+        Copy of ``full_trace`` without the chains specified in ``chains``.
+
+    """
 
     all_chains = list(full_trace.posterior.chain.values)
 
@@ -486,17 +506,16 @@ def accumulation_rate(full_trace, sample_df, ages_df, method = 'all', age_model 
     include_age_constraints: bool, optional
         Whether to include radiometric age constraints in accumulation rate calculations; defaults to ``True``.
 
+    sections: list(str) or numpy.array(str), optional 
+        List of sections to include. Defaults to all sections in ``sample_df``.
+
     Returns
     -------
     rate_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing sediment accumulation rates and associated durations. 
         
     """
-    
-    if 'sections' in kwargs:
-        sections = list(kwargs['sections'])
-    else: 
-        sections = np.unique(sample_df['section'])
+
         
     # get list of proxies included in model from full_trace
     variables = [
@@ -508,6 +527,11 @@ def accumulation_rate(full_trace, sample_df, ages_df, method = 'all', age_model 
     proxies = []
     for var in variables:
         proxies.append(var[6:])
+
+    if 'sections' in kwargs:
+        sections = list(kwargs['sections'])
+    else: 
+        sections = np.unique(sample_df.dropna(subset = proxies, how = 'all')['section'])
   
     sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)
         

@@ -5,9 +5,9 @@ from stratmc.data import clean_data
 
 def check_inference(full_trace, sample_df, ages_df, quiet = True, **kwargs): 
     """
-    Master function (calls each of the functions in the ``tests`` module) for checking that superposition is never violated in the posterior. Returns a list of chain indices where superposition was violated;these chains can be dropped from the trace using :py:meth:`drop_bad_chains() <stratmc.tests.drop_bad_chains>`. Run automatically inside of :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`. 
+    Master function (calls each of the functions in the ``tests`` module) for checking that superposition is never violated in the posterior. Returns a list of chain indices where superposition was violated; these chains can be dropped from the trace using :py:meth:`drop_chains() <stratmc.data.drop_chains>`. Run automatically inside of :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`. 
 
-    Because of the likelihood gradient used to manually enforce detrital and intrusive ages in :py:meth:`intermediate_detrital_potential() <stratmc.model.intermediate_detrital_potential>` and :py:meth:`intermediate_intrusive_potential() <stratmc.model.intermediate_intrusive_potential>` (called in :py:meth:`build_model() <stratmc.model.build_model>`), rare chains may have minor superposition violations when deterital/intrusive ages are present. These chains can simply be discarded. If superposition is frequently violated in a given section, or if superposition violations are severe, check that the heights for all age constraints in ``ages_df`` are correct, and that the reported ages respect superposition. The model can correct for mean ages that are out of superposition, but may fail if the age constraints do not overlap given their 2:math:`\sigma` uncertainties. 
+    Because of the likelihood gradient used to manually enforce detrital and intrusive ages in :py:meth:`intermediate_detrital_potential() <stratmc.model.intermediate_detrital_potential>` and :py:meth:`intermediate_intrusive_potential() <stratmc.model.intermediate_intrusive_potential>` (called in :py:meth:`build_model() <stratmc.model.build_model>`), rare chains may have minor superposition violations when deterital/intrusive ages are present. These chains can simply be discarded. If superposition is frequently violated in a given section, or if superposition violations are severe, check that the heights for all age constraints in ``ages_df`` are correct, and that the reported ages respect superposition. The model can correct for mean ages that are out of superposition, but may fail if the age constraints do not overlap given their 2$\sigma$ uncertainties. 
 
     Parameters
     ----------
@@ -20,7 +20,7 @@ def check_inference(full_trace, sample_df, ages_df, quiet = True, **kwargs):
     ages_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing age constraints for all sections.
 
-    sections: list or numpy.array of str, optional
+    sections: list(str) or numpy.array(str), optional
         List of sections included in the inference. Defaults to all sections in ``sample_df``.
 
     quiet: bool, optional
@@ -33,10 +33,21 @@ def check_inference(full_trace, sample_df, ages_df, quiet = True, **kwargs):
 
     """
 
+    # get list of proxies included in model from full_trace
+    variables = [
+            l
+            for l in list(full_trace["posterior"].data_vars.keys())
+            if (f"{'gp_ls_'}" in l) and (f"{'unshifted'}" not in l)
+            ]
+
+    proxies = []
+    for var in variables:
+        proxies.append(var[6:])
+
     if 'sections' in kwargs:
         sections = list(kwargs['sections'])
-    else:
-        sections = np.unique(sample_df['section'])
+    else: 
+        sections = np.unique(sample_df.dropna(subset = proxies, how = 'all')['section'])
 
     bad_chains_1 = check_superposition(full_trace, sample_df, ages_df, sections = sections, quiet = quiet)
     bad_chains_2 = check_detrital_ages(full_trace, sample_df, ages_df, sections = sections, quiet = quiet)
@@ -49,7 +60,7 @@ def check_inference(full_trace, sample_df, ages_df, quiet = True, **kwargs):
             
 def check_superposition(full_trace, sample_df, ages_df, quiet = True, **kwargs): 
     """
-    Test that stratigraphic superposition between all age constriants and samples is respected in the posterior.
+    Check that stratigraphic superposition between all age constriants and samples is respected in the posterior.
 
     Parameters
     ----------
@@ -62,7 +73,7 @@ def check_superposition(full_trace, sample_df, ages_df, quiet = True, **kwargs):
     ages_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing age constraints for all sections.
 
-    sections: list or numpy.array of str, optional
+    sections: list(str) or numpy.array(str), optional
         List of sections included in the inference. Defaults to all sections in ``sample_df``.
     
     quiet: bool, optional
@@ -74,11 +85,6 @@ def check_superposition(full_trace, sample_df, ages_df, quiet = True, **kwargs):
         Array of chain indices where superposition was violated in the posterior. 
 
     """
-
-    if 'sections' in kwargs:
-        sections = list(kwargs['sections'])
-    else:
-        sections = np.unique(sample_df['section'])
     
     # get list of proxies included in model from full_trace
     variables = [
@@ -90,6 +96,11 @@ def check_superposition(full_trace, sample_df, ages_df, quiet = True, **kwargs):
     proxies = []
     for var in variables:
         proxies.append(var[6:])
+
+    if 'sections' in kwargs:
+        sections = list(kwargs['sections'])
+    else: 
+        sections = np.unique(sample_df.dropna(subset = proxies, how = 'all')['section'])
 
     sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)
     
@@ -142,7 +153,7 @@ def check_detrital_ages(full_trace, sample_df, ages_df, quiet = True, **kwargs):
     ages_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing age constraints for all sections.
 
-    sections: list or numpy.array of str, optional
+    sections: list(str) or numpy.array(str), optional
         List of sections included in the inference. Defaults to all sections in ``sample_df``.
 
     quiet: bool, optional
@@ -154,11 +165,6 @@ def check_detrital_ages(full_trace, sample_df, ages_df, quiet = True, **kwargs):
         Array of chain indices where superposition was violated in the posterior. 
         
     """
-        
-    if 'sections' in kwargs:
-        sections = list(kwargs['sections'])
-    else:
-        sections = np.unique(sample_df['section'])
 
     # get list of proxies included in model from full_trace
     variables = [
@@ -170,6 +176,11 @@ def check_detrital_ages(full_trace, sample_df, ages_df, quiet = True, **kwargs):
     proxies = []
     for var in variables:
         proxies.append(var[6:])
+
+    if 'sections' in kwargs:
+        sections = list(kwargs['sections'])
+    else: 
+        sections = np.unique(sample_df.dropna(subset = proxies, how = 'all')['section'])
 
     sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)
         
@@ -235,7 +246,7 @@ def check_intrusive_ages(full_trace, sample_df, ages_df, quiet = True, **kwargs)
     ages_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing age constraints for all sections.
 
-    sections: list or numpy.array of str, optional
+    sections: list(str) or numpy.array(str), optional
         List of sections included in the inference. Defaults to all sections in ``sample_df``.
 
     quiet: bool, optional
@@ -247,10 +258,7 @@ def check_intrusive_ages(full_trace, sample_df, ages_df, quiet = True, **kwargs)
         Array of chain indices where superposition was violated in the posterior. 
         
     """
-    if 'sections' in kwargs:
-        sections = list(kwargs['sections'])
-    else:
-        sections = np.unique(sample_df['section'])
+
 
     # get list of proxies included in model from full_trace
     variables = [
@@ -262,6 +270,11 @@ def check_intrusive_ages(full_trace, sample_df, ages_df, quiet = True, **kwargs)
     proxies = []
     for var in variables:
         proxies.append(var[6:])
+
+    if 'sections' in kwargs:
+        sections = list(kwargs['sections'])
+    else: 
+        sections = np.unique(sample_df.dropna(subset = proxies, how = 'all')['section'])
 
     sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)
 

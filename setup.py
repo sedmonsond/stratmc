@@ -8,7 +8,7 @@ from setuptools import find_packages, setup
 DISTNAME = "stratmc"
 DESCRIPTION = "Bayesian statistical framework for reconstructing proxy signals from the stratigraphic record"
 AUTHOR = "Stacey Edmonsond"
-AUTHOR_EMAIL = "sedmonsond@uvic.ca"
+AUTHOR_EMAIL = "staceyedmonsond777@gmail.com"
 URL = "http://github.com/sedmonsond/stratmc"
 LICENSE = "GNU General Public License v3.0"
 

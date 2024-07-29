@@ -16,17 +16,17 @@ import xarray as xr
 
 os.environ["AESARA_FLAGS"] = "mode=FAST_RUN,device=cpu,floatX=float64"
 
-from stratmc.config import JITTER_DEFAULT
 from stratmc.data import clean_data, drop_chains
 from stratmc.tests import check_inference
 
 
-def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approximate = False, name="", chains = 8, draws = 1000, tune = 1000, prior_draws = 1000, target_accept = 0.8, sampler = 'numpyro', nuts_kwargs = None, seed = None, save = True, **kwargs):
+def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approximate = False, name="", chains = 8, draws = 1000, tune = 2000, prior_draws = 1000, target_accept = 0.9, sampler = 'numpyro', nuts_kwargs = None, jitter = 0.001, seed = None, save = True, postprocessing_backend = None, **kwargs):
     """
     Sample the prior and posterior distributions for a :class:`pymc.model.core.Model` returned by :py:meth:`build_model() <stratmc.model.build_model>` in :py:mod:`stratmc.model`. By default, uses :py:func:`pymc.sampling.jax.sample_numpyro_nuts() <pymc.sampling.jax.sample_numpyro_nuts>` to sample the posterior; change ``sampler`` to 'blackjax` to use :py:func:`pymc.sampling.jax.sample_blackjax_nuts() <pymc.sampling.jax.sample_blackjax_nuts>`.
 
-    After the posterior has been sampled, runs :py:meth:`check_inference() <stratmc.tests.check_inference>` in :py:mod:`stratmc.tests` to check that superposition is never violated in the posterior. Any chains with superposition violations are removed from the trace before it is returned (if ``save = True``, both the original and 'cleaned' traces are saved to the ``traces`` subfolder), and a warning is printed. See py:meth:`check_inferece() <stratmc.tests.check_inference>` for details; superposition issues are rare, and typically are related to minor violations of detrital or intrusive age constraints. 
+    After the posterior has been sampled, runs :py:meth:`check_inference() <stratmc.tests.check_inference>` in :py:mod:`stratmc.tests` to check that superposition is never violated in the posterior. Any chains with superposition violations are removed from the trace with :py:meth:`drop_chains() <stratmc.data.drop_chains>` before it is returned (if ``save = True``, both the original and 'cleaned' traces are saved to the ``traces`` subfolder), and a warning is printed. See :py:meth:`check_inference() <stratmc.tests.check_inference>` for details; superposition issues are rare, and typically are related to minor violations of detrital or intrusive age constraints. 
 
+    Problems during sampling, including frequent divergences or minor violations of limiting age constraints, might be resolved by increasing the number of ``tune`` steps and/or increasing ``target_accept`` (which decreases the step size).
 
     Parameters
     ----------
@@ -36,7 +36,7 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
     gp: pymc.gp.Latent
         Gaussian process prior (:class:`pymc.gp.Latent` or :class:`pymc.gp.HSGP`) returned by :py:meth:`build_model() <stratmc.model.build_model>` in :py:mod:`stratmc.model`.
 
-    ages: numpy.array
+    ages: numpy.array(float)
         array of ages at which to sample the posterior distribution of the proxy signal.
 
     sample_df: pandas.DataFrame
@@ -45,10 +45,10 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
     ages_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing age constraints for all sections.
 
-    sections:: list or numpy.array of str, optional
+    sections:: list(str) or numpy.array(str), optional
         List of sections to include in the inference model. Defaults to all sections in ``sample_df``.
 
-    proxies: str or list of str, optional 
+    proxies: str or list(str), optional 
         List of proxies included in the model. Defaults to 'd13c'. 
 
     approximate: bool, optional
@@ -70,13 +70,19 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
         Number of samples to draw from the prior; defaults to 1000. 
 
     target_accept: float, optional
-        Between 0 and 1 (exclusive). During tuning, the sampler adapts the proposals such that the average acceptance probability is equal to ``target_accept``; higher values for ``target_accept`` typically lead to smaller step sizes. Defaults to 0.8.
+        Between 0 and 1 (exclusive). During tuning, the sampler adapts the proposals such that the average acceptance probability is equal to ``target_accept``; higher values for ``target_accept`` typically lead to smaller step sizes. Defaults to 0.9.
 
     sampler: str, optional
         Which NUTS algorithm to use to sample the posterior ('numpyro` or 'blackjax`); defaults to 'numpyro`.
 
     nuts_kwargs: dict, optional 
-        Dictionary of keyword arguments passed to NumPyro NUTS sampler (see :py:func:`pymc.sampling.jax.sample_numpyro_nuts() <pymc.sampling.jax.sample_numpyro_nuts>` and :class:`numpyro.infer.hmc.NUTS`). 
+        Dictionary of keyword arguments passed to NumPyro NUTS sampler (see :py:func:`pymc.sampling.jax.sample_numpyro_nuts() <pymc.sampling.jax.sample_numpyro_nuts>` and :class:`numpyro.infer.hmc.NUTS`) or blackjax NUTS sampler (see :py:func:`pymc.sampling.jax.sample_blackjax_nuts() <pymc.sampling.jax.sample_blackjax_nuts>`). 
+
+    jitter: float, optional 
+        Value of ``jitter`` passed to :meth:`pymc.gp.Latent.conditional`. Defaults to 0.001. Changing this value may help if a linear algebra error is encountered during posterior predictive sampling. 
+
+    postprocessing_backend: str, optional 
+        Use the `cpu' or `gpu' for postprocessing. Defaults to ``None``.
 
     seed: int, optional
         Random seed for sampler.
@@ -91,13 +97,13 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
 
     """
 
-    if 'sections' in kwargs:
-        sections = list(kwargs['sections'])
-    else:
-        sections = list(np.unique(sample_df['section']))
-
     if type(proxies) == str:
         proxies = list([proxies])
+
+    if 'sections' in kwargs:
+        sections = list(kwargs['sections'])
+    else: 
+        sections = np.unique(sample_df.dropna(subset = proxies, how = 'all')['section'])
 
     if save: 
         # if folders for saving traces don't already exist in the current directory, make them
@@ -110,9 +116,6 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
         
         if not dir_path_intermediate.is_dir():
             dir_path_intermediate.mkdir()
-    
-    if type(proxies) == str:
-        proxies = list([proxies])
     
     if len(asctime().split(" ")[3]) > 1:
         ind = 3
@@ -132,10 +135,10 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
     
     with model:
         if sampler == 'numpyro':
-            full_trace = pm.sampling.jax.sample_numpyro_nuts(draws, tune=tune, chains=chains, target_accept=target_accept, postprocessing_vectorize='scan', random_seed = seed, idata_kwargs = idata_kwargs, nuts_kwargs = nuts_kwargs)
+            full_trace = pm.sampling.jax.sample_numpyro_nuts(draws, tune=tune, chains=chains, target_accept=target_accept, postprocessing_vectorize='scan', postprocessing_backend = postprocessing_backend, random_seed = seed, idata_kwargs = idata_kwargs, nuts_kwargs = nuts_kwargs)
         
         elif sampler == 'blackjax':
-            full_trace = pm.sampling.jax.sample_blackjax_nuts(draws, tune=tune, chains=chains, target_accept=target_accept, postprocessing_vectorize='scan', random_seed = seed, idata_kwargs = idata_kwargs)
+            full_trace = pm.sampling.jax.sample_blackjax_nuts(draws, tune=tune, chains=chains, target_accept=target_accept, postprocessing_vectorize='scan', postprocessing_backend = postprocessing_backend, random_seed = seed, idata_kwargs = idata_kwargs, nuts_kwargs = nuts_kwargs)
     
         if save:
             # save the trace with posterior samples -- if an error is encountered during sample_posterior_predictive, can re-load this file so we don't have to start over
@@ -147,7 +150,7 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
             if approximate: 
                 f_pred = gp[proxy].conditional('f_pred_' + proxy, Xnew=ages)
             else:
-                f_pred = gp[proxy].conditional('f_pred_' + proxy, Xnew=ages, jitter = JITTER_DEFAULT)
+                f_pred = gp[proxy].conditional('f_pred_' + proxy, Xnew=ages, jitter = jitter)
 
         posterior_predictive = pm.sample_posterior_predictive(
             full_trace,
@@ -156,7 +159,7 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
             random_seed = seed
         )
 
-        prior = pm.sample_prior_predictive(random_seed = seed, samples = prior_draws)
+        prior = pm.sample_prior_predictive(random_seed = seed, draws = prior_draws)
 
     full_trace.extend(prior)
     full_trace.extend(posterior_predictive)
@@ -171,7 +174,7 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
         # delete the temporary backup
         os.remove("traces/temp/" + str(name) + '_' + tstamp + ".nc")
 
-    bad_chains = check_inference(full_trace, sample_df, ages_df, quiet = True)
+    bad_chains = check_inference(full_trace, sample_df, ages_df, quiet = True, sections = sections)
     if len(bad_chains) > 0: 
         print('Superposition violated in chains ' + str(bad_chains) + '. These chains were removed from the trace; the original trace (with the bad chains) is saved in the `traces` folder. To investigate the cause of the superposition violation, load the original trace and run the functions in the `stratmc.tests` module with `quiet = False`.')
         
@@ -186,7 +189,7 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
 
 def extend_age_model(full_trace, sample_df, ages_df, new_proxies, new_proxy_df = None, **kwargs):
     """
-    Extend age models to a different set of proxy observations using posterior sample ages from an existing inference. For instance, extend an age model built using C isotope data to new S isotope data collected from different stratigraphic horizons in the same sections. Note that the age of stratigraphic horizons that were included in ``sample_df`` (but marked ``Exclude? = True``) is already passively tracked within the model; this function should only be used to estimate the age of observations that were not in ``sample_df`` when the inference was run. To estimate ages for new measurements of the same proxy, place the new data in a different column (e.g., 'd13c_new`).
+    Extend age models to a different set of proxy observations using posterior sample ages from an existing inference. For instance, extend an age model built using C isotope data to new S isotope data collected from different stratigraphic horizons in the same sections. Note that the age of stratigraphic horizons that were included in ``sample_df`` (but marked ``Exclude? = True``) is already passively tracked within the model; this function is only required to estimate the age of observations that were not in ``sample_df`` when the inference was run. To estimate ages for new measurements of the same proxy, place the new data in a different column (e.g., 'd13c_new`).
     
     Parameters
     ----------
@@ -199,13 +202,13 @@ def extend_age_model(full_trace, sample_df, ages_df, new_proxies, new_proxy_df =
     ages_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing age constraints used during the inference step (as input to :py:meth:`build_model() <stratmc.model.build_model>` in :py:mod:`stratmc.model`).
         
-    new_proxies: str or list of str
+    new_proxies: str or list(str)
         New proxy(s) to construct age models for.  
         
     new_proxy_df: pandas.DataFrame, optional
         :class:`pandas.DataFrame` containing new proxy observations. Optional; if not provided, uses ``sample_df`` (assumes that observations for the new proxy are in the same DataFrame as the original proxy observations). 
 
-    sections: list or numpy.array of str, optional 
+    sections: list(str) or numpy.array(str), optional 
         List of sections included in the inference; only required if not all sections in ``sample_df`` were included.
     
     Returns
@@ -213,14 +216,7 @@ def extend_age_model(full_trace, sample_df, ages_df, new_proxies, new_proxy_df =
     interpolated_df: pandas.DataFrame
         :class:`pandas.DataFrame` with interpolated age draws and sample age summary statistics (maximum likelihood estimate, median, and 68\% and 95\% confidence intervals) for each new proxy observation. 
     """
-        
-    if 'sections' in kwargs:
-        sections = list(kwargs['sections'])
-    else:
-        sections = np.unique(sample_df['section'])
 
-    if type(new_proxies) == str:
-        new_proxies = list([proxies])
 
     # get list of proxies included in model from full_trace
     variables = [
@@ -233,6 +229,14 @@ def extend_age_model(full_trace, sample_df, ages_df, new_proxies, new_proxy_df =
     for var in variables:
         proxies.append(var[6:])
         
+    if 'sections' in kwargs:
+        sections = list(kwargs['sections'])
+    else:
+        sections = np.unique(sample_df.dropna(subset = proxies, how = 'all')['section'])
+
+    if type(new_proxies) == str:
+        new_proxies = list([new_proxies])
+        
     if new_proxy_df is None:
         new_proxy_df = sample_df.copy()
     
@@ -240,7 +244,8 @@ def extend_age_model(full_trace, sample_df, ages_df, new_proxies, new_proxy_df =
     sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)
 
     new_proxy_df, _  = clean_data(new_proxy_df, ages_df, new_proxies, sections)
-    
+    new_proxy_df = new_proxy_df[~new_proxy_df['Exclude?']]
+
     interp_df = pd.DataFrame(columns = list(new_proxy_df.columns) + ['interp'])
     
     common_sections = [section for section in sections if section in np.unique(new_proxy_df['section'].values)]
@@ -264,9 +269,9 @@ def extend_age_model(full_trace, sample_df, ages_df, new_proxies, new_proxy_df =
         section_ages_df = ages_df[(ages_df['section']==section) & (~ages_df['Exclude?']) & (~ages_df['intermediate detrital?'])  & (~ages_df['intermediate intrusive?'])]
         age_heights = section_ages_df['height'].values
         
-        # heigts at which to interpolate age models
-        interp_heights = [h for h in new_heights if h not in sample_heights]
-        
+        # heights at which to interpolate age models
+        # just keep all heights, even if included in the original inference - improves workflow for plotting interpolated proxy signals
+        interp_heights = [h for h in new_heights] # if h not in sample_heights]
         cols = list(np.unique(list(new_proxy_df.columns)))
         interp_section_df = pd.DataFrame(columns = cols + ['interp'])
     
@@ -303,11 +308,13 @@ def extend_age_model(full_trace, sample_df, ages_df, new_proxies, new_proxy_df =
         for i in np.arange(age_paths.shape[1]):
             interp_section_ages[:, i] = np.interp(interp_section_df['height'], all_heights[sorted_idx], age_paths[:, i])
 
+
         # store draws for each horizon 
         interp_section_df['age_draws'] = np.nan
         interp_section_df['age_draws'] = interp_section_df['age_draws'].astype(object)
         for i in interp_section_df.index.tolist():
-            interp_section_df['age_draws'][i] = interp_section_ages[i, :]
+            # shape samples x draws
+            interp_section_df.at[i, 'age_draws'] = list(interp_section_ages[i, :])
                         
         interp_df = pd.concat([interp_df, interp_section_df])
               
@@ -326,22 +333,22 @@ def extend_age_model(full_trace, sample_df, ages_df, new_proxies, new_proxy_df =
             # mle
             dy = np.linspace(np.min(current_ages), np.max(current_ages), 2000)
             max_like = dy[np.argmax(gaussian_kde(current_ages, bw_method = 1)(dy))]
-            interp_df['mle'].loc[i] = max_like
+            interp_df.loc[i, 'mle'] = max_like
             
             # median
-            interp_df['50'].loc[i] = np.percentile(current_ages, 50)
+            interp_df.loc[i, '50'] = np.percentile(current_ages, 50)
             
             # 2.5%
-            interp_df['2.5'].loc[i] = np.percentile(current_ages, 2.5)
+            interp_df.loc[i, '2.5'] = np.percentile(current_ages, 2.5)
             
             # 16%
-            interp_df['16'].loc[i] = np.percentile(current_ages, 16)
+            interp_df.loc[i, '16'] = np.percentile(current_ages, 16)
             
             # 84%
-            interp_df['84'].loc[i] = np.percentile(current_ages, 84)
+            interp_df.loc[i, '84'] = np.percentile(current_ages, 84)
             
             # 97.5%
-            interp_df['97.5'].loc[i] = np.percentile(current_ages, 97.5)
+            interp_df.loc[i, '97.5'] = np.percentile(current_ages, 97.5)
             
     return interp_df
 
@@ -358,7 +365,7 @@ def interpolate_proxy(interp_df, proxy, ages):
     proxy: str 
         Tracer to interpolate.
         
-    ages: list or numpy.array
+    ages: list(float) or numpy.array(float)
         Target ages at which to interpolate proxy values. 
         
     Returns
@@ -371,11 +378,11 @@ def interpolate_proxy(interp_df, proxy, ages):
     
     proxy_vec = interp_df[proxy]
 
+    # iterate over draws
     print('Interpolating proxy values')
     for i in tqdm(np.arange(age_paths.shape[1])):
         current_order = np.argsort(age_paths[:, i])
-        current_path = age_paths[:, i]
-        current_path = current_path[current_order]
+        current_path = age_paths[current_order, i]
         current_interp_proxy = np.interp(ages, current_path, proxy_vec[current_order])
 
         if i == 0:
@@ -387,15 +394,18 @@ def interpolate_proxy(interp_df, proxy, ages):
     interpolated_proxy_df = pd.DataFrame(columns = ['age', proxy + '_draws', 'mle', '2.5', '16', '50', '84', '97.5'])
     interpolated_proxy_df[proxy + '_draws'] = interpolated_proxy_df[proxy + '_draws'].astype(object)
     
+
+    # iterate over ages
     print('Calculating summary statistics')
     for i in tqdm(np.arange(len(ages))):
+        # shape = draws x ages
         current_proxy = interp_proxy[:, i]
         dy = np.linspace(np.min(current_proxy), np.max(current_proxy), 200)
         max_like = dy[np.argmax(gaussian_kde(current_proxy, bw_method = 1)(dy))]
         current_mle = max_like
             
         temp_df = pd.DataFrame({'age': ages[i], 
-                                proxy + '_draws': current_proxy, 
+                                proxy + '_draws': [current_proxy], 
                                 'mle': current_mle,
                                 '2.5': np.percentile(current_proxy, 2.5),
                                 '16': np.percentile(current_proxy, 16),
@@ -405,8 +415,7 @@ def interpolate_proxy(interp_df, proxy, ages):
                                })
         
         interpolated_proxy_df = pd.concat([interpolated_proxy_df, temp_df])
-        
-        
+                
     return interpolated_proxy_df
     
 
@@ -431,7 +440,7 @@ def age_range_to_height(full_trace, sample_df, ages_df, lower_age, upper_age, **
     upper_age: float
         Upper bound (oldest age) of the target age interval.
 
-    sections: list or numpy.array of str, optional 
+    sections: list(str) or numpy.array(str), optional 
         List of sections included in the original inference; only required if not all sections in ``sample_df`` were included.
     
     Returns
@@ -441,27 +450,21 @@ def age_range_to_height(full_trace, sample_df, ages_df, lower_age, upper_age, **
         
     """
         
-    if 'proxies' in kwargs:
-        proxy = kwargs['proxies']
-        if type(proxies) == str:
-            proxies = list([proxies])
-    else:
-        # get list of proxies included in model from full_trace
-        variables = [
-                l
-                for l in list(full_trace["posterior"].data_vars.keys())
-                if (f"{'gp_ls_'}" in l) and (f"{'unshifted'}" not in l)
-                ]
+    # get list of proxies included in model from full_trace
+    variables = [
+            l
+            for l in list(full_trace["posterior"].data_vars.keys())
+            if (f"{'gp_ls_'}" in l) and (f"{'unshifted'}" not in l)
+            ]
 
-        proxies = []
-        for var in variables:
-            proxies.append(var[6:])        
+    proxies = []
+    for var in variables:
+        proxies.append(var[6:])        
         
-    if 'sections' in kwargs: 
-        sections = kwargs['sections']
-        
-    else:
-        sections = np.unique(sample_df['section'])
+    if 'sections' in kwargs:
+        sections = list(kwargs['sections'])
+    else: 
+        sections = np.unique(sample_df.dropna(subset = proxies, how = 'all')['section'])
         
     sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)
     
@@ -590,7 +593,7 @@ def map_ages_to_section(full_trace, sample_df, ages_df, include_radiometric_ages
     include_radiometric_ages: bool, optional
         Whether to consider radiometric ages when calculating the most likely posterior age model for each section; defaults to ``False``. 
 
-    sections: list or numpy.array of str, optional 
+    sections: list(str) or numpy.array(str), optional 
         List of sections included in the inference; only required if not all sections in ``sample_df`` were included.
         
     Returns
@@ -611,11 +614,10 @@ def map_ages_to_section(full_trace, sample_df, ages_df, include_radiometric_ages
     for var in variables:
         proxies.append(var[6:])       
         
-    if 'sections' in kwargs: 
-        sections = kwargs['sections']
-        
+    if 'sections' in kwargs:
+        sections = list(kwargs['sections'])
     else: 
-        sections = np.unique(sample_df['section'])
+        sections = np.unique(sample_df.dropna(subset = proxies, how = 'all')['section'])
         
     # only keep samples that were included in the inference
     sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)
