@@ -2,13 +2,13 @@
 Plotting
 *********
 
-Functions for plotting the input data, inference results, and convergence/stability metrics. 
+Functions for plotting the input data, inference results, and convergence/stability metrics.
 
 .. currentmodule:: stratmc.plotting
-    
+
 .. autosummary::
    :nosignatures:
- 
+
     proxy_strat
     proxy_inference
     interpolated_proxy_inference
@@ -31,6 +31,6 @@ Functions for plotting the input data, inference results, and convergence/stabil
     lengthscale_traceplot
     lengthscale_stability
     proxy_signal_stability
-    
+
 .. automodule:: stratmc.plotting
    :members:

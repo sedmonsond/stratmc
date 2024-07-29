@@ -2,7 +2,7 @@
 Statistical model
 *****************
 
-Functions for building a proxy signal inference model. 
+Functions for building a proxy signal inference model.
 
 .. currentmodule:: stratmc.model
 
@@ -14,6 +14,6 @@ Functions for building a proxy signal inference model.
     intermediate_detrital_potential
     intermediate_intrusive_potential
     transformed_initval
-  
+
 .. automodule:: stratmc.model
    :members:

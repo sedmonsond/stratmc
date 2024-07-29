@@ -2,13 +2,13 @@
 Loading and processing data
 ****************************
 
-Functions for importing and processing proxy and age constraint data. 
+Functions for importing and processing proxy and age constraint data.
 
 .. currentmodule:: stratmc.data
 
 .. autosummary::
   :nosignatures:
-  
+
     load_data
     combine_data
     load_object
@@ -24,4 +24,3 @@ Functions for importing and processing proxy and age constraint data.
 
 .. automodule:: stratmc.data
   :members:
-  

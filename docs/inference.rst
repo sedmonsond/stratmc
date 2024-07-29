@@ -8,7 +8,7 @@ Functions for sampling the inference model, checking for convergence, and proces
 
 .. autosummary::
   :nosignatures:
-  
+
     get_trace
     extend_age_model
     interpolate_proxy
@@ -22,5 +22,3 @@ Functions for sampling the inference model, checking for convergence, and proces
 .. automodule:: stratmc.inference
    :members:
    :exclude-members:
-   
-   

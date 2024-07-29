@@ -1,30 +1,31 @@
 from unittest.mock import patch
 
-from stratmc.config import PROJECT_ROOT 
-from stratmc.plotting import *
+from stratmc.config import PROJECT_ROOT
 from stratmc.data import load_data, load_trace
 from stratmc.inference import extend_age_model, interpolate_proxy
+from stratmc.plotting import *
+
 
 @patch("matplotlib.pyplot.show")
-def test_proxy_strat(a): 
-    # load data 
+def test_proxy_strat(a):
+    # load data
     sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
 
-    fig = proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_excluded_samples = True)
+    _ = proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_excluded_samples = True)
 
 @patch("matplotlib.pyplot.show")
 def test_proxy_inference(a):
-    # load data 
+    # load data
     sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
 
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    fig = proxy_inference(sample_df, ages_df, full_trace, plot_data = True, plot_excluded_samples = True, plot_mean = True, plot_mle = True) 
+    _ = proxy_inference(sample_df, ages_df, full_trace, plot_data = True, plot_excluded_samples = True, plot_mean = True, plot_mle = True)
 
 @patch("matplotlib.pyplot.show")
 def test_interpolated_proxy_inference(a):
-    # this will also test the interpolation functions 
-    # load data 
+    # this will also test the interpolation functions
+    # load data
     sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
 
     # load trace
@@ -33,158 +34,160 @@ def test_interpolated_proxy_inference(a):
 
     interpolated_df = extend_age_model(full_trace, sample_df, ages_df, new_proxies = 'd34s')
     interpolated_proxy_df = interpolate_proxy(interpolated_df, 'd34s', predict_ages)
-    fig = interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, 'd34s', plot_data = True)
+    _ = interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, 'd34s', plot_data = True)
 
     assert interpolated_proxy_df.shape[0] == len(predict_ages)
 
 @patch("matplotlib.pyplot.show")
-def test_age_height_model(a): 
+def test_age_height_model(a):
     sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
 
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    fig = age_height_model(sample_df, ages_df, full_trace)
-    
+    _ = age_height_model(sample_df, ages_df, full_trace)
+
 @patch("matplotlib.pyplot.show")
-def test_section_proxy_signal(a): 
+def test_section_proxy_signal(a):
     # also tests map_ages_to_section
     sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    fig = section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_ages = True)
+    _ = section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_ages = True)
 
 @patch("matplotlib.pyplot.show")
 def test_covariance_hyperparameters(a):
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    fig = covariance_hyperparameters(full_trace, proxy = 'd13c')
-    fig = covariance_hyperparameters(full_trace, proxy = 'd18o')
+    _ = covariance_hyperparameters(full_trace, proxy = 'd13c')
+    _ = covariance_hyperparameters(full_trace, proxy = 'd18o')
 
 @patch("matplotlib.pyplot.show")
-def test_section_summary(a): 
+def test_section_summary(a):
     sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-@patch("matplotlib.pyplot.show")
-def test_noise_summary(a): 
-    # d13C has group noise, d18O has per-section noise 
-    full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_custom_priors')
-    fig = noise_summary(full_trace, proxy  = 'd13c')
-    fig = noise_summary(full_trace, proxy  = 'd18o')
+    _ = section_summary(sample_df, ages_df, full_trace, '0', plot_excluded_samples = True, plot_noise_prior = True, plot_offset_prior = True)
 
 @patch("matplotlib.pyplot.show")
-def test_offset_summary(a): 
+def test_noise_summary(a):
+    # d13C has group noise, d18O has per-section noise
+    full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_custom_priors')
+    _ = noise_summary(full_trace, proxy  = 'd13c')
+    _ = noise_summary(full_trace, proxy  = 'd18o')
+
+@patch("matplotlib.pyplot.show")
+def test_offset_summary(a):
     # trace w/ per-section offsets (for both d13c and d18o)
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    fig = offset_summary(full_trace, proxy  = 'd13c')
+    _ = offset_summary(full_trace, proxy  = 'd13c')
 
     # trace w/ group offsets (for both d13c and d18o)
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_custom_priors')
 
-    fig = offset_summary(full_trace, proxy = 'd18o')
+    _ = offset_summary(full_trace, proxy = 'd18o')
 
 @patch("matplotlib.pyplot.show")
-def test_section_proxy_residuals(a): 
+def test_section_proxy_residuals(a):
+    sample_df, _ = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
+
+    _ = section_proxy_residuals(full_trace, sample_df)
+
+    _ = section_proxy_residuals(full_trace, sample_df, include_excluded_samples = True, proxy = 'd18o')
+
+@patch("matplotlib.pyplot.show")
+def test_sample_ages(a):
+    sample_df, _ = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
+
+    _ = sample_ages(full_trace, sample_df, '0', plot_excluded_samples = True)
+
+@patch("matplotlib.pyplot.show")
+def test_sample_ages_per_chain(a):
+    sample_df, _ = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
+
+    _ = sample_ages_per_chain(full_trace, sample_df, '0', plot_excluded_samples = True)
+
+@patch("matplotlib.pyplot.show")
+def test_age_constraints(a):
+    full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
+
+    _ = age_constraints(full_trace, '1')
+
+@patch("matplotlib.pyplot.show")
+def test_limiting_age_constraints(a):
     sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    fig = section_proxy_residuals(full_trace, sample_df)
-
-    fig = section_proxy_residuals(full_trace, sample_df, include_excluded_samples = True, proxy = 'd18o')
+    _ = limiting_age_constraints(full_trace, sample_df, ages_df, '2')
 
 @patch("matplotlib.pyplot.show")
-def test_sample_ages(a): 
-    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
-    full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
-
-    fig = sample_ages(full_trace, sample_df, '0', plot_excluded_samples = True)
-
-@patch("matplotlib.pyplot.show")
-def test_sample_ages_per_chain(a): 
-    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
-    full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
-
-    fig = sample_ages_per_chain(full_trace, sample_df, '0', plot_excluded_samples = True)
-
-@patch("matplotlib.pyplot.show")
-def test_age_constraints(a): 
-    full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
-
-    fig = age_constraints(full_trace, '1')
-
-@patch("matplotlib.pyplot.show")
-def test_limiting_age_constraints(a): 
-    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
-    full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
-
-    fig = limiting_age_constraints(full_trace, sample_df, ages_df, '2')
-
-@patch("matplotlib.pyplot.show")
-def test_sadler_plot(a): 
+def test_sadler_plot(a):
     # test with and without age constraints
     # this also tests accumulation_rate with method = 'all'
     sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    fig = sadler_plot(full_trace, sample_df, ages_df, include_age_constraints = False, scale = 'linear')
-    fig = sadler_plot(full_trace, sample_df, ages_df, include_age_constraints = True)
+    _ = sadler_plot(full_trace, sample_df, ages_df, include_age_constraints = False, scale = 'linear')
+    _ = sadler_plot(full_trace, sample_df, ages_df, include_age_constraints = True)
 
 @patch("matplotlib.pyplot.show")
-def test_accumulation_rate_stratigraphy(a): 
+def test_accumulation_rate_stratigraphy(a):
     # test with and without age constraints
     # this also test accumulation_rate with method = 'successive'
     sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    fig = accumulation_rate_stratigraphy(full_trace, sample_df, ages_df, include_age_constraints = True)
-    fig = accumulation_rate_stratigraphy(full_trace, sample_df, ages_df, include_age_constraints = False, rate_scale = 'linear')
+    _ = accumulation_rate_stratigraphy(full_trace, sample_df, ages_df, include_age_constraints = True)
+    _ = accumulation_rate_stratigraphy(full_trace, sample_df, ages_df, include_age_constraints = False, rate_scale = 'linear')
 
 @patch("matplotlib.pyplot.show")
-def test_section_age_range(a): 
-    # also tests age_range_to_height function 
+def test_section_age_range(a):
+    # also tests age_range_to_height function
     sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    fig = section_age_range(full_trace, sample_df, ages_df, 125, 130, legend = True)
+    _ = section_age_range(full_trace, sample_df, ages_df, 125, 130, legend = True)
 
 @patch("matplotlib.pyplot.show")
-def test_proxy_data_gaps(a): 
-    # this also tests find_gaps in inference module 
+def test_proxy_data_gaps(a):
+    # this also tests find_gaps in inference module
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    fig = proxy_data_gaps(full_trace)
+    _ = proxy_data_gaps(full_trace)
 
     time_grid = np.arange(100, 150, 2)
-    fig = proxy_data_gaps(full_trace, yaxis = 'count', time_grid = time_grid)
+    _ = proxy_data_gaps(full_trace, yaxis = 'count', time_grid = time_grid)
 
 @patch("matplotlib.pyplot.show")
-def test_proxy_data_density(a): 
+def test_proxy_data_density(a):
     # this also tests count_samples in inference module
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    fig = proxy_data_density(full_trace)
+    _ = proxy_data_density(full_trace)
 
     time_grid = np.arange(100, 150, 2)
-    fig = proxy_data_density(full_trace, time_grid = time_grid)
+    _ = proxy_data_density(full_trace, time_grid = time_grid)
 
 @patch("matplotlib.pyplot.show")
-def test_lengthscale_traceplot(a): 
+def test_lengthscale_traceplot(a):
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    fig = lengthscale_traceplot(full_trace)
-    fig = lengthscale_traceplot(full_trace, chains = [1])
+    _ = lengthscale_traceplot(full_trace)
+    _ = lengthscale_traceplot(full_trace, chains = [1])
 
 @patch("matplotlib.pyplot.show")
-def test_lengthscale_stability(a): 
+def test_lengthscale_stability(a):
     # this also tests calculate_lengthscale_stability in inference module
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    fig = lengthscale_stability(full_trace)
+    _ = lengthscale_stability(full_trace)
 
 @patch("matplotlib.pyplot.show")
-def test_proxy_signal_stability(a): 
-    # this also tests calculate_proxy_signal_stability in inference module 
+def test_proxy_signal_stability(a):
+    # this also tests calculate_proxy_signal_stability in inference module
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    fig = proxy_signal_stability(full_trace)
+    _ = proxy_signal_stability(full_trace)

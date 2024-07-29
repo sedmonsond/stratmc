@@ -2,10 +2,10 @@
 Examples *(coming soon)*
 *************************
 
-.. todo:: 
+.. todo::
   Make example notebook with model construction, sampling, and basic plotting functions (single proxy example)
 
-.. todo:: 
+.. todo::
   make multiproxy example notebook
 
 .. todo::
@@ -19,7 +19,7 @@ Examples *(coming soon)*
 
 .. toctree::
   :maxdepth: 1
-  
+
     Basic workflow <examples/single_proxy>
     Multiproxy inference <examples/multiproxy>
     Hilbert space Gaussian process approximation <examples/hsgp>

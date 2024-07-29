@@ -6,12 +6,8 @@ Testing the inference model
     :hidden:
     :maxdepth: 1
 
-.. todo:: 
+.. todo::
     Link notebook with simple draw  from prior examples
 
-.. todo:: 
+.. todo::
     Link to multiproxy inference notebook
-
-
-
- 

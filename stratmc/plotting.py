@@ -1,34 +1,40 @@
-import arviz as az
 import math
-from matplotlib import pyplot as plt
-from matplotlib import gridspec
-from matplotlib.ticker import NullFormatter, LogFormatterSciNotation
-import numpy as np
-import pandas as pd
-from scipy.stats import gaussian_kde
-from scipy.ndimage import gaussian_filter as gaussian
-import seaborn as sns
 import sys
 
+import arviz as az
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from matplotlib import gridspec
+from matplotlib import pyplot as plt
+from scipy.ndimage import gaussian_filter as gaussian
+from scipy.stats import gaussian_kde
 
 from stratmc.data import accumulation_rate, clean_data
-from stratmc.inference import age_range_to_height, count_samples, find_gaps, map_ages_to_section, calculate_lengthscale_stability, calculate_proxy_signal_stability
-    
+from stratmc.inference import (
+    age_range_to_height,
+    calculate_lengthscale_stability,
+    calculate_proxy_signal_stability,
+    count_samples,
+    find_gaps,
+    map_ages_to_section,
+)
+
 pd.options.mode.chained_assignment = None
 
 def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plot_excluded_samples = False, cmap = 'Spectral', **kwargs):
     """
 
     Plot stratigraphic data (proxy observations and age constraints) for each section.
-    
+
     .. plot::
-    
+
        from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object
        from stratmc.plotting import proxy_strat
 
        example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df' 
+       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
@@ -46,19 +52,19 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
         :class:`pandas.DataFrame` containing age constraints for all sections.
 
     proxy: str, optional
-        Name of proxy. Defaults to 'd13c'. 
+        Name of proxy. Defaults to 'd13c'.
 
     sections: list(str) or numpy.array(str), optional
         List of sections to plot. Defaults to all sections in ``sample_df``.
 
-    plot_constraints: bool, optional 
-        Whether to plot age constraints as dashed lines. Ages are printed above dashed lines by defalut; to turn off age labels, pass ``print_ages = False``. 
+    plot_constraints: bool, optional
+        Whether to plot age constraints as dashed lines. Ages are printed above dashed lines by defalut; to turn off age labels, pass ``print_ages = False``.
 
-    plot_excluded_samples: bool, optional 
+    plot_excluded_samples: bool, optional
         Whether to plot proxy observations for excluded samples (``Exclude?`` is ``True`` in ``sample_df``) as red dots. Defaults to ``False``.
 
     cmap: str, optional
-        Name of seaborn color palette to use for sections. Defaults to 'Spectral'. 
+        Name of seaborn color palette to use for sections. Defaults to 'Spectral'.
 
     Returns
     -------
@@ -76,10 +82,10 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
         print_ages = kwargs['print_ages']
     else:
         print_ages = True
-        
+
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-    else: 
+    else:
         fs = 12
 
     cs = {}
@@ -96,7 +102,7 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
         section = sections[n]
         cs[section] = pal[n]
         ax = fig.add_subplot(gs[n])
-        
+
         if len(sample_df[proxy][(sample_df['section'] == section) & (sample_df['Exclude?'] == True)]) > 0:
             if plot_excluded_samples:
                 ax.scatter(sample_df[proxy][(sample_df['section'] == section) & (sample_df['Exclude?'] == True)],
@@ -104,17 +110,17 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
                         color = 'red',
                         edgecolors = 'k')
 
-    
+
         ax.scatter(sample_df[proxy][(sample_df['section'] == section) & (sample_df['Exclude?'] != True)],
                    sample_df['height'][(sample_df['section'] == section) & (sample_df['Exclude?'] != True)],
                    color = cs[section],
                    edgecolors = 'k')
-        
+
 
         xl = ax.get_xlim()
         yl = ax.get_ylim()
 
-        if plot_constraints: 
+        if plot_constraints:
             depositional_age_heights = ages_df['height'][(ages_df['section']==section) & (ages_df['Exclude?'] == False) & (ages_df['intermediate detrital?'] == False)  & (ages_df['intermediate intrusive?'] == False)]
             ax.hlines(depositional_age_heights,
                       xl[0],
@@ -138,7 +144,7 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
                       color = cs[section],
                       linestyle = 'dashdot',
                       zorder = 2)
-                
+
 
         x_range = xl[1] - xl[0]
         y_range = yl[1] - yl[0]
@@ -167,24 +173,24 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
 
     fig.tight_layout()
 
-    plt.subplots_adjust(wspace=0.45) 
+    plt.subplots_adjust(wspace=0.45)
 
     return fig
 
 def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constraints = False, plot_data = False, plot_excluded_samples = False, plot_mean = False, plot_mle = True, orientation = 'horizontal', marker_size = 20, section_legend = False, section_cmap = 'Spectral', **kwargs):
-    
+
     """
-    Plot the inferred proxy signal over time. 
-    
+    Plot the inferred proxy signal over time.
+
     .. plot::
-    
+
        from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import proxy_inference
 
        full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
        example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df' 
+       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
@@ -192,7 +198,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
 
        plt.show()
 
-        
+
     Parameters
     ----------
 
@@ -204,7 +210,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
 
     full_trace: arviz.InferenceData
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
-        
+
     proxy: str, optional
         Tracer to plot; only required if more than one proxy was included in the inference.
 
@@ -216,24 +222,24 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
 
     plot_data: bool, optional
         Plot proxy observations by most likely posterior age. Defaults to ``False``.
-        
+
     plot_excluded_samples: bool, optional
         Plot proxy observations that were excluded from the inference (``Exclude?`` is ``True`` in ``sample_df``). Defaults to ``False``.
 
     plot_mean: bool, optional
         Plot the mean as a dashed line. Defaults to ``False``.
-        
+
     plot_mle: bool, optional
-        Plot the maximum likelihood estimate. Defaults to ``True``. 
+        Plot the maximum likelihood estimate. Defaults to ``True``.
 
     orientation: str, optional
         Orientation of figure ('horizontal' with age on the x-axis, or 'vertical' with age on the y-axis). Defaults to 'horizontal'.
 
     marker_size: int, optional
-        Size of markers if ``plot_data`` is ``True``. Defaults to 20. 
-        
+        Size of markers if ``plot_data`` is ``True``. Defaults to 20.
+
     section_legend: bool, optional
-        Include section names in the legend (if ``plot_data`` is ``True``). Defaults to ``False``. 
+        Include section names in the legend (if ``plot_data`` is ``True``). Defaults to ``False``.
 
     section_cmap: str, optional
         Name of seaborn color palette to use for sections (if ``plot_data`` is ``True``). Defaults to 'Spectral'.
@@ -241,7 +247,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
     Returns
     -------
     fig: matplotlib.pyplot.figure
-        Figure with the proxy signal inference. 
+        Figure with the proxy signal inference.
 
     """
 
@@ -261,9 +267,9 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
 
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-    else: 
+    else:
         fs = 12
-        
+
     # get list of proxies included in model from full_trace
     variables = [
             l
@@ -274,7 +280,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
     proxies = []
     for var in variables:
         proxies.append(var[6:])
-        
+
     if 'proxy' in kwargs:
         proxy = kwargs['proxy']
     else:
@@ -284,9 +290,9 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
         sections = list(kwargs['sections'])
     else:
         sections = np.unique(sample_df[~np.isnan(sample_df[proxy])]['section'])
-  
+
     sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)
-        
+
     ages = full_trace.X_new.X_new.values
 
     fig=plt.figure(figsize=figsize)
@@ -301,16 +307,16 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
 
     min_ages = []
     max_ages = []
-    
+
     if plot_data: # by max likelihood
         plotted_excluded = False
         plotted_data = False
-        
+
         for section in sections:
             section_df = sample_df[sample_df['section']==section]
             proxy_idx = (~np.isnan(section_df[proxy])) & (~section_df['Exclude?'].values.astype(bool))
             excluded_idx = (~np.isnan(section_df[proxy])) & (section_df['Exclude?'])
-        
+
             sec_ages = az.extract(full_trace.posterior)[str(section)+'_ages'].values
 
             max_like = np.zeros(sec_ages.shape[0])
@@ -318,14 +324,14 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                 sample_ages = sec_ages[i,:]
                 dx = np.linspace(np.min(sample_ages), np.max(sample_ages), 1000)
                 max_like[i] = dx[np.argmax(gaussian_kde(sample_ages, bw_method = 1)(dx))]
-            
+
             if section_legend:
                 label = section
             elif not plotted_data:
                 label = 'Most likely sample age'
             else:
                 label = '_nolegend_'
-                
+
             if vertical:
                 ax.scatter(section_df[proxy][proxy_idx],
                            max_like[proxy_idx],
@@ -336,15 +342,15 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                            edgecolors = 'k',
                            lw = 0.5,
                            zorder = 3)
-                
+
                 plotted_data = True
-                
-                if (plot_excluded_samples) and (len(section_df[proxy][excluded_idx]) > 0): 
+
+                if (plot_excluded_samples) and (len(section_df[proxy][excluded_idx]) > 0):
                     if not plotted_excluded:
                         excluded_label = 'Excluded samples'
                     else:
                         excluded_label = '_nolegend'
-                        
+
                     ax.scatter(section_df[proxy][excluded_idx],
                            max_like[excluded_idx],
                            s = marker_size,
@@ -353,10 +359,10 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                            edgecolors = cs[section],
                            lw = 0.5,
                            zorder = 4)
-                
+
                     plotted_excluded = True
-                
-                if 'interp_sample_df' in kwargs: 
+
+                if 'interp_sample_df' in kwargs:
                     interp_sample_df = kwargs['interp_sample_df']
                     if section == sections[0]:
                         interp_label = 'Interpolated'
@@ -371,7 +377,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                            label = interp_label,
                            marker = 'x',
                            zorder = 5)
-                    
+
             if horizontal:
                 ax.scatter(max_like[proxy_idx],
                            section_df[proxy][proxy_idx],
@@ -381,15 +387,15 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                            lw = 0.5,
                            edgecolors = 'k',
                            zorder = 3)
-                
+
                 plotted_data = True
-        
-                if (plot_excluded_samples) and (len(section_df[proxy][excluded_idx]) > 0): 
+
+                if (plot_excluded_samples) and (len(section_df[proxy][excluded_idx]) > 0):
                     if not plotted_excluded:
                         excluded_label = 'Excluded samples'
                     else:
                         excluded_label = '_nolegend'
-                        
+
                     ax.scatter(max_like[excluded_idx],
                            section_df[proxy][excluded_idx],
                            s = marker_size,
@@ -398,10 +404,10 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                            edgecolors = cs[section],
                            lw = 0.5,
                            zorder = 4)
-                    
+
                     plotted_excluded = True
-                
-                if 'interp_sample_df' in kwargs: 
+
+                if 'interp_sample_df' in kwargs:
                     interp_sample_df = kwargs['interp_sample_df']
                     if section == sections[0]:
                         interp_label = 'Interpolated'
@@ -431,10 +437,10 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                          hi,
                          lo,
                          color=(.95,.95,.95),
-                         label='95% envelope', 
-                         linestyle = '--', 
-                         lw = 1.5, 
-                         edgecolor = 'k', 
+                         label='95% envelope',
+                         linestyle = '--',
+                         lw = 1.5,
+                         edgecolor = 'k',
                          zorder = 0)
 
     if horizontal:
@@ -442,10 +448,10 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                         hi,
                         lo,
                         color=(.95,.95,.95),
-                        label='95% envelope',  
-                        linestyle = '--', 
-                        edgecolor = 'k', 
-                        lw = 1.5, 
+                        label='95% envelope',
+                        linestyle = '--',
+                        edgecolor = 'k',
+                        lw = 1.5,
                         zorder = 0)
 
     lo = np.percentile(proxy_pred, 16, axis=1).flatten()
@@ -477,7 +483,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                     color = 'k',
                     linestyle = 'solid',
                     lw = 2,
-                    zorder = 2, 
+                    zorder = 2,
                    label = 'Mean ' + str(proxy))
 
         if vertical:
@@ -485,10 +491,10 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                     ages.ravel(),
                     color = 'k',
                     linestyle = 'solid',
-                    lw = 2, 
-                    zorder = 2, 
+                    lw = 2,
+                    zorder = 2,
                    label = 'Mean ' + str(proxy))
-    
+
     if plot_mle:
         dy = np.linspace(np.min(proxy_pred), np.max(proxy_pred), 200)
         max_like = np.zeros(ages.size)
@@ -496,34 +502,34 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
             time_slice = proxy_pred[i,:]
             max_like[i] = dy[np.argmax(gaussian_kde(time_slice, bw_method = 1)(dy))]
         max_like = gaussian(max_like, 2)
-        
-        if horizontal: 
+
+        if horizontal:
             ax.plot(ages.ravel(),
-                    max_like, 
-                    zorder = 2, 
-                    color = 'k', 
-                    linestyle = 'solid', 
-                    lw = 2, 
+                    max_like,
+                    zorder = 2,
+                    color = 'k',
+                    linestyle = 'solid',
+                    lw = 2,
                     label = 'Most likely ' + str(proxy))
-            
+
         if vertical:
-            ax.plot(max_like, 
-                    ages.ravel(), 
-                    zorder = 2, 
-                    color = 'k', 
-                    linestyle = 'solid', 
-                    lw = 2, 
+            ax.plot(max_like,
+                    ages.ravel(),
+                    zorder = 2,
+                    color = 'k',
+                    linestyle = 'solid',
+                    lw = 2,
                     label = 'Most likely ' + str(proxy))
-    
+
     xl = ax.get_xlim()
     yl = ax.get_ylim()
 
     if plot_constraints:
         i = 0
         for section in sections:
-            if i == 0: 
+            if i == 0:
                 label = 'Age constraint'
-            else: 
+            else:
                 label =  '_nolegend_'
             if vertical:
                 ax.hlines(ages_df['age'][ages_df['section']==section],
@@ -545,10 +551,10 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                           zorder = -1)
                 ax.set_ylim(yl)
             i += 1
-                            
+
     min_ages = np.append(min_ages, np.min(ages))
     max_ages = np.append(max_ages, np.max(ages))
-        
+
     if vertical:
         ax.set_ylabel('Age (Ma)', fontsize = fs)
         if proxy == 'd13c':
@@ -581,11 +587,11 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
 
 def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, legend = True, plot_data = False, plot_mle = True, orientation = 'horizontal', section_legend = False, marker_size = 20, section_cmap = 'Spectral', **kwargs):
     """
-        
-    Plot interpolated proxy signal over time (by extending the posterior section age models to a new proxy not included in the inference model) using interpolated age models from :py:meth:`extend_age_model() <stratmc.inference.extend_age_model>` and interpolated proxy values from :py:meth:`interpolate_proxy() <stratmc.inference.interpolate_proxy>` in :py:mod:`stratmc.inference`. 
+
+    Plot interpolated proxy signal over time (by extending the posterior section age models to a new proxy not included in the inference model) using interpolated age models from :py:meth:`extend_age_model() <stratmc.inference.extend_age_model>` and interpolated proxy values from :py:meth:`interpolate_proxy() <stratmc.inference.interpolate_proxy>` in :py:mod:`stratmc.inference`.
 
     .. plot::
-    
+
         from stratmc.config import PROJECT_ROOT
         from stratmc.data import load_object, load_trace
         from stratmc.inference import extend_age_model, interpolate_proxy
@@ -594,13 +600,13 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
         full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
         example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
         example_sample_path_d18o = str(PROJECT_ROOT) + '/examples/example_sample_df_d18o'
-        example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df' 
+        example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
         sample_df = load_object(example_sample_path)
         sample_df_d18o = load_object(example_sample_path_d18o)
         ages_df = load_object(example_ages_path)
 
         interpolated_df = extend_age_model(full_trace, sample_df, ages_df, ['d18o'], new_proxy_df = sample_df_d18o)
-        ages_new = full_trace.X_new.X_new.values.ravel() 
+        ages_new = full_trace.X_new.X_new.values.ravel()
         interpolated_proxy_df = interpolate_proxy(interpolated_df, 'd18o', ages_new)
 
         interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, 'd18o')
@@ -612,20 +618,20 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
     ----------
 
     interpolated_df: pandas.DataFrame
-        :class:`pandas.DataFrame` with interpolated age draws and sample age summary statistics from :py:meth:`extend_age_model() <stratmc.inference.extend_age_model>` in :py:mod:`stratmc.inference`. 
+        :class:`pandas.DataFrame` with interpolated age draws and sample age summary statistics from :py:meth:`extend_age_model() <stratmc.inference.extend_age_model>` in :py:mod:`stratmc.inference`.
 
     interpolated_proxy_df: pandas.DataFrame
-        :class:`pandas.DataFrame` with interpolated proxy values and summary statistics at target ages from :py:meth:`interpolate_proxy() <stratmc.inference.interpolate_proxy>` in :py:mod:`stratmc.inference`.  
+        :class:`pandas.DataFrame` with interpolated proxy values and summary statistics at target ages from :py:meth:`interpolate_proxy() <stratmc.inference.interpolate_proxy>` in :py:mod:`stratmc.inference`.
 
     proxy: str
-        Name of new proxy (must match column name in ``interpolated_proxy_df``). 
-    
+        Name of new proxy (must match column name in ``interpolated_proxy_df``).
+
     legend: bool, optional
         Generate a legend. Defaults to ``True``.
 
     plot_data: bool, optional
         Plot proxy observations by most likely posterior age. Defaults to ``False``.
-        
+
     plot_mle: bool, optional
         Plot the maximum likelihood estimate. Defaults to ``True``.
 
@@ -633,10 +639,10 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
         Orientation of figure ('horizontal' or 'vertical'). Defaults to 'horizontal'.
 
     marker_size: int, optional
-        Size of markers if ``plot_data`` is ``True``. Defaults to 20. 
-        
+        Size of markers if ``plot_data`` is ``True``. Defaults to 20.
+
     section_legend: bool, optional
-        Include section names in the legend (if ``plot_data`` is ``True``). Defaults to ``False``. 
+        Include section names in the legend (if ``plot_data`` is ``True``). Defaults to ``False``.
 
     section_cmap: str, optional
         Name of seaborn color palette to use for sections (if ``plot_data`` is ``True``). Defaults to 'Spectral'.
@@ -669,7 +675,7 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
 
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-    else: 
+    else:
         fs = 12
 
     fig=plt.figure(figsize=figsize)
@@ -684,16 +690,16 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
 
     min_ages = []
     max_ages = []
-    
+
     if plot_data: # by max likelihood
         for section in sections:
             section_df = interpolated_df[interpolated_df['section']==section]
-            
+
             if section_legend:
                 label = section
             else:
                 label = '_nolegend_'
-                
+
             if vertical:
                 ax.scatter(section_df[proxy],
                            section_df['mle'],
@@ -704,7 +710,7 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
                            edgecolors = 'k',
                            lw = 0.5,
                            zorder = 3)
-                    
+
             if horizontal:
                 ax.scatter(section_df['mle'],
                            section_df[proxy],
@@ -714,7 +720,7 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
                            lw = 0.5,
                            edgecolors = 'k',
                            zorder = 3)
-                
+
         sec_ages = section_df['mle'].values
 
         min_ages = np.append(min_ages, np.min(sec_ages))
@@ -727,10 +733,10 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
                          interpolated_proxy_df['97.5'],
                          interpolated_proxy_df['2.5'],
                          color=(.95,.95,.95),
-                         label='95% envelope', 
-                         linestyle = '--', 
-                         lw = 1.5, 
-                         edgecolor = 'k', 
+                         label='95% envelope',
+                         linestyle = '--',
+                         lw = 1.5,
+                         edgecolor = 'k',
                          zorder = 0)
 
     if horizontal:
@@ -738,10 +744,10 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
                         interpolated_proxy_df['97.5'],
                         interpolated_proxy_df['2.5'],
                         color=(.95,.95,.95),
-                        label='95% envelope',  
-                        linestyle = '--', 
-                        edgecolor = 'k', 
-                        lw = 1.5, 
+                        label='95% envelope',
+                        linestyle = '--',
+                        edgecolor = 'k',
+                        lw = 1.5,
                         zorder = 0)
 
 
@@ -763,21 +769,16 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
                         edgecolor = 'k',
                         lw = 1.5,
                         zorder = 1)
-    
+
     if plot_mle:
-        if horizontal: 
+        if horizontal:
             ax.plot(interpolated_proxy_df['age'], interpolated_proxy_df['mle'], zorder = 2, color = 'k', linestyle = 'solid', lw = 2, label = 'Most likely ' + str(proxy))
         if vertical:
             ax.plot(interpolated_proxy_df['mle'], interpolated_proxy_df['age'], zorder = 2, color = 'k', linestyle = 'solid', lw = 2, label = 'Most likely ' + str(proxy))
-                
-    
-    xl = ax.get_xlim()
-    yl = ax.get_ylim()
-
 
     min_ages = np.append(min_ages, np.min(interpolated_proxy_df['age']))
     max_ages = np.append(max_ages, np.max(interpolated_proxy_df['age']))
-        
+
     if vertical:
         ax.set_ylabel('Age (Ma)', fontsize = fs)
         ax.set_xlabel(proxy, fontsize = fs)
@@ -803,16 +804,16 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
 def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = True, cmap = 'Spectral', legend = False, **kwargs):
     """
     Generate a posterior age-height plot for each section.
-    
+
     .. plot::
-    
+
        from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import age_height_model
 
        full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
        example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df' 
+       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
@@ -830,14 +831,14 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
         :class:`pandas.DataFrame` containing age constraints for all sections.
 
     full_trace: arviz.InferenceData
-        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.  
+        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
 
     sections: list(str) or numpy.array(str), optional
         List of sections to plot. Defaults to all sections in ``sample_df``.
-        
+
     cmap: str, optional
         Name of seaborn color palette to use for sections. Defaults to 'Spectral'.
-        
+
     legend: bool, optional
         Generate a legend. Defaults to ``False``.
 
@@ -847,15 +848,15 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
     Returns
     -------
     fig: matplotlib.pyplot.figure
-        Figure with age-height models for each section. 
+        Figure with age-height models for each section.
     """
 
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-        
-    else: 
+
+    else:
         fs = 12
-    
+
     # get list of proxies included in model from full_trace
     variables = [
             l
@@ -869,9 +870,9 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
 
     if 'sections' in kwargs:
         sections = list(kwargs['sections'])
-    else: 
+    else:
         sections = np.unique(sample_df.dropna(subset = proxies, how = 'all')['section'])
-  
+
     sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)
 
     cs = {}
@@ -890,23 +891,23 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
         ax = fig.add_subplot(gs[n])
 
         sec_ages = az.extract(full_trace.posterior)[str(section)+'_ages'].values # posterior_predictive
-        
+
         section_df = sample_df[sample_df['section']==section]
 
         lo = np.percentile(sec_ages, 2.5, axis=1).flatten()
         hi = np.percentile(sec_ages, 97.5, axis=1).flatten()
-        
+
         if include_excluded_samples:
             ax.fill_betweenx(section_df['height'], hi, lo,color=(.95,.95,.95),label='2-$\sigma$')
-        
+
         else:
             included_idx = ~section_df['Exclude?'].values.astype(bool)
-            ax.fill_betweenx(section_df['height'][included_idx], 
-                             hi[included_idx], 
+            ax.fill_betweenx(section_df['height'][included_idx],
+                             hi[included_idx],
                              lo[included_idx],
                              color=(.95,.95,.95),
                              label='2-$\sigma$')
-    
+
         lo = np.percentile(sec_ages,16,axis=1).flatten()
         hi = np.percentile(sec_ages,100-16,axis=1).flatten()
 
@@ -916,7 +917,7 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
                              lo,
                              color=(.8,.8,.8),
                              label='1-$\sigma$')
-        else: 
+        else:
             ax.fill_betweenx(section_df['height'][included_idx],
                              hi[included_idx],
                              lo[included_idx],
@@ -930,14 +931,14 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
                     linewidth = 2,
                     linestyle = 'dashed',
                     label = 'Mean')
-        else: 
+        else:
             ax.plot(np.mean(sec_ages, axis = 1)[included_idx],
                     section_df['height'][included_idx],
                     color = cs[section],
                     linewidth = 2,
                     linestyle = 'dashed',
                     label = 'Mean')
-            
+
 
         ax.errorbar(ages_df['age'][ages_df['section']==section],
                      ages_df['height'][ages_df['section']==section],
@@ -949,15 +950,15 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
                     section_ages_df['height'][(~section_ages_df['intermediate intrusive?']) & (~section_ages_df['intermediate detrital?'])],
                     color = cs[section],
                     label = 'Age ($\pm2\sigma$)')
-        
-        
+
+
         if section_ages_df['age'][section_ages_df['intermediate intrusive?']].shape[0] > 0:
             ax.scatter(section_ages_df['age'][section_ages_df['intermediate intrusive?']],
                         section_ages_df['height'][section_ages_df['intermediate intrusive?']],
                        marker = 's',
                         color = cs[section],
                         label = 'Intrusive Age ($\pm2\sigma$)')
-            
+
         if section_ages_df['age'][section_ages_df['intermediate detrital?']].shape[0] > 0:
             ax.scatter(section_ages_df['age'][section_ages_df['intermediate detrital?']],
                         section_ages_df['height'][section_ages_df['intermediate detrital?']],
@@ -966,12 +967,12 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
                         label = 'Detrital Age ($\pm2\sigma$)')
 
         if legend:
-            leg = plt.legend(loc = 'upper right', 
-                             bbox_to_anchor=(1, 1), 
-                             markerfirst = False, 
+            plt.legend(loc = 'upper right',
+                             bbox_to_anchor=(1, 1),
+                             markerfirst = False,
                              frameon = False,
                              fontsize = 8) #0.95,  0.985
-            
+
         ax.axis('tight')
         ax.set_xlabel('Age (Ma)', fontsize = fs)
         ax.set_ylabel('Height (m)', fontsize = fs)
@@ -984,46 +985,46 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
 
     return fig
 
-def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_ages = False, plot_constraints = False, yax = 'height', legend = False, cmap = 'Spectral', **kwargs): 
+def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_ages = False, plot_constraints = False, yax = 'height', legend = False, cmap = 'Spectral', **kwargs):
     """
-    Map the posterior proxy signal back to height in each section (using its most likely posterior age model), and plot alongside the proxy observations (plotted by most likely posterior age). 
+    Map the posterior proxy signal back to height in each section (using its most likely posterior age model), and plot alongside the proxy observations (plotted by most likely posterior age).
 
-    .. todo:: 
+    .. todo::
         update how interpolation works (see note on map_ages_to_section)
 
     .. plot::
-    
+
        from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import section_proxy_signal
 
        full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
        example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df' 
+       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
        section_proxy_signal(full_trace, sample_df, ages_df)
 
        plt.show()
-    
+
     Parameters
     ----------
     full_trace: arviz.InferenceData
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
-      
+
     sample_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing proxy data for all sections.
 
     ages_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing age constraints for all sections.
-  
+
     include_radiometric_ages: bool, optional
         Whether to consider radiometric ages in the posterior age model for each section. Defaults to ``False``.
 
     plot_constraints: bool, optional
         Plot age constraints for each section as dashed lines. Defaults to ``False``.
-    
+
     yax: str, optional
         Scale for the y-axis ('height' or 'age'). Defaults to 'height'.
 
@@ -1039,16 +1040,16 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
     Returns
     -------
     fig: matplotlib.pyplot.figure
-        Figure with inferred proxy signal mapped to height in each section. 
+        Figure with inferred proxy signal mapped to height in each section.
 
     """
 
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-        
-    else: 
+
+    else:
         fs = 12
-    
+
     # get list of proxies included in model from full_trace
     variables = [
             l
@@ -1059,21 +1060,21 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
     proxies = []
     for var in variables:
         proxies.append(var[6:])
-            
+
     if 'proxy' in kwargs:
         proxy = kwargs['proxy']
-    
-    else:  
-        proxy = proxies[0]         
-        
+
+    else:
+        proxy = proxies[0]
+
     if 'sections' in kwargs:
         sections = list(kwargs['sections'])
-    else: 
-        # only want to map signal back to sections that actually have data for this proxy 
+    else:
+        # only want to map signal back to sections that actually have data for this proxy
         sections = np.unique(sample_df.dropna(subset = [proxy], how = 'all')['section'])
-    
+
     sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)
-        
+
     cs = {}
     pal = sns.color_palette(cmap, n_colors=len(sections))
 
@@ -1083,56 +1084,56 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
 
     gs = gridspec.GridSpec(rows, cols)
     fig = plt.figure(figsize = (2.5 * cols, 4*rows))
-            
+
     proxy_pred = az.extract(full_trace.posterior_predictive)['f_pred_' + proxy].values
     ages_new = full_trace.X_new.X_new.values
 
-    # calculate MLE 
+    # calculate MLE
     dy = np.linspace(np.min(proxy_pred), np.max(proxy_pred), 200)
     max_like = np.zeros(ages_new.size)
     for i in np.arange(ages_new.size):
         time_slice = proxy_pred[i,:]
         max_like[i] = dy[np.argmax(gaussian_kde(time_slice, bw_method = 1)(dy))]
     max_like = gaussian(max_like, 2)
-    
+
     mapped_age_models = map_ages_to_section(full_trace, sample_df, ages_df, sections = sections, include_radiometric_ages = include_radiometric_ages)
-  
+
     for n in range(N):
-        section = sections[n] 
+        section = sections[n]
         cs[section] = pal[n]
         ax = fig.add_subplot(gs[n])
-        
+
         ax.tick_params(bottom = True, top = False, left = True, right = False, direction = 'out', labelsize = fs, width = 1.5)
-        
+
         ax.set_title(section, fontsize = fs)
-        
-        # calculate maximum likelihood age for each sample 
+
+        # calculate maximum likelihood age for each sample
         section_df = sample_df[sample_df['section']==section]
-        
+
         proxy_idx = (~np.isnan(section_df[proxy])) & (~section_df['Exclude?'].values.astype(bool))
         excluded_idx = (~np.isnan(section_df[proxy])) & (section_df['Exclude?'])
-        
+
         section_age_model = mapped_age_models[mapped_age_models['section']==section]
         section_age_vec = section_age_model['age'].values
-        above = (ages_new <= np.max(section_age_vec)) 
+        above = (ages_new <= np.max(section_age_vec))
         below = (ages_new >= np.min(section_age_vec))
 
         age_idx = above & below
-        
-        # plot data    
+
+        # plot data
         if yax == 'height':
-       
+
             # samples included in inference
-            ax.scatter(section_df[proxy].values[proxy_idx], 
-                        section_df['height'].values[proxy_idx], 
-                        color = cs[section], 
+            ax.scatter(section_df[proxy].values[proxy_idx],
+                        section_df['height'].values[proxy_idx],
+                        color = cs[section],
                         edgecolor = 'k',
                        zorder = 3)
-            
+
             # excluded samples
-            ax.scatter(section_df[proxy].values[excluded_idx], 
-                        section_df['height'].values[excluded_idx], 
-                        color = 'none', 
+            ax.scatter(section_df[proxy].values[excluded_idx],
+                        section_df['height'].values[excluded_idx],
+                        color = 'none',
                         edgecolor = cs[section],
                        zorder = 4)
 
@@ -1144,12 +1145,12 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
                              hi[age_idx],
                              lo[age_idx],
                              color=(.95,.95,.95),
-                             label='95% envelope', 
-                             linestyle = '--', 
-                             lw = 1.5, 
-                             edgecolor = 'k', 
+                             label='95% envelope',
+                             linestyle = '--',
+                             lw = 1.5,
+                             edgecolor = 'k',
                              zorder = 0)
-            
+
             hi = np.percentile(proxy_pred, 100-16, axis=1).flatten()
             lo = np.percentile(proxy_pred, 16, axis=1).flatten()
 
@@ -1157,51 +1158,51 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
                              hi[age_idx],
                              lo[age_idx],
                              color=(.8,.8,.8),
-                             label='68% envelope', 
-                             linestyle = 'solid', 
-                             lw = 1.5, 
-                             edgecolor = 'k', 
+                             label='68% envelope',
+                             linestyle = 'solid',
+                             lw = 1.5,
+                             edgecolor = 'k',
                              zorder = 1)
-            
-            ax.plot(max_like[age_idx], 
+
+            ax.plot(max_like[age_idx],
                     section_age_model['interpolated height'],
-                    color = 'k', 
+                    color = 'k',
                     lw = 2,
                     label = 'Most likely',
                     zorder = 2)
-            
-            if plot_constraints: 
+
+            if plot_constraints:
                 section_ages_df = ages_df[(ages_df['section']==section) & (~ages_df['Exclude?'])]
-                for h in section_ages_df['height'].ravel(): 
+                for h in section_ages_df['height'].ravel():
                     ax.axhline(h, color = cs[section], linestyle = 'dashed', zorder = -1)
-                    
-            if proxy == 'd13c': 
+
+            if proxy == 'd13c':
                 ax.set_xlabel('$\delta^{13}$C$_{\mathrm{carb}}$ (‰)', fontsize = fs)
-        
-            else: 
+
+            else:
                 ax.set_xlabel(proxy, fontsize = fs)
-            
-        
+
+
         elif yax == 'age':
-                    
+
             sec_ages = az.extract(full_trace.posterior)[str(section)+'_ages'].values
-        
+
             max_like = np.zeros(sec_ages.shape[0])
             for i in np.arange(sec_ages.shape[0]):
                 sample_ages = sec_ages[i,:]
                 dx = np.linspace(np.min(sample_ages), np.max(sample_ages), 1000)
                 max_like[i] = dx[np.argmax(gaussian_kde(sample_ages, bw_method = 1)(dx))]
 
-            ax.scatter(section_df[proxy].values[proxy_idx], 
-                        max_like[proxy_idx], 
-                        color = cs[section], 
-                        edgecolor = 'k', 
+            ax.scatter(section_df[proxy].values[proxy_idx],
+                        max_like[proxy_idx],
+                        color = cs[section],
+                        edgecolor = 'k',
                        zorder = 3)
-            
-            ax.scatter(section_df[proxy].values[excluded_idx], 
-                        max_like[excluded_idx], 
-                        color = 'none', 
-                        edgecolor = cs[section], 
+
+            ax.scatter(section_df[proxy].values[excluded_idx],
+                        max_like[excluded_idx],
+                        color = 'none',
+                        edgecolor = cs[section],
                        zorder = 4)
 
             # plot posterior d13C signal
@@ -1212,12 +1213,12 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
                              hi[age_idx],
                              lo[age_idx],
                              color=(.95,.95,.95),
-                             label='95% envelope', 
-                             linestyle = '--', 
-                             lw = 1.5, 
-                             edgecolor = 'k', 
+                             label='95% envelope',
+                             linestyle = '--',
+                             lw = 1.5,
+                             edgecolor = 'k',
                              zorder = 0)
-            
+
             hi = np.percentile(proxy_pred, 100-16, axis=1).flatten()
             lo = np.percentile(proxy_pred, 16, axis=1).flatten()
 
@@ -1225,59 +1226,59 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
                              hi[age_idx],
                              lo[age_idx],
                              color=(.8,.8,.8),
-                             label='68% envelope', 
-                             linestyle = 'solid', 
-                             lw = 1.5, 
-                             edgecolor = 'k', 
+                             label='68% envelope',
+                             linestyle = 'solid',
+                             lw = 1.5,
+                             edgecolor = 'k',
                              zorder = 1)
-            
-            ax.plot(max_like[age_idx], 
+
+            ax.plot(max_like[age_idx],
                     ages_new[age_idx],
-                    color = 'k', 
+                    color = 'k',
                     lw = 2,
                     label = 'Most likely',
                     zorder = 2)
-            
-            if plot_constraints: 
+
+            if plot_constraints:
                 section_ages_df = ages_df[(ages_df['section']==section)  & (~ages_df['Exclude?'])]
-                for age in section_ages_df['age'].ravel(): 
+                for age in section_ages_df['age'].ravel():
                     ax.axhline(age, color = cs[section], linestyle = 'dashed', zorder = -1)
-            
+
             ax.invert_yaxis()
-            
-            if proxy == 'd13c': 
+
+            if proxy == 'd13c':
                 ax.set_xlabel('$\delta^{13}$C$_{\mathrm{carb}}$ (‰)', fontsize = fs)
-        
-            else: 
+
+            else:
                 ax.set_xlabel(proxy, fontsize = fs)
 
-            
+
         if (n == 0) | ((n % 4) == 0):
             if yax == 'height':
                 ax.set_ylabel('Height (m)', fontsize = fs)
 
             elif yax == 'age':
                 ax.set_ylabel('Age (Ma)', fontsize = fs)
-                
-        if (n == 0) and legend: 
+
+        if (n == 0) and legend:
             ax.legend()
- 
+
     fig.tight_layout()
-         
-    return fig 
-        
-    
+
+    return fig
+
+
 def covariance_hyperparameters(full_trace, figsize = (4, 3.5), **kwargs):
 
     """
-    Plot prior and posterior distributions for the lengthscale (:math:`\\ell`) and variance (:math:`\\sigma`) hyperparameters of the :class:`pymc.gp.cov.ExpQuad <pymc.gp.cov.ExpQuad>` Gaussian process covariance kernel: 
+    Plot prior and posterior distributions for the lengthscale (:math:`\\ell`) and variance (:math:`\\sigma`) hyperparameters of the :class:`pymc.gp.cov.ExpQuad <pymc.gp.cov.ExpQuad>` Gaussian process covariance kernel:
 
     .. math::
 
         k(x, x') = \\sigma^2 \\mathrm{exp} \\left[-\\frac{(x - x')^2}{2 \\ell^2} \\right]
-    
+
     .. plot::
-    
+
        from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_trace
        from stratmc.plotting import covariance_hyperparameters
@@ -1293,20 +1294,20 @@ def covariance_hyperparameters(full_trace, figsize = (4, 3.5), **kwargs):
 
     full_trace: arviz.InferenceData
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
-        
+
     proxy: str, optional
-        Tracer to plot model parameters for (each proxy has a different covariance kernel); only required if more than one proxy was included in the inference. 
+        Tracer to plot model parameters for (each proxy has a different covariance kernel); only required if more than one proxy was included in the inference.
 
     Returns
     -------
     fig: matplotlib.pyplot.figure
-        Figure with prior and posterior model parameters. 
+        Figure with prior and posterior model parameters.
     """
-    
+
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-        
-    else: 
+
+    else:
         fs = 12
 
     # get list of proxies included in model from full_trace
@@ -1319,12 +1320,12 @@ def covariance_hyperparameters(full_trace, figsize = (4, 3.5), **kwargs):
     proxies = []
     for var in variables:
         proxies.append(var[6:])
-            
+
     if 'proxy' in kwargs:
         proxy = kwargs['proxy']
-    
-    else:  
-        proxy = proxies[0]    
+
+    else:
+        proxy = proxies[0]
 
     fig, ax = plt.subplots(2, figsize = figsize)
 
@@ -1379,17 +1380,17 @@ def covariance_hyperparameters(full_trace, figsize = (4, 3.5), **kwargs):
 def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_samples = False, plot_noise_prior = False, plot_offset_prior = False, include_age_constraints_sedrate = True, figsize = (8, 9)):
 
     """
-    For a given section, plot posterior estimates of sample age, sedimentation rate, noise, and offset. Noise and offset terms must be either per-section or global; to plot per-sample noise and offset terms, use :py:meth:`noise_summary() <stratmc.plotting>` and :py:meth:`offset_summary() <stratmc.plotting>`. 
-        
+    For a given section, plot posterior estimates of sample age, sedimentation rate, noise, and offset. Noise and offset terms must be either per-section or global; to plot per-sample noise and offset terms, use :py:meth:`noise_summary() <stratmc.plotting>` and :py:meth:`offset_summary() <stratmc.plotting>`.
+
     .. plot::
-    
+
        from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import section_summary
 
        full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
        example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df' 
+       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
@@ -1401,7 +1402,7 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
     ----------
     sample_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing proxy data for all sections.
-        
+
     ages_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing age constraints for all sections.
 
@@ -1410,25 +1411,25 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
 
     section: str
         Name of target section.
-        
+
     plot_excluded_samples: bool, optional
         Plot age estimates for proxy observations that were excluded from the inference (``Exclude?`` is ``True`` in ``sample_df``). Defaults to ``False``.
-        
+
     plot_noise_prior: bool, optional
         Plot prior distribution for noise term. Defaults to ``False``.
-    
+
     plot_offset_prior: bool, optional
         Plot prior distribution for offset term. Defaults to ``False``.
-        
+
     include_age_constraints_sedrate: bool, optional
         Include age constraints in sedimentation rate calculations. Defaults to ``True``.
 
     Returns
     -------
     fig: matplotlib.pyplot.figure
-        Figure summarizing posterior sample ages, sedimentation rate, and posterior noise and offset terms for the input section. 
+        Figure summarizing posterior sample ages, sedimentation rate, and posterior noise and offset terms for the input section.
     """
-    
+
     # get list of proxies included in model from full_trace
     variables = [
             l
@@ -1439,17 +1440,17 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
     proxies = []
     for var in variables:
         proxies.append(var[6:])
-        
-    
+
+
     if str(section) + '_section_noise_' + proxies[0] in list(full_trace.posterior.keys()):
         noise_type = 'section'
 
-    else: 
+    else:
         noise_type = 'groups'
-        
+
     if str(section) + '_section_offset_' + proxies[0] in list(full_trace.posterior.keys()):
         offset_type = 'section'
-  
+
     else:
         group_offset_vars = [
         l
@@ -1461,27 +1462,25 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
             offset_type = 'groups'
         else:
             offset_type = 'none'
-        
+
     if (noise_type == 'none') and (offset_type == 'none'):
         n_rows = 3
-        
+
     elif ((noise_type != 'none') or (offset_type != 'none')) and not ((noise_type != 'none') and (offset_type != 'none')):
         n_rows = 4
-    
-    elif ((noise_type != 'none') and (offset_type != 'none')): 
-        n_rows = 5
-        
-    sample_df, ages_df = clean_data(sample_df, ages_df, proxies, list(section))
-    
-    fig, ax = plt.subplots(n_rows, 1, figsize = figsize, constrained_layout=True, gridspec_kw={'height_ratios': [1, 1, 1.5] + [0.5] * (n_rows - 3)})
-    
-    # link axes with age on the x-axis
-    ax_list = [ax[0], ax[1], ax[2]] 
 
+    elif ((noise_type != 'none') and (offset_type != 'none')):
+        n_rows = 5
+
+    sample_df, ages_df = clean_data(sample_df, ages_df, proxies, list(section))
+
+    fig, ax = plt.subplots(n_rows, 1, figsize = figsize, constrained_layout=True, gridspec_kw={'height_ratios': [1, 1, 1.5] + [0.5] * (n_rows - 3)})
+
+    # link axes with age on the x-axis
     ax[0].sharex(ax[1])
     ax[2].sharex(ax[1])
-    
-    pal = sns.color_palette("flare", n_colors = np.mean(az.extract(full_trace.posterior)[str(section)+'_ages'].values, axis = 1).size, desat=0.8) 
+
+    pal = sns.color_palette("flare", n_colors = np.mean(az.extract(full_trace.posterior)[str(section)+'_ages'].values, axis = 1).size, desat=0.8)
     sns.set_palette(pal)
 
     samples = np.mean(az.extract(full_trace.posterior)[str(section)+'_ages'], axis = 1).size # posterior_predictive
@@ -1489,18 +1488,18 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
     sec_ages = az.extract(full_trace.posterior)[str(section)+'_ages'].values # posterior_predictive
 
     section_df = sample_df[sample_df['section']==section]
-    
+
     excluded_idx = section_df['Exclude?'].values
-        
+
     for i in range(samples):
-        if not excluded_idx[i]: 
+        if not excluded_idx[i]:
             sns.kdeplot(sec_ages[i,:].ravel().astype(float),
                         label = 'posterior',
                         fill = True,
                         edgecolor = None,
                         color = pal[i],
                         alpha = 0.3,
-                        ax = ax[0], 
+                        ax = ax[0],
                         cut = 0)
         else:
             if plot_excluded_samples:
@@ -1510,7 +1509,7 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
                             edgecolor = None,
                             color = pal[i],
                             alpha = 0.3,
-                            ax = ax[0], 
+                            ax = ax[0],
                             cut = 0)
 
     yl = ax[0].get_ylim()
@@ -1528,97 +1527,96 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
                   ages_df['age'][ages_df['section']==section].values[i] + ages_df['age_std'][ages_df['section']==section].values[i],
                     alpha=0.5,
                     color ='#8c8684')
-        
+
     ax[0].invert_xaxis()
-    
+
     ax[0].set_ylim(yl)
-    
+
     ax[0].set_ylabel('Sample ages', fontsize = 12)
     ax[0].set_yticks([])
-    
-    # age constraint posteriors 
+
+    # age constraint posteriors
     constraint_ages = az.extract(full_trace.posterior)[str(section)+'_radiometric_age'].values
     prior_constraint_ages = az.extract(full_trace.prior)[str(section)+'_radiometric_age'].values
     samples = np.mean(constraint_ages, axis = 1).size
 
-    cs = {}
     pal = sns.color_palette('crest',n_colors=samples)
 
     for i in range(samples):
-        if i == 0: 
+        if i == 0:
             post_label = 'Posterior'
             prior_label = 'Prior'
-        else: 
+        else:
             post_label = '_nolegend'
             prior_label = '_nolegend'
-        sns.kdeplot(constraint_ages[i,:].ravel(), 
+        sns.kdeplot(constraint_ages[i,:].ravel(),
                     label = post_label, fill = True, color = pal[i], edgecolor='None', alpha = 0.3, ax = ax[1], cut = 0)
-        sns.kdeplot(prior_constraint_ages[i,:].ravel(), 
+        sns.kdeplot(prior_constraint_ages[i,:].ravel(),
                     label = prior_label, color = pal[i], fill = False, ax = ax[1], cut = 0)
-        
+
     ax[1].set_ylabel('Age constraints', fontsize = 12)
     ax[1].set_yticks([])
-    
+
     ax[1].legend()
-    
+
     # sedimentation rate
     age_bins = 50
     rate_bins = 50
-    
+
     rate_df = accumulation_rate(full_trace, sample_df, ages_df, sections = section, method = 'successive', include_age_constraints = include_age_constraints_sedrate)
-                
+
     age_bin_edges = np.linspace(np.min(rate_df['top_age']), np.max(rate_df['base_age']), age_bins)
-        
+
     rate_bin_edges = np.logspace(np.log10(rate_df['rate'].min()), np.log10(rate_df['rate'].max()), rate_bins)
 
     # get age bin centers
     age_centers = (age_bin_edges[:-1] + age_bin_edges[1:]) / 2
-    
+
     age_vec = []
     rate_vec = []
-                
-    for rate, base, top in zip(rate_df['rate'], rate_df['base_age'], rate_df['top_age']): 
+
+    for rate, base, top in zip(rate_df['rate'], rate_df['base_age'], rate_df['top_age']):
         for i in np.arange(len(age_bin_edges)-1):
             center = age_centers[i]
             current_bin = pd.Interval(age_bin_edges[i], age_bin_edges[i+1], closed = 'left')
             current_sample_pair = pd.Interval(top, base, closed = 'right')
             result = current_bin.overlaps(current_sample_pair)
-            if result: 
+            if result:
                 age_vec.append(center)
                 rate_vec.append(rate)
-    
+
     H, xedges, yedges = np.histogram2d(age_vec, rate_vec, bins=[age_bin_edges, rate_bin_edges], density = False)
-    
+
     H[H == 0] = np.nan
     H = H/np.nansum(H, axis=1,keepdims=1) # each column (age bin) should sum to 1
-    
+
     m = ax[2].pcolormesh(xedges, yedges, H.T, cmap = 'jet')
-    
+
     ax[2].set_yscale('log')
     ax[2].set_ylabel('LOG (Accumulation rate [m/Myr])', fontsize = 12)
-     
+
     ax[2].set_xlabel('Age (Ma)', fontsize = 12)
-    
+
     cb = plt.colorbar(m)
     cb.set_label(label='Probability density', fontsize = 12)
-    
+
     # noise posteriors
     if noise_type != 'none':
-        
-        if noise_type == 'section': 
+
+        if noise_type == 'section':
             pal = sns.color_palette("deep", n_colors = len(proxies))
 
-        if noise_type == 'groups': 
+        if noise_type == 'groups':
             palettes = ['crest', 'flare', 'Purples', 'Grays', 'Reds', 'Greens', 'YlOrBr', 'Oranges']
 
         for i in np.arange(len(proxies)):
             proxy = proxies[i]
-            
+
             if noise_type == 'section':
-            
+
                 posterior_noise_dist = az.extract(full_trace.posterior)[str(section) + '_section_noise_' + proxy].values.ravel()
                 prior_noise_dist = az.extract(full_trace.prior)[str(section) + '_section_noise_' + proxy].values.ravel()
-                
+
                 sns.kdeplot(posterior_noise_dist,
                             fill = True,
                             ax = ax[3],
@@ -1627,7 +1625,7 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
                             alpha = 0.3,
                             label = proxy + ' posterior',
                             cut = 0)
-                
+
                 if plot_noise_prior:
                     sns.kdeplot(prior_noise_dist,
                                 fill = False,
@@ -1636,7 +1634,7 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
                                 alpha = 0.3,
                                 label = proxy + ' prior',
                                 cut = 0)
-                    
+
             elif noise_type == 'groups':
 
                 noise_vars = [
@@ -1646,53 +1644,53 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
                 ]
 
                 pal = sns.color_palette(palettes[i], n_colors = len(noise_vars))
-      
-                for j, var in enumerate(noise_vars): 
+
+                for j, var in enumerate(noise_vars):
                     posterior_noise_dist =  az.extract(full_trace.posterior)[var].values.ravel()
 
-                    sns.kdeplot(posterior_noise_dist, 
-                                    fill = True, 
+                    sns.kdeplot(posterior_noise_dist,
+                                    fill = True,
                                     ax = ax[3],
-                                    color = pal[j], 
-                                    alpha = 0.3, 
-                                    label = var + ' posterior', 
+                                    color = pal[j],
+                                    alpha = 0.3,
+                                    label = var + ' posterior',
                                     cut = 0
                                     )
-                    
+
                     if plot_noise_prior:
                         prior_noise_dist =  az.extract(full_trace.prior)[var].values.ravel()
 
-                        sns.kdeplot(prior_noise_dist, 
-                                    fill = False, 
+                        sns.kdeplot(prior_noise_dist,
+                                    fill = False,
                                     ax = ax[3],
                                     color = pal[j],
-                                    alpha = 0.3, 
-                                    label = var + ' prior', 
+                                    alpha = 0.3,
+                                    label = var + ' prior',
                                     cut = 0
                                     )
-                
+
                 if (len(proxies) > 1) | (noise_type == 'groups'):
                     ax[3].legend()
-                
+
         ax[3].set_xlabel('Noise', fontsize = 12)
         ax[3].set_yticks([])
         ax[3].set_ylabel(None)
-                
+
     # offset posteriors
     if offset_type != 'none':
 
-        if offset_type == 'section': 
+        if offset_type == 'section':
             pal = sns.color_palette("deep", n_colors = len(proxies))
 
-        if offset_type == 'groups': 
+        if offset_type == 'groups':
             palettes = ['crest', 'flare', 'Purples', 'Grays', 'Reds', 'Greens', 'YlOrBr', 'Oranges']
 
         for i in np.arange(len(proxies)):
             proxy = proxies[i]
-            
+
             if offset_type == 'section':
                 posterior_offset_dist = az.extract(full_trace.posterior)[str(section) + '_section_offset_' + proxy].values.ravel()
-            
+
                 sns.kdeplot(posterior_offset_dist,
                                 fill = True,
                                 ax = ax[n_rows - 1],
@@ -1701,7 +1699,7 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
                                 alpha = 0.3,
                                 label = proxy + ' posterior',
                                 cut = 0)
-                
+
                 if plot_offset_prior:
                     prior_offset_dist = az.extract(full_trace.prior)[str(section) + '_section_offset_' + proxy].values.ravel()
 
@@ -1712,7 +1710,7 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
                                     alpha = 0.3,
                                     label = proxy + ' prior',
                                     cut = 0)
-            
+
             elif offset_type == 'groups':
 
                 offset_vars = [
@@ -1723,10 +1721,10 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
 
                 pal = sns.color_palette(palettes[i], n_colors = len(offset_vars))
 
-                for j, var in enumerate(offset_vars): 
+                for j, var in enumerate(offset_vars):
 
                     posterior_offset_dist =  az.extract(full_trace.posterior)[var].values.ravel()
-                    
+
                     sns.kdeplot(posterior_offset_dist,
                                 fill = True,
                                 ax = ax[n_rows - 1],
@@ -1735,7 +1733,7 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
                                 alpha = 0.3,
                                 label = var + ' posterior',
                                 cut = 0)
-                
+
 
                     if plot_offset_prior:
                         prior_offset_dist =  az.extract(full_trace.prior)[var].values.ravel()
@@ -1748,7 +1746,7 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
                                 alpha = 0.3,
                                 label = var + ' prior',
                                 cut = 0)
-                
+
             if (len(proxies) > 1) | (offset_type == 'groups'):
                     ax[n_rows - 1].legend()
 
@@ -1769,14 +1767,14 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
 def noise_summary(full_trace, **kwargs):
 
     """
-    Plot posterior noise distributions for each section or group of samples (depending on ``noise_type`` used in :py:meth:`build_model() <stratmc.model.build_model>`) for a given proxy. If multiple proxies were included in the inference, pass a ``proxy`` argument to specify which noise terms to plot. 
+    Plot posterior noise distributions for each section or group of samples (depending on ``noise_type`` used in :py:meth:`build_model() <stratmc.model.build_model>`) for a given proxy. If multiple proxies were included in the inference, pass a ``proxy`` argument to specify which noise terms to plot.
 
     .. plot::
-    
+
        from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import noise_summary
-       
+
        full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
        example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
        sample_df = load_object(example_sample_path)
@@ -1785,14 +1783,14 @@ def noise_summary(full_trace, **kwargs):
        noise_summary(full_trace)
 
        plt.show()
-    
+
     Parameters
     ----------
 
     full_trace: arviz.InferenceData
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
 
-    proxy: str, optional 
+    proxy: str, optional
         Target proxy; only required if more than one proxy was included in the inference.
 
 
@@ -1804,9 +1802,9 @@ def noise_summary(full_trace, **kwargs):
 
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-    else: 
+    else:
         fs = 12
-    
+
     # get list of proxies included in model from full_trace
     variables = [
             l
@@ -1817,10 +1815,10 @@ def noise_summary(full_trace, **kwargs):
     proxies = []
     for var in variables:
         proxies.append(var[6:])
-        
+
     if 'proxy' in kwargs:
         proxy = kwargs['proxy']
-    else: 
+    else:
         proxy = proxies[0]
 
     section_noise_vars = [
@@ -1828,20 +1826,20 @@ def noise_summary(full_trace, **kwargs):
             for l in list(full_trace["posterior"].data_vars.keys())
             if f"{'_section_noise_' + str(proxy)}" in l
             ]
-        
-    if len(section_noise_vars) > 0: 
+
+    if len(section_noise_vars) > 0:
         noise_vars = section_noise_vars
 
-    else:    
+    else:
         noise_vars = [
             l
             for l in list(full_trace["posterior"].data_vars.keys())
             if f"{'_group_noise_' + str(proxy)}" in l
             ]
-        
+
         if len(noise_vars) == 0:
             sys.exit(f"No noise terms in the model")
-        
+
     N = len(noise_vars)
     cols = int(np.min([4, N]))
 
@@ -1851,7 +1849,7 @@ def noise_summary(full_trace, **kwargs):
 
     gs = gridspec.GridSpec(rows, cols)
     fig = plt.figure(figsize = (10, 2.5*rows))
-    
+
     for n in range(N):
 
         ax = fig.add_subplot(gs[n])
@@ -1867,19 +1865,19 @@ def noise_summary(full_trace, **kwargs):
                     fill = True,
                     edgecolor='None',
                     color = pal[n],
-                    alpha = 0.5, 
+                    alpha = 0.5,
                     label = proxy,
                     cut = 0)
-            
+
         ax.set_ylabel('')
         ax.set_yticks([])
         ax.tick_params(labelsize = fs)
-                            
+
     fig.supxlabel('Noise (%s)' % proxy, fontsize = fs)
 
     fig.tight_layout()
 
-    plt.subplots_adjust(wspace=0.15, hspace=0.4) 
+    plt.subplots_adjust(wspace=0.15, hspace=0.4)
 
     return fig
 
@@ -1887,11 +1885,11 @@ def noise_summary(full_trace, **kwargs):
 def offset_summary(full_trace, **kwargs):
 
     """
-    
-    Plot posterior offset distributions for each section or group of samples (depending on ``offset_type`` used in :py:meth:`build_model() <stratmc.model.build_model>`). If multiple proxies were included in the inference, pass a ``proxy`` argument to specify which offset terms to plot. 
+
+    Plot posterior offset distributions for each section or group of samples (depending on ``offset_type`` used in :py:meth:`build_model() <stratmc.model.build_model>`). If multiple proxies were included in the inference, pass a ``proxy`` argument to specify which offset terms to plot.
 
     .. plot::
-    
+
        from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import offset_summary
@@ -1903,27 +1901,27 @@ def offset_summary(full_trace, **kwargs):
        offset_summary(full_trace)
 
        plt.show()
-    
+
     Parameters
     ----------
 
     full_trace: arviz.InferenceData
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
 
-    proxy: str, optional 
+    proxy: str, optional
         Target proxy; only required if more than one proxy was included in the inference.
 
     Returns
     -------
     fig: matplotlib.pyplot.figure
-        Figure with offset distributions for each section or group of samples. 
+        Figure with offset distributions for each section or group of samples.
     """
 
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-    else: 
+    else:
         fs = 12
-    
+
     # get list of proxies included in model from full_trace
     variables = [
             l
@@ -1934,10 +1932,10 @@ def offset_summary(full_trace, **kwargs):
     proxies = []
     for var in variables:
         proxies.append(var[6:])
-        
+
     if 'proxy' in kwargs:
         proxy = kwargs['proxy']
-    else: 
+    else:
         proxy = proxies[0]
 
     section_offset_vars = [
@@ -1948,7 +1946,7 @@ def offset_summary(full_trace, **kwargs):
 
     if len(section_offset_vars) > 0:
         offset_vars = section_offset_vars
-  
+
     else:
         offset_vars = [
         l
@@ -1958,19 +1956,19 @@ def offset_summary(full_trace, **kwargs):
 
         if len(offset_vars) == 0:
             sys.exit(f"No offset terms in the model")
-    
+
 
     N = len(offset_vars)
     cols = int(np.min([4, N]))
 
     pal = sns.color_palette("deep", n_colors = len(offset_vars))
-    
+
     rows = int(math.ceil(N/cols))
 
     gs = gridspec.GridSpec(rows, cols)
     fig = plt.figure(figsize = (10, 2.5*rows))
 
-    for n in range(N): 
+    for n in range(N):
         ax = fig.add_subplot(gs[n])
 
         var = offset_vars[n]
@@ -1979,11 +1977,11 @@ def offset_summary(full_trace, **kwargs):
 
         # shape = samples x draws
         posterior_offset_dist = az.extract(full_trace.posterior)[var].values.ravel()
-        
-        sns.kdeplot(posterior_offset_dist, 
+
+        sns.kdeplot(posterior_offset_dist,
                         ax = ax,
-                        fill = True, 
-                        edgecolor = 'None', 
+                        fill = True,
+                        edgecolor = 'None',
                         color = pal[n],
                         alpha = 0.3,
                         label = var,
@@ -1993,26 +1991,26 @@ def offset_summary(full_trace, **kwargs):
         ax.set_ylabel('')
         ax.set_yticks([])
         ax.tick_params(labelsize = fs)
-                            
-        
+
+
     fig.supxlabel('Offset (%s)' % proxy, fontsize = fs)
 
     fig.tight_layout()
 
-    plt.subplots_adjust(wspace=0.15, hspace=0.4) 
+    plt.subplots_adjust(wspace=0.15, hspace=0.4)
 
     return fig
 
 def section_proxy_residuals(full_trace, sample_df, legend = True, cmap = 'Spectral', include_excluded_samples = False, **kwargs):
     """
-    
-    Plot the residuals between the observed proxy values for each section and the inferred proxy signal (using the posterior section age models to map the signal back to height in section). Use to check for stratigraphic trends in the residuals, which may give insight to the processes that cause noisy sections to deviate from the inferred common signal. If multiple proxies were included in the inference, pass a ``proxy`` argument. 
 
-    .. todo:: 
+    Plot the residuals between the observed proxy values for each section and the inferred proxy signal (using the posterior section age models to map the signal back to height in section). Use to check for stratigraphic trends in the residuals, which may give insight to the processes that cause noisy sections to deviate from the inferred common signal. If multiple proxies were included in the inference, pass a ``proxy`` argument.
+
+    .. todo::
         should this function (optionally) correct for the inferred offset before calulating the residuals? so that residuals just represent noise that cannot be explained as a constant offset
 
     .. plot::
-    
+
        from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import section_proxy_residuals
@@ -2024,7 +2022,7 @@ def section_proxy_residuals(full_trace, sample_df, legend = True, cmap = 'Spectr
        section_proxy_residuals(full_trace, sample_df)
 
        plt.show()
-    
+
     Parameters
     ----------
 
@@ -2040,7 +2038,7 @@ def section_proxy_residuals(full_trace, sample_df, legend = True, cmap = 'Spectr
     cmap: str, optional
         Name of seaborn color palette to use for sections. Defaults to 'Spectral'.
 
-    proxy: str, optional 
+    proxy: str, optional
         Target proxy; only required if more than one proxy was included in the inference.
 
     include_excluded_samples: bool, optional
@@ -2052,12 +2050,12 @@ def section_proxy_residuals(full_trace, sample_df, legend = True, cmap = 'Spectr
     fig: matplotlib.pyplot.figure
         Figure with residuals for each section.
     """
-    
+
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-    else: 
+    else:
         fs = 12
-        
+
     # get list of proxies included in model from full_trace
     variables = [
             l
@@ -2068,19 +2066,19 @@ def section_proxy_residuals(full_trace, sample_df, legend = True, cmap = 'Spectr
     proxies = []
     for var in variables:
         proxies.append(var[6:])
-        
+
     if 'proxy' in kwargs:
         proxy = kwargs['proxy']
-        
+
     else:
         proxy = proxies[0]
-        
+
     if 'sections' in kwargs:
         sections = list(kwargs['sections'])
     else:
         sections = np.unique(sample_df[~np.isnan(sample_df[proxy])]['section'])
 
-    
+
     cs = {}
     pal = sns.color_palette(cmap, n_colors=len(sections))
 
@@ -2090,50 +2088,50 @@ def section_proxy_residuals(full_trace, sample_df, legend = True, cmap = 'Spectr
 
     gs = gridspec.GridSpec(rows, cols)
     fig = plt.figure(figsize = (2.5 * cols, 4*rows))
-        
+
     proxy_pred = az.extract(full_trace.posterior_predictive)['f_pred_' + proxy].values
     ages_new = full_trace.X_new.X_new.values
-      
-    for n in range(N): 
+
+    for n in range(N):
         section = sections[n]
         cs[section] = pal[n]
         ax = fig.add_subplot(gs[n])
-        
+
         ax.set_title(section, fontsize = fs)
-        
+
         section_sample_df = sample_df[sample_df['section'] == section]
 
         if include_excluded_samples:
             included_idx = (~np.isnan(section_sample_df[proxy]))
-        else: 
+        else:
             included_idx = (~np.isnan(section_sample_df[proxy])) & (~section_sample_df['Exclude?'])
 
         section_ages = az.extract(full_trace.posterior)[str(section) + '_ages'].values[included_idx, :]
-            
+
         section_proxy_true = section_sample_df[included_idx][proxy].values
         section_heights = section_sample_df[included_idx]['height'].values
-        
+
         section_proxy_pred = np.ones((len(section_proxy_true), proxy_pred.shape[1])) * np.nan
         section_residuals =  np.ones((len(section_proxy_true), proxy_pred.shape[1])) * np.nan
-        
-        for i in np.arange(proxy_pred.shape[1]): 
+
+        for i in np.arange(proxy_pred.shape[1]):
             section_proxy_pred[:, i] = np.interp(section_ages[:, i], ages_new, proxy_pred[:, i])
             # residual = actual - predicted
             section_residuals[:, i] = section_proxy_true - section_proxy_pred[:, i]
-    
+
         hi = np.percentile(section_residuals, 97.5, axis = 1).flatten()
         lo = np.percentile(section_residuals, 2.5, axis = 1).flatten()
-        
+
         ax.fill_betweenx(section_heights,
                              hi,
                              lo,
                              color=(.95,.95,.95),
-                             label='95% envelope', 
-                             linestyle = '--', 
-                             lw = 1.5, 
-                             edgecolor = 'k', 
+                             label='95% envelope',
+                             linestyle = '--',
+                             lw = 1.5,
+                             edgecolor = 'k',
                              zorder = 0)
-            
+
         hi = np.percentile(section_residuals, 100-16, axis=1).flatten()
         lo = np.percentile(section_residuals, 16, axis=1).flatten()
 
@@ -2141,43 +2139,43 @@ def section_proxy_residuals(full_trace, sample_df, legend = True, cmap = 'Spectr
                          hi,
                          lo,
                          color=(.8,.8,.8),
-                         label='68% envelope', 
-                         linestyle = 'solid', 
-                         lw = 1.5, 
-                         edgecolor = 'k', 
+                         label='68% envelope',
+                         linestyle = 'solid',
+                         lw = 1.5,
+                         edgecolor = 'k',
                          zorder = 1)
-            
+
         # calculate mle
         dy = np.linspace(np.min(section_residuals.ravel()), np.max(section_residuals.ravel()), 200)
         max_like = np.zeros(section_heights.size)
         for i in np.arange(section_heights.size):
             height_slice = section_residuals[i,:]
             max_like[i] = dy[np.argmax(gaussian_kde(height_slice, bw_method = 1)(dy))]
-        
+
         ax.plot(max_like,
                 section_heights,
-                color = 'k', 
-                lw = 2, 
-                zorder = 2, 
+                color = 'k',
+                lw = 2,
+                zorder = 2,
                 label = 'Most likely')
-                        
-        ax.set_ylabel('Height (m)', fontsize = fs) 
-        
+
+        ax.set_ylabel('Height (m)', fontsize = fs)
+
         if legend and n == 0:
             ax.legend(loc = 'upper right')
-        
+
     fig.supxlabel('Residual ' + str(proxy) + ' value (observed - predicted)', fontsize = fs)
 
-    fig.tight_layout() 
-    
+    fig.tight_layout()
+
     return fig
 
 def sample_ages(full_trace, sample_df, section, plot_excluded_samples = False, cmap = 'viridis'):
     """
-    Plot sample age prior and posterior distributions for a given section. Each subplot contains posterior distributions for a different sample. 
-    
+    Plot sample age prior and posterior distributions for a given section. Each subplot contains posterior distributions for a different sample.
+
     .. plot::
-    
+
        from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import sample_ages
@@ -2190,30 +2188,30 @@ def sample_ages(full_trace, sample_df, section, plot_excluded_samples = False, c
        sample_ages(full_trace, sample_df, section)
 
        plt.show()
-    
+
     Parameters
     ----------
     full_trace: arviz.InferenceData
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
-        
+
     sample_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing proxy data for all sections.
 
     section: str
         Name of target section.
-        
+
     plot_excluded_samples: bool, optional
         Plot age distributions for proxy observations that were excluded from the inference (``Exclude?`` is ``True`` in ``sample_df``). Defaults to ``False``.
 
     cmap: str, optional
-        Name of seaborn color palette to use for age distributions. Defaults to 'viridis'. 
+        Name of seaborn color palette to use for age distributions. Defaults to 'viridis'.
 
     Returns
     -------
     fig: matplotlib.pyplot.figure
         Figure with prior and posterior sample age distributions.
     """
-    
+
     # get list of proxies included in model from full_trace
     variables = [
             l
@@ -2224,20 +2222,20 @@ def sample_ages(full_trace, sample_df, section, plot_excluded_samples = False, c
     proxies = []
     for var in variables:
         proxies.append(var[6:])
-    
+
     sample_df, _ = clean_data(sample_df, None, proxies, list(section))
-    
+
     vals = az.extract(full_trace.posterior)[str(section)+'_ages'].values
     prior_vals = az.extract(full_trace.prior)[str(section)+'_ages'].values
-    
+
     if not plot_excluded_samples:
         included_idx = ~sample_df['Exclude?'].values.astype(bool)
         # shape = (samples x draws)
         vals = vals[included_idx, :]
-    
-    else: 
+
+    else:
         excluded_idx = sample_df['Exclude?'].values
-    
+
     samples = np.mean(vals, axis = 1).size
 
     cols = 5
@@ -2252,8 +2250,8 @@ def sample_ages(full_trace, sample_df, section, plot_excluded_samples = False, c
     excluded_count = 0
     for i in range(samples):
         ax = fig.add_subplot(gs[i])
-        
-        if plot_excluded_samples: 
+
+        if plot_excluded_samples:
             if excluded_idx[i]:
                 linestyle = 'dashed'
                 edgecolor = pal[i]
@@ -2265,29 +2263,29 @@ def sample_ages(full_trace, sample_df, section, plot_excluded_samples = False, c
                 edgecolor = 'none'
                 post_label = 'Posterior'
                 prior_label = 'Prior'
-        else: 
+        else:
             linestyle = 'solid'
             edgecolor = 'none'
             post_label = 'Posterior'
             prior_label = 'Prior'
-                
-        sns.kdeplot(vals[i,:].ravel(), 
+
+        sns.kdeplot(vals[i,:].ravel(),
                     label = post_label, fill = True, color = pal[i], edgecolor=edgecolor, linestyle = linestyle, alpha = 0.3, ax = ax, cut = 0)
-        sns.kdeplot(prior_vals[i,:].ravel(), 
+        sns.kdeplot(prior_vals[i,:].ravel(),
                 label = prior_label, fill = False, color = pal[i], ax = ax, cut = 0)
 
         ax.tick_params(bottom = True, top = True, left = False, right = False, direction = 'in', labelsize = 12)
         ax.set_ylabel('')
         ax.set_yticklabels([])
         ax.invert_xaxis()
-        
+
         if (i == 0) | ((excluded_count == 1) and (excluded_idx[i])):
             ax.legend(frameon = False, loc = 'upper left')
-    
+
     fig.suptitle('Section: ' + section, fontsize = 14)
     fig.supxlabel('Age (Ma)', fontsize = 12)
     fig.tight_layout()
-    
+
     return fig
 
 def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_prior = False, plot_excluded_samples = False, legend = True, cmap = 'viridis'):
@@ -2295,7 +2293,7 @@ def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_pr
     Plot sample age posterior distributions for a given section, with separate distributions for each chain. Each subplot contains posterior distributions for a different sample. Use to check for posterior multimodality (in this example, each chain has explored a different mode of the posterior age distributions).
 
     .. plot::
-    
+
        from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import sample_ages_per_chain
@@ -2308,13 +2306,13 @@ def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_pr
        sample_ages_per_chain(full_trace, sample_df, section, chains = [0, 1, 2, 3])
 
        plt.show()
-       
+
 
     Parameters
     ----------
     full_trace: arviz.InferenceData
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
-    
+
     sample_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing proxy data for all sections.
 
@@ -2322,11 +2320,11 @@ def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_pr
         Name of target section.
 
     chains: list(int) or numpy.array(int); optional
-        Indices of chains to include; optional (defaults to all chains). 
-        
+        Indices of chains to include; optional (defaults to all chains).
+
     plot_prior: bool, optional
         Plot prior distributions for sample ages. Defaults to ``False``.
-        
+
     plot_excluded_samples: bool, optional
         Plot age distributions for proxy observations that were excluded from the inference (``Exclude?`` is ``True`` in ``sample_df``). Defaults to ``False``.
 
@@ -2334,15 +2332,15 @@ def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_pr
         Generate a legend. Defaults to ``True``.
 
     cmap: str, optional
-        Name of seaborn color palette to use for different chains. Defaults to 'viridis'. 
+        Name of seaborn color palette to use for different chains. Defaults to 'viridis'.
 
     Returns
     -------
     fig: matplotlib.pyplot.figure
         Figure with per-chain posterior sample age distributions.
-        
+
     """
-    
+
     # get list of proxies included in model from full_trace
     variables = [
             l
@@ -2353,25 +2351,25 @@ def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_pr
     proxies = []
     for var in variables:
         proxies.append(var[6:])
-    
+
     sample_df, _ = clean_data(sample_df, None, proxies, list(section))
-        
+
     # chains x draws x samples
     vals = full_trace.posterior[str(section)+'_ages'].values
-    
-    if chains is None: 
+
+    if chains is None:
         chains = np.arange(vals.shape[0])
 
     prior_vals = az.extract(full_trace.prior)[str(section)+'_ages'].values
-    
+
     if not plot_excluded_samples:
         included_idx = ~sample_df['Exclude?'].values.astype(bool)
         # shape = (samples x draws)
         vals = vals[:, :, included_idx]
-    
-    else: 
+
+    else:
         excluded_idx = sample_df['Exclude?'].values
-        
+
     samples = vals.shape[2]
 
     cols = 5
@@ -2385,11 +2383,11 @@ def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_pr
     fig = plt.figure(figsize = (11, 1.5*rows))
 
     excluded_count = 0
-    
+
     for i in range(samples):
         ax = fig.add_subplot(gs[i])
-        
-        if plot_excluded_samples: 
+
+        if plot_excluded_samples:
             if excluded_idx[i]:
                 linestyle = 'dashed'
                 post_label = 'Posterior (excluded sample)'
@@ -2399,49 +2397,47 @@ def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_pr
             else:
                 lw = 0
                 linestyle = 'solid'
-                edgecolor = 'none'
                 post_label = 'Posterior'
                 prior_label = 'Prior'
-                
-        else: 
+
+        else:
             lw = 0
             linestyle = 'solid'
-            edgecolor = 'none'
             post_label = 'Posterior'
             prior_label = 'Prior'
-                
+
         for m in range(len(chains)):
             cs[m] = pal[m]
-            
-            sns.kdeplot(vals[chains[m], :, i].ravel(), 
+
+            sns.kdeplot(vals[chains[m], :, i].ravel(),
                         label = post_label + ', chain ' + str(chains[m]), fill = True, color = cs[m], alpha = 0.3, ax = ax, lw = lw, linestyle = linestyle, cut = 0)
-            
+
         if plot_prior:
-            sns.kdeplot(prior_vals[i,:].ravel(), 
+            sns.kdeplot(prior_vals[i,:].ravel(),
                         label = prior_label, fill = False, color = 'k', ax = ax, cut = 0)
 
         ax.tick_params(bottom = True, top = True, left = False, right = False, direction = 'in', labelsize = 12)
         ax.set_ylabel('')
         ax.set_yticklabels([])
         ax.invert_xaxis()
-            
+
         if legend:
             if (i == 0) | ((excluded_count == 1) and (excluded_idx[i])):
                 ax.legend(frameon = False, loc = 'upper left')
-        
+
     fig.suptitle('Section: ' + section, fontsize = 14)
     fig.supxlabel('Age (Ma)', fontsize = 12)
     fig.tight_layout()
-    
+
     return fig
 
 def age_constraints(full_trace, section, cmap = 'viridis', **kwargs):
     """
-    
+
     For a given section, plot prior and posterior age distributions for all depositional age constraints (and limiting age constraints that provide a minimum or maximum age for the entire section). To plot intermediate limiting ages (i.e., detrital and intrusive age constraints in the middle of a section), use :py:meth:`limiting_age_constraints() <stratmc.plotting.limiting_age_constraints>`.
 
     .. plot::
-    
+
        from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_trace
        from stratmc.plotting import age_constraints
@@ -2462,27 +2458,27 @@ def age_constraints(full_trace, section, cmap = 'viridis', **kwargs):
         Name of target section.
 
     cmap: str, optional
-        Name of seaborn color palette to use for age distributions. Defaults to 'viridis'. 
+        Name of seaborn color palette to use for age distributions. Defaults to 'viridis'.
 
     Returns
     -------
     fig: matplotlib.pyplot.figure
         Figure with prior and posterior depositional age constraint distributions.
-    """ 
+    """
 
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-    else: 
+    else:
         fs = 12
-    
+
     vals = az.extract(full_trace.posterior)[str(section)+'_radiometric_age'].values
     prior_vals = az.extract(full_trace.prior)[str(section)+'_radiometric_age'].values
 
     # if only 1 age constraint (should only occur if one the min or max age is shared), reshape for plotting
-    if vals.ndim == 1: 
+    if vals.ndim == 1:
             vals = np.reshape(vals, (1, len(vals)))
 
-    if prior_vals.ndim == 1: 
+    if prior_vals.ndim == 1:
         prior_vals = np.reshape(prior_vals, (1, len(prior_vals)))
 
     samples = np.mean(vals, axis = 1).size
@@ -2498,9 +2494,9 @@ def age_constraints(full_trace, section, cmap = 'viridis', **kwargs):
 
     for i in range(samples):
         ax = fig.add_subplot(gs[i])
-        sns.kdeplot(vals[i,:].ravel(), 
+        sns.kdeplot(vals[i,:].ravel(),
                     label = 'Posterior', fill = True, color = pal[i], edgecolor='None', alpha = 0.3, ax = ax, cut = 0)
-        sns.kdeplot(prior_vals[i,:].ravel(), 
+        sns.kdeplot(prior_vals[i,:].ravel(),
                     label = 'Prior', fill = False, color = pal[i], ax = ax, cut = 0)
 
         ax.set_ylabel('')
@@ -2516,22 +2512,22 @@ def age_constraints(full_trace, section, cmap = 'viridis', **kwargs):
     fig.supxlabel('Age (Ma)', fontsize = fs)
 
     fig.tight_layout()
-    
+
     return fig
 
-def limiting_age_constraints(full_trace, sample_df, ages_df, section, cmap = 'viridis', **kwargs): 
+def limiting_age_constraints(full_trace, sample_df, ages_df, section, cmap = 'viridis', **kwargs):
     """
     For a given section, plot prior and posterior age distributions for all intermediate limiting (i.e., detrital and intrusive ages in the middle of a section) age constraints. To plot depositional age constraints (and limiting age constraints that provide a minimum or maximum age for the entire section), use :py:meth:`age_constraints() <stratmc.plotting.age_constraints>`.
-    
+
     .. plot::
-    
+
         from stratmc.config import PROJECT_ROOT
         from stratmc.data import load_object, load_trace
         from stratmc.plotting import limiting_age_constraints
 
         full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_limiting_ages_trace')
         example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df_limiting_ages'
-        example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df_limiting_ages' 
+        example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df_limiting_ages'
         sample_df = load_object(example_sample_path)
         ages_df = load_object(example_ages_path)
         section = '1'
@@ -2555,19 +2551,19 @@ def limiting_age_constraints(full_trace, sample_df, ages_df, section, cmap = 'vi
         Name of target section.
 
     cmap: str, optional
-        Name of seaborn color palette to use for age distributions. Defaults to 'viridis'. 
+        Name of seaborn color palette to use for age distributions. Defaults to 'viridis'.
 
     Returns
     -------
     fig: matplotlib.pyplot.figure
-        Figure with prior and posterior limiting age constraint distributions. 
-    """ 
+        Figure with prior and posterior limiting age constraint distributions.
+    """
 
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-    else: 
+    else:
         fs = 12
-        
+
     # get list of proxies included in model from full_trace
     variables = [
             l
@@ -2578,33 +2574,33 @@ def limiting_age_constraints(full_trace, sample_df, ages_df, section, cmap = 'vi
     proxies = []
     for var in variables:
         proxies.append(var[6:])
-        
+
     sample_df, ages_df = clean_data(sample_df, ages_df, proxies, [section])
 
     detrital_df = ages_df[(ages_df['section']==section) & (ages_df['intermediate detrital?'])]
     intrusive_df =  ages_df[(ages_df['section']==section) & (ages_df['intermediate intrusive?'])]
 
     detrital_named = []
-    if detrital_df.shape[0] > 0: 
+    if detrital_df.shape[0] > 0:
         # grab names from list of model variables (will only include constriants that aren't shared)
         detrital_vars = [
             l
             for l in list(full_trace["posterior"].data_vars.keys())
             if (l[0:len(section)] == section) and (f"{'detrital_age_'}" in l)
             ]
-        
+
         detrital_named += [False] * len(detrital_vars)
-        
+
         # if constraints are shared, grab those names too
         detrital_vars += list(detrital_df[detrital_df['shared?']]['name'].values)
 
         detrital_named += [True] * len(list(detrital_df[detrital_df['shared?']]['name'].values))
-    
-    else: 
-        detrital_vars = [] 
 
-    intrusive_named = [] 
-    if intrusive_df.shape[0] > 0: 
+    else:
+        detrital_vars = []
+
+    intrusive_named = []
+    if intrusive_df.shape[0] > 0:
 
         # grab names from list of model variables (will only include constriants that aren't shared)
         intrusive_vars = [
@@ -2612,25 +2608,25 @@ def limiting_age_constraints(full_trace, sample_df, ages_df, section, cmap = 'vi
             for l in list(full_trace["posterior"].data_vars.keys())
             if (l[0:len(section)] == section) and (f"{'intrusive_age_'}" in l)
             ]
-        
+
         intrusive_named += [False] * len(intrusive_vars)
-        
+
         # if constraints are shared, grab those names too
         intrusive_vars += list(intrusive_df[intrusive_df['shared?']]['name'].values)
         intrusive_named += [True] * len(list(intrusive_df[intrusive_df['shared?']]['name'].values))
 
-    else: 
-        intrusive_vars = [] 
+    else:
+        intrusive_vars = []
 
     # number of age constraints to plot
-    combined_vars = detrital_vars + intrusive_vars 
+    combined_vars = detrital_vars + intrusive_vars
     combined_named = detrital_named + intrusive_named
 
     if len(combined_vars) == 0:
             sys.exit(f"Section {section} has no intermediate limiting age constraints")
-    
+
     N = len(combined_vars)
-    
+
     cols = np.min([4, N])
     rows = int(math.ceil(N/cols))
 
@@ -2643,11 +2639,11 @@ def limiting_age_constraints(full_trace, sample_df, ages_df, section, cmap = 'vi
         var = combined_vars[i]
 
         named = combined_named[i]
-        if named: 
+        if named:
             title = var
         elif i < len(detrital_vars):
             title = 'Detrital ' + str(i)
-        else: 
+        else:
             title = 'Intrusive ' + str(i - len(detrital_vars))
 
         ax = fig.add_subplot(gs[i])
@@ -2658,9 +2654,9 @@ def limiting_age_constraints(full_trace, sample_df, ages_df, section, cmap = 'vi
         vals = az.extract(full_trace.posterior)[var].values
         prior_vals = az.extract(full_trace.prior)[var].values
 
-        sns.kdeplot(vals.ravel(), 
+        sns.kdeplot(vals.ravel(),
                     label = 'Posterior', fill = True, color = pal[i], edgecolor='None', alpha = 0.3, ax = ax, cut = 0)
-        sns.kdeplot(prior_vals.ravel(), 
+        sns.kdeplot(prior_vals.ravel(),
                     label = 'Prior', fill = False, color = pal[i], ax = ax, cut = 0)
 
         ax.set_ylabel('')
@@ -2681,73 +2677,73 @@ def limiting_age_constraints(full_trace, sample_df, ages_df, section, cmap = 'vi
 
 def sadler_plot(full_trace, sample_df, ages_df, method = 'density', duration_bins = 50, rate_bins = 50, scale = 'log', include_age_constraints = True, density_cmap = 'jet', section_cmap = 'Spectral', figsize = (6, 4), **kwargs):
     """
-    Plot accumulation rate against duration. 
-    
+    Plot accumulation rate against duration.
+
     .. plot::
-    
+
        from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import sadler_plot
 
        full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
        example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df' 
+       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
        sadler_plot(full_trace, sample_df, ages_df)
 
        plt.show()
-       
+
 
     Parameters
     ----------
-    
+
     full_trace: arviz.InferenceData
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
-        
+
     sample_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing proxy data for all sections.
-        
+
     ages_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing age constraints for all sections.
 
     method: str, optional
         Plot as a 2D histogram ('density') or as a scatter plot ('scatter'). The density plot will combine data for all sections in ``sections``, while a scatter plot will assign a unique color to each section. Defaults to 'density'.
-        
+
     duration_bins: int, optional
-        Number of bin edges to use for the duration data. Defaults to 50. 
-        
+        Number of bin edges to use for the duration data. Defaults to 50.
+
     rate_bins: int, optional
-        Number of bin edges to use for the rate data. Defaults to 50. 
-        
+        Number of bin edges to use for the rate data. Defaults to 50.
+
     scale: str, optional
-        Scaling for x- and y-axes ('linear' or 'log'). Defaults to 'log'. 
+        Scaling for x- and y-axes ('linear' or 'log'). Defaults to 'log'.
 
     sections: list(str) numpy.array(str), optional
-        List of target sections. Defaults to all sections in ``sample_df``. 
-        
+        List of target sections. Defaults to all sections in ``sample_df``.
+
     include_age_constraints: bool, optional
         Include age constraints in sedimentation rate calculations. Defaults to ``False``.
-        
+
     density_cmap: str, optional
-        Name of matplotlib colormap to use for probability density if ``method`` is 'density`. Defaults to 'jet'. 
+        Name of matplotlib colormap to use for probability density if ``method`` is 'density`. Defaults to 'jet'.
 
     section_cmap: str, optional
-        Name of seaborn color palette to use for sections if ``method`` is 'scatter`. Defaults to 'Spectral'. 
+        Name of seaborn color palette to use for sections if ``method`` is 'scatter`. Defaults to 'Spectral'.
 
     Returns
     -------
     fig: matplotlib.pyplot.figure
-        Figure with sediment accumulation rate plotted against duration. 
+        Figure with sediment accumulation rate plotted against duration.
 
     """
 
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-    else: 
+    else:
         fs = 12
-        
+
     # get list of proxies included in model from full_trace
     variables = [
             l
@@ -2761,26 +2757,26 @@ def sadler_plot(full_trace, sample_df, ages_df, method = 'density', duration_bin
 
     if 'sections' in kwargs:
         sections = list(kwargs['sections'])
-    else: 
+    else:
         # any sections that have no relevant proxy observations would not have ages tracked in the trace
         sections = np.unique(sample_df.dropna(subset = proxies, how = 'all')['section'])
-        
+
     sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)
-    
+
     rate_df = accumulation_rate(full_trace, sample_df, ages_df, method = 'all', sections = sections, include_age_constraints = include_age_constraints)
-    
+
     dur = rate_df['duration'].values
     rate = rate_df['rate'].values
-    
+
     fig = plt.figure(figsize = figsize)
     ax = fig.gca()
-    
+
     if method == 'density':
-        if scale == 'log': 
+        if scale == 'log':
             x_bins = np.logspace(np.log10(dur.min()), np.log10(dur.max()), duration_bins)
             y_bins = np.logspace(np.log10(rate.min()), np.log10(rate.max()), rate_bins)
 
-        else: 
+        else:
             x_bins = np.linspace(dur.min(), dur.max(), duration_bins)
             y_bins = np.linspace(rate.min(),rate.max(), rate_bins)
 
@@ -2788,54 +2784,54 @@ def sadler_plot(full_trace, sample_df, ages_df, method = 'density', duration_bin
 
         H[H == 0] = np.nan
         H = H/len(dur) # normalize
-        
+
         m = ax.pcolormesh(xedges, yedges, H.T, cmap = density_cmap)
-        
+
         cb = plt.colorbar(m)
         cb.set_label(label='Probability density', fontsize = fs)
-        
+
     elif method == 'scatter':
         pal = sns.color_palette(section_cmap, n_colors = len(sections))
         for i in np.arange(len(sections)):
             section = sections[i]
-            ax.scatter(rate_df[rate_df['section']==section]['duration'].values, rate_df[rate_df['section']==section]['rate'].values, 
-                       s = 5, 
-                       edgecolor = pal[i], 
-                       facecolor = 'none', 
-                      alpha = 0.5, 
+            ax.scatter(rate_df[rate_df['section']==section]['duration'].values, rate_df[rate_df['section']==section]['rate'].values,
+                       s = 5,
+                       edgecolor = pal[i],
+                       facecolor = 'none',
+                      alpha = 0.5,
                       label = section)
         ax.legend()
-            
+
     if scale == 'log':
         ax.set_xscale('log')
         ax.set_yscale('log')
         ax.set_xlabel('LOG (Duration [yr])', fontsize = fs)
         ax.set_ylabel('LOG (Accumulation rate [mm/yr])', fontsize = fs)
-    
-    else: 
+
+    else:
         ax.set_xlabel('Duration (yr)', fontsize = fs)
         ax.set_ylabel('Accumulation rate (mm/yr)', fontsize = fs)
-        
+
     ax.tick_params(labelsize = fs)
-    
+
     fig.tight_layout()
-    
+
     return fig
 
 
-def accumulation_rate_stratigraphy(full_trace, sample_df, ages_df, age_bins = 50, age_bin_edges = [], rate_bins = 50, rate_bin_edges = [], rate_scale = 'log', include_age_constraints = True, cmap = 'jet', figsize = (8, 4), **kwargs): 
+def accumulation_rate_stratigraphy(full_trace, sample_df, ages_df, age_bins = 50, age_bin_edges = [], rate_bins = 50, rate_bin_edges = [], rate_scale = 'log', include_age_constraints = True, cmap = 'jet', figsize = (8, 4), **kwargs):
     """
-    Plot the probability density of sediment accumulation rates (calculated between successive samples) through time. Probability density for each age bin sums to 1. Unless a ``sections`` argument is passed, includes accumulation rates for all sections. 
-    
+    Plot the probability density of sediment accumulation rates (calculated between successive samples) through time. Probability density for each age bin sums to 1. Unless a ``sections`` argument is passed, includes accumulation rates for all sections.
+
     .. plot::
-    
+
        from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import accumulation_rate_stratigraphy
 
        full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
        example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df' 
+       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
@@ -2845,49 +2841,49 @@ def accumulation_rate_stratigraphy(full_trace, sample_df, ages_df, age_bins = 50
 
     Parameters
     ----------
-    
+
     full_trace: arviz.InferenceData
-        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`. 
-        
+        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
+
     sample_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing proxy data for all sections.
-        
+
     ages_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing age constraints for all sections.
-        
+
     age_bins: int, optional
-        Number of bin edges for age data (if ``age_bin_edges`` not provided). Defaults to 50. 
-    
+        Number of bin edges for age data (if ``age_bin_edges`` not provided). Defaults to 50.
+
     rate_bins: int, optional
-        Number of bin edges for rate data (if ``rate_bin_edges`` not provided). Defaults to 50. 
-        
+        Number of bin edges for rate data (if ``rate_bin_edges`` not provided). Defaults to 50.
+
     age_bin_edges: list(float) or numpy.array(float), optional
         List or array of bin edges for the age data.
-        
+
     rate_bin_edges: list(float) numpy.array(float), optional
         List or array of bin edges for the rate data.
-        
+
     rate_scale: str, optional
-        Scaling for rate ('linear' or 'log'). Defaults to 'log'. 
-        
+        Scaling for rate ('linear' or 'log'). Defaults to 'log'.
+
     include_age_constraints: bool, optional
         Include age constraints in sedimentation rate calculations. Defaults to ``True``.
-        
+
     sections: list(str) or numpy.array(str), optional
-        Section(s) to include. If not provided, combines data from all sections in ``sample_df``. 
-   
+        Section(s) to include. If not provided, combines data from all sections in ``sample_df``.
+
     Returns
     -------
     fig: matplotlib.pyplot.figure
-        Figure with accumulation rate probability density through time. 
+        Figure with accumulation rate probability density through time.
 
     """
 
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-    else: 
+    else:
         fs = 12
-        
+
     # get list of proxies included in model from full_trace
     variables = [
             l
@@ -2901,90 +2897,90 @@ def accumulation_rate_stratigraphy(full_trace, sample_df, ages_df, age_bins = 50
 
     if 'sections' in kwargs:
         sections = list(kwargs['sections'])
-    else: 
+    else:
         sections = np.unique(sample_df.dropna(subset = proxies, how = 'all')['section'])
-        
-    sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)    
-        
+
+    sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)
+
     rate_df = accumulation_rate(full_trace, sample_df, ages_df, sections = sections, method = 'successive', include_age_constraints = include_age_constraints)
-                
+
     if len(age_bin_edges) == 0:
         age_bin_edges = np.linspace(np.min(rate_df['top_age']), np.max(rate_df['base_age']), age_bins)
-        
+
     if len(rate_bin_edges) == 0:
         if rate_scale == 'log':
             rate_bin_edges = np.logspace(np.log10(rate_df['rate'].min()), np.log10(rate_df['rate'].max()), rate_bins)
-        elif rate_scale == 'linear': 
+        elif rate_scale == 'linear':
             rate_bin_edges = np.linspace(rate_df['rate'].min(), rate_df['rate'].max(), rate_bins)
-        
+
     # get age bin centers
     age_centers = (age_bin_edges[:-1] + age_bin_edges[1:]) / 2
-    
+
     age_vec = []
     rate_vec = []
-                
-    for rate, base, top in zip(rate_df['rate'], rate_df['base_age'], rate_df['top_age']): 
+
+    for rate, base, top in zip(rate_df['rate'], rate_df['base_age'], rate_df['top_age']):
         for i in np.arange(len(age_bin_edges)-1):
             center = age_centers[i]
             current_bin = pd.Interval(age_bin_edges[i], age_bin_edges[i+1], closed = 'left')
             current_sample_pair = pd.Interval(top, base, closed = 'right')
             result = current_bin.overlaps(current_sample_pair)
-            if result: 
+            if result:
                 age_vec.append(center)
                 rate_vec.append(rate)
-                
-            
+
+
     fig = plt.figure(figsize = figsize)
     ax = fig.gca()
-    
+
     H, xedges, yedges = np.histogram2d(age_vec, rate_vec, bins=[age_bin_edges, rate_bin_edges], density = False)
-    
+
     H[H == 0] = np.nan
     H = H/np.nansum(H, axis=1,keepdims=1) # each column (age bin) should sum to 1
-    
+
     m = ax.pcolormesh(xedges, yedges, H.T, cmap = cmap)
-    
-    if rate_scale == 'log': 
+
+    if rate_scale == 'log':
         ax.set_yscale('log')
         ax.set_ylabel('LOG (Accumulation rate [m/Myr])', fontsize = fs)
-        
-    elif rate_scale == 'linear': 
+
+    elif rate_scale == 'linear':
         ax.set_ylabel('Accumulation rate (m/Myr)', fontsize = fs)
-     
+
     ax.invert_xaxis()
     ax.set_xlabel('Age (Ma)', fontsize = fs)
-    
+
     cb = plt.colorbar(m)
     cb.set_label(label='Probability density', fontsize = fs)
-    
+
     return fig
 
 
 def section_age_range(full_trace, sample_df, ages_df, lower_age, upper_age, legend = True, section_cmap = 'Spectral', **kwargs):
     """
-    Plot the stratigraphic interval corresponding to a given age range (based on the posterior section age models). If ``sections`` is not provided, includes each section that overlaps the target age range. 
-    
+    Plot the stratigraphic interval corresponding to a given age range (based on the posterior section age models). If ``sections`` is not provided, includes each section that overlaps the target age range.
+
     .. plot::
-    
+
        from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import section_age_range
 
        full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
        example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df' 
+       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
        section_age_range(full_trace, sample_df, ages_df, 120, 130)
 
        plt.show()
-    
+
     Parameters
     ----------
     full_trace: arviz.InferenceData
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
-        
+
     sample_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing proxy data for all sections.
 
@@ -2993,7 +2989,7 @@ def section_age_range(full_trace, sample_df, ages_df, lower_age, upper_age, lege
 
     lower_age: float
         Lower bound (youngest) of the target age interval.
-    
+
     upper_age: float
         Upper bound (oldest) of the target age interval.
 
@@ -3001,15 +2997,15 @@ def section_age_range(full_trace, sample_df, ages_df, lower_age, upper_age, lege
         Generate a legend. Defaults to ``True``.
 
     cmap: str, optional
-        Name of seaborn color palette to use for sections. Defaults to 'Spectral'. 
+        Name of seaborn color palette to use for sections. Defaults to 'Spectral'.
 
     Returns
     -------
     fig: matplotlib.pyplot.figure
-        Tracer stratigraphy for each section, with the stratigraphic interval corresponding to the input age range highlighted. 
+        Tracer stratigraphy for each section, with the stratigraphic interval corresponding to the input age range highlighted.
 
     """
-    
+
     # get list of proxies included in model from full_trace
     variables = [
             l
@@ -3020,29 +3016,29 @@ def section_age_range(full_trace, sample_df, ages_df, lower_age, upper_age, lege
     proxies = []
     for var in variables:
         proxies.append(var[6:])
-        
+
     if 'proxy' in kwargs:
         proxy = kwargs['proxy']
     else:
         proxy = proxies[0]
-        
+
     if 'sections' in kwargs:
         sections = list(kwargs['sections'])
-    else: 
+    else:
         sections = np.unique(sample_df.dropna(subset = proxies, how = 'all')['section'])
-        
+
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-        
-    else: 
+
+    else:
         fs = 12
-        
+
     sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)
-        
+
     stats_df = age_range_to_height(full_trace, sample_df, ages_df,lower_age, upper_age, **kwargs)
-    
+
     sections = stats_df.index.tolist()
-    
+
     cs = {}
     pal = sns.color_palette(section_cmap, n_colors=len(sections))
 
@@ -3057,7 +3053,7 @@ def section_age_range(full_trace, sample_df, ages_df, lower_age, upper_age, lege
         section = sections[n]
         cs[section] = pal[n]
         ax = fig.add_subplot(gs[n])
-     
+
         section_df = sample_df[sample_df['section']==section]
 
         ax.scatter(section_df[proxy], section_df['height'], color = cs[section], edgecolor = 'k', zorder = 3)
@@ -3067,7 +3063,7 @@ def section_age_range(full_trace, sample_df, ages_df, lower_age, upper_age, lege
         ax.axhspan(stats_df.loc[section]['base_16'], stats_df.loc[section]['top_84'], zorder = 1, color = (0.8, 0.8, 0.8), label='68% envelope')
         ax.axhline(stats_df.loc[section]['base_mle'], color = 'darkgray', linestyle = 'solid', zorder = 2)
         ax.axhline(stats_df.loc[section]['top_mle'], color = 'darkgray', linestyle = 'solid', zorder = 2, label = 'Most likely range')
-    
+
         ax.set_ylabel('Height (m)', fontsize = fs)
         if proxy == 'd13c':
             ax.set_xlabel('$\delta^{13}$C$_{\mathrm{carb}} (‰)$', fontsize = fs)
@@ -3077,21 +3073,21 @@ def section_age_range(full_trace, sample_df, ages_df, lower_age, upper_age, lege
         ax.set_title(section, fontsize = fs)
         ax.tick_params(labelsize=fs)
         ax.locator_params(axis='x', nbins=5)
-        
+
         if legend:
             if n == 0:
                 ax.legend(loc = 'upper left')
-        
+
     fig.tight_layout()
 
-    plt.subplots_adjust(wspace=0.4) 
+    plt.subplots_adjust(wspace=0.4)
 
     return fig
 
-def proxy_data_gaps(full_trace, time_grid = None, yaxis = 'percentage', figsize = (6, 3.5), **kwargs): 
+def proxy_data_gaps(full_trace, time_grid = None, yaxis = 'percentage', figsize = (6, 3.5), **kwargs):
 
     """
-    For a set of discrete time bins, shows the number of draws from the posterior where there are no proxy observations (i.e., where there are temporal `gaps` in the proxy data). This plot can be used to determine where additional observations are needed to improve the inference. 
+    For a set of discrete time bins, shows the number of draws from the posterior where there are no proxy observations (i.e., where there are temporal `gaps` in the proxy data). This plot can be used to determine where additional observations are needed to improve the inference.
 
     .. plot::
 
@@ -3104,18 +3100,18 @@ def proxy_data_gaps(full_trace, time_grid = None, yaxis = 'percentage', figsize 
         proxy_data_gaps(full_trace)
 
         plt.show()
-    
+
     Parameters
     ----------
     full_trace: arviz.InferenceData
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
 
     time_grid: np.array, optional
-        Time bin edges; if not provided, defaults to the ``ages`` array passed to :py:meth:`get_trace() <stratmc.inference.get_trace>`. 
+        Time bin edges; if not provided, defaults to the ``ages`` array passed to :py:meth:`get_trace() <stratmc.inference.get_trace>`.
 
     yaxis: str, optional
-        Set y-axis to percentage of posterior draws without observations ('percentage') or to the number of posterior draws without observations ('count`). Defaults to 'percentage`. 
-        
+        Set y-axis to percentage of posterior draws without observations ('percentage') or to the number of posterior draws without observations ('count`). Defaults to 'percentage`.
+
     Returns
     -------
     fig: matplotlib.pyplot.figure
@@ -3125,10 +3121,10 @@ def proxy_data_gaps(full_trace, time_grid = None, yaxis = 'percentage', figsize 
 
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-    else: 
+    else:
         fs = 12
 
-    if time_grid is None: 
+    if time_grid is None:
         time_grid = full_trace.X_new.X_new.values
 
     age_gaps, grid_centers, grid_widths, n =  find_gaps(full_trace, time_grid = time_grid)
@@ -3137,11 +3133,11 @@ def proxy_data_gaps(full_trace, time_grid = None, yaxis = 'percentage', figsize 
 
     ax = fig.gca()
 
-    if yaxis == 'percentage': 
+    if yaxis == 'percentage':
         ax.bar(grid_centers, height = 100 * age_gaps/n, width = grid_widths, color = 'lightgray', edgecolor = 'k', lw = 0.5)
         ax.set_ylabel('% solutions without observations', fontsize = fs)
 
-    elif yaxis == 'count': 
+    elif yaxis == 'count':
         ax.bar(grid_centers, height = age_gaps, width = grid_widths, color = 'lightgray', edgecolor = 'k', lw = 0.5)
         ax.set_ylabel('# solutions without observations', fontsize = fs)
 
@@ -3156,7 +3152,7 @@ def proxy_data_gaps(full_trace, time_grid = None, yaxis = 'percentage', figsize 
 
 def proxy_data_density(full_trace, time_grid = None, figsize = (6, 3.5), **kwargs):
     """
-    Plot the mean number proxy observations in discrete time bins (averaged over all posterior draws). This plot can be used to determine where proxy observations are relatively sparse, and additional observations may improve the inference. 
+    Plot the mean number proxy observations in discrete time bins (averaged over all posterior draws). This plot can be used to determine where proxy observations are relatively sparse, and additional observations may improve the inference.
 
     .. plot::
 
@@ -3169,15 +3165,15 @@ def proxy_data_density(full_trace, time_grid = None, figsize = (6, 3.5), **kwarg
         proxy_data_density(full_trace)
 
         plt.show()
-    
+
     Parameters
     ----------
     full_trace: arviz.InferenceData
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
 
     time_grid: np.array, optional
-        Time bin edges; if not provided, defaults to the ``ages`` array passed to :py:meth:`get_trace() <stratmc.inference.get_trace>`. 
-        
+        Time bin edges; if not provided, defaults to the ``ages`` array passed to :py:meth:`get_trace() <stratmc.inference.get_trace>`.
+
     Returns
     -------
     fig: matplotlib.pyplot.figure
@@ -3186,10 +3182,10 @@ def proxy_data_density(full_trace, time_grid = None, figsize = (6, 3.5), **kwarg
 
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-    else: 
+    else:
         fs = 12
 
-    if time_grid is None: 
+    if time_grid is None:
         time_grid = full_trace.X_new.X_new.values
 
     sample_counts, grid_centers, grid_widths, n =  count_samples(full_trace, time_grid = time_grid)
@@ -3212,7 +3208,7 @@ def proxy_data_density(full_trace, time_grid = None, figsize = (6, 3.5), **kwarg
 
 def lengthscale_traceplot(full_trace, chains = None, legend = True, figsize = (5, 3.5), **kwargs):
     """
-    Generate trace plot (parameter value vs. step in Markov chain) for the :class:`pymc.gp.cov.ExpQuad <pymc.gp.cov.ExpQuad>` covariance kernel lengthscale. By default, includes all chains; to plot the draws for only a subset of chains, past list of chain indices to ``chains``. Use to check for posterior multimodality. 
+    Generate trace plot (parameter value vs. step in Markov chain) for the :class:`pymc.gp.cov.ExpQuad <pymc.gp.cov.ExpQuad>` covariance kernel lengthscale. By default, includes all chains; to plot the draws for only a subset of chains, past list of chain indices to ``chains``. Use to check for posterior multimodality.
 
     .. plot::
 
@@ -3232,10 +3228,10 @@ def lengthscale_traceplot(full_trace, chains = None, legend = True, figsize = (5
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
 
     chains: list(int) or numpy.array(int); optional
-        Indices of chains to plot; optional (defaults to all chains). 
+        Indices of chains to plot; optional (defaults to all chains).
 
-    proxy: str, optional 
-        Target proxy; only required if more than one proxy was included in the inference. 
+    proxy: str, optional
+        Target proxy; only required if more than one proxy was included in the inference.
 
     legend: bool, optional
         Generate a legend. Defaults to ``True``.
@@ -3243,13 +3239,13 @@ def lengthscale_traceplot(full_trace, chains = None, legend = True, figsize = (5
     Returns
     -------
     fig: matplotlib.pyplot.figure
-        Figure with lengthscale trace plot. 
+        Figure with lengthscale trace plot.
     """
 
 
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-    else: 
+    else:
         fs = 12
 
     # get list of proxies included in model from full_trace
@@ -3262,11 +3258,11 @@ def lengthscale_traceplot(full_trace, chains = None, legend = True, figsize = (5
     proxies = []
     for var in variables:
         proxies.append(var[6:])
-                    
+
     if 'proxy' in kwargs:
         proxy = kwargs['proxy']
-    
-    else: 
+
+    else:
         proxy = proxies[0]
 
     fig = plt.figure(figsize = figsize)
@@ -3278,33 +3274,33 @@ def lengthscale_traceplot(full_trace, chains = None, legend = True, figsize = (5
 
     else:
         post_ls = full_trace.sel(chain = chains).posterior['gp_ls_' +str(proxy)].values
-    
+
     sns.reset_defaults()
-    
-    for i in np.arange(post_ls.shape[0]): 
-        ax.plot(np.arange(post_ls.shape[1]), 
+
+    for i in np.arange(post_ls.shape[0]):
+        ax.plot(np.arange(post_ls.shape[1]),
                 post_ls[i, :, :],
-                lw = 0.5, 
+                lw = 0.5,
                 label = 'Chain ' + str(chains[i]))
-        
+
     ax.set_xlabel('Draw', fontsize = fs)
     ax.set_ylabel('Lengthscale (%s)' % proxy, fontsize = fs)
 
-    if legend: 
+    if legend:
         ax.legend()
 
     ax.tick_params(labelsize = fs)
 
-    fig.tight_layout() 
+    fig.tight_layout()
 
     return fig
 
 def lengthscale_stability(full_trace, figsize = (5, 3.5), **kwargs):
 
     """
-    Plot the posterior standard deviation of the :class:`pymc.gp.cov.ExpQuad <pymc.gp.cov.ExpQuad>` covariance kernel lengthscale when 1 through *N* chains are considered. When the posterior has been sufficiently explored, the standard deviation will stabilize; if it has not stabilized, then additional chains should be run. 
+    Plot the posterior standard deviation of the :class:`pymc.gp.cov.ExpQuad <pymc.gp.cov.ExpQuad>` covariance kernel lengthscale when 1 through *N* chains are considered. When the posterior has been sufficiently explored, the standard deviation will stabilize; if it has not stabilized, then additional chains should be run.
 
-    To consider chains from multiple traces associated with the same inference model, first combine the traces (saved as NetCDF files) using :py:meth:`combine_traces() <stratmc.data>` in :py:mod:`stratmc.data`. 
+    To consider chains from multiple traces associated with the same inference model, first combine the traces (saved as NetCDF files) using :py:meth:`combine_traces() <stratmc.data>` in :py:mod:`stratmc.data`.
 
     .. plot::
 
@@ -3323,7 +3319,7 @@ def lengthscale_stability(full_trace, figsize = (5, 3.5), **kwargs):
     full_trace: arviz.InferenceData
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
 
-    proxy: str, optional 
+    proxy: str, optional
         Target proxy; only required if more than one proxy was included in the inference.
 
     Returns
@@ -3334,7 +3330,7 @@ def lengthscale_stability(full_trace, figsize = (5, 3.5), **kwargs):
 
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-    else: 
+    else:
         fs = 12
 
     # get list of proxies included in model from full_trace
@@ -3347,12 +3343,12 @@ def lengthscale_stability(full_trace, figsize = (5, 3.5), **kwargs):
     proxies = []
     for var in variables:
         proxies.append(var[6:])
-                    
+
     if 'proxy' in kwargs:
         proxy = kwargs['proxy']
-    
-    else: 
-        proxy = proxies[0]        
+
+    else:
+        proxy = proxies[0]
 
     gp_ls_variance = calculate_lengthscale_stability(full_trace, proxy = proxy)
 
@@ -3372,9 +3368,9 @@ def lengthscale_stability(full_trace, figsize = (5, 3.5), **kwargs):
 
 def proxy_signal_stability(full_trace, figsize = (5, 3.5), **kwargs):
     """
-    Plot the sum (over all time slices) of the residuals between the median inferred proxy signal when all *N* chains are considered compared to when 1 to *N-1* chains are considered. When the posterior has been sufficiently explored, the residuals will stabilize and approach zero; if they have not stabilized, then additional chains should be run. 
+    Plot the sum (over all time slices) of the residuals between the median inferred proxy signal when all *N* chains are considered compared to when 1 to *N-1* chains are considered. When the posterior has been sufficiently explored, the residuals will stabilize and approach zero; if they have not stabilized, then additional chains should be run.
 
-    To consider chains from multiple traces associated with the same inference model, first combine the traces (saved as NetCDF files) using :py:meth:`combine_traces() <stratmc.data>` in :py:mod:`stratmc.data`. 
+    To consider chains from multiple traces associated with the same inference model, first combine the traces (saved as NetCDF files) using :py:meth:`combine_traces() <stratmc.data>` in :py:mod:`stratmc.data`.
 
     .. plot::
 
@@ -3387,25 +3383,25 @@ def proxy_signal_stability(full_trace, figsize = (5, 3.5), **kwargs):
         proxy_signal_stability(full_trace, proxy = 'd13c')
 
         plt.show()
-    
+
     Parameters
     ----------
     full_trace: arviz.InferenceData
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
 
-    proxy: str, optional 
+    proxy: str, optional
         Target proxy; only required if more than one proxy was included in the inference.
-        
-        
+
+
     Returns
     -------
     fig: matplotlib.pyplot.figure
-        Figure showing the stability of the proxy signal inference. 
+        Figure showing the stability of the proxy signal inference.
     """
 
     if 'fontsize' in kwargs:
         fs = kwargs['fontsize']
-    else: 
+    else:
         fs = 12
 
     # get list of proxies included in model from full_trace
@@ -3418,12 +3414,12 @@ def proxy_signal_stability(full_trace, figsize = (5, 3.5), **kwargs):
     proxies = []
     for var in variables:
         proxies.append(var[6:])
-                    
+
     if 'proxy' in kwargs:
         proxy = kwargs['proxy']
-    
-    else: 
-        proxy = proxies[0]        
+
+    else:
+        proxy = proxies[0]
 
     median_residuals = calculate_proxy_signal_stability(full_trace, proxy = proxy)
 
@@ -3440,19 +3436,3 @@ def proxy_signal_stability(full_trace, figsize = (5, 3.5), **kwargs):
     fig.tight_layout()
 
     return fig
-
-
-
-
-
-
-        
-            
-        
-    
-                
-    
-        
-    
-    
-

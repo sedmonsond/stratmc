@@ -1,5 +1,5 @@
 # blackjax
-# jax 
+# jax
 # numpy; sys_platform != 'darwin' or platform_machine != 'arm64'
 # numpy --no-binary=numpy; sys_platform == 'darwin' and platform_machine == 'arm64'
 # numpyro

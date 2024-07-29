@@ -1,5 +1,4 @@
 import re
-
 from codecs import open
 from os.path import dirname, join, realpath
 
@@ -33,6 +32,7 @@ with open(REQUIREMENTS_FILE) as f:
     install_reqs = f.read().splitlines()
 
 test_reqs = ["pytest", "pytest-cov"]
+
 
 def get_version():
     VERSIONFILE = join("stratmc", "__init__.py")
