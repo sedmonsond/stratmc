@@ -1,3 +1,4 @@
+import warnings
 from datetime import date
 
 import arviz as az
@@ -18,6 +19,8 @@ from scipy.stats import gaussian_kde
 from tqdm.notebook import tqdm
 
 os.environ["AESARA_FLAGS"] = "mode=FAST_RUN,device=cpu,floatX=float64"
+warnings.filterwarnings("ignore", message="X_new group is not defined in the InferenceData scheme")
+
 
 from stratmc.data import clean_data, drop_chains
 from stratmc.tests import check_inference

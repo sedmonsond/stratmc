@@ -1,0 +1,37 @@
+name: stratmc-dev
+channels:
+- conda-forge
+- defaults
+dependencies:
+# Base dependencies
+- python==3.11
+# - "libblas=*=*accelerate"
+#; sys_platform == 'darwin' and platform_machine == 'arm64'
+- pip
+- pytest
+- pip:
+  - blackjax
+  - fastprogress
+  - ipywidgets
+  - jax
+  - matplotlib
+  - numpyro
+  - pymc>=5.16.2
+  - pytest-cov
+  - scikit-learn
+  - scipy
+  - seaborn
+  - tqdm
+  - xarray
+# extra packages for development
+- jupyter-sphinx
+- myst-nb
+- numpydoc
+- pre-commit
+- sphinx-copybutton
+- sphinx-design
+- sphinx-notfound-page
+- sphinx>=1.5
+- sphinxext-rediraffe
+- watermark
+- sphinx-remove-toctrees

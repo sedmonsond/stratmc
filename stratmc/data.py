@@ -1,10 +1,14 @@
+import pickle
+import sys
+import warnings
+
 import arviz as az
 import numpy as np
 import pandas as pd
 
 pd.options.mode.chained_assignment = None
-import pickle
-import sys
+warnings.filterwarnings("ignore", message="X_new group is not defined in the InferenceData scheme")
+
 
 pd.options.mode.chained_assignment = None
 

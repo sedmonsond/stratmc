@@ -1,11 +1,14 @@
-# blackjax
-# jax
-# numpy; sys_platform != 'darwin' or platform_machine != 'arm64'
-# numpy --no-binary=numpy; sys_platform == 'darwin' and platform_machine == 'arm64'
-# numpyro
-# pandas>=0.24.0
-# pymc >= 5.16.2
-# tensorflow
-# tensorflow-metal; sys_platform == 'darwin' and platform_machine == 'arm64'
-# tensorflow-probability
-# tqdm
+blackjax
+fastprogress
+ipywidgets
+jax
+matplotlib
+numpyro
+pymc >= 5.16.2
+pytest
+pytest-cov
+scikit-learn
+scipy
+seaborn
+tqdm
+xarray
