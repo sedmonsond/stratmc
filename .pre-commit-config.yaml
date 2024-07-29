@@ -42,16 +42,16 @@ repos:
 #         "--rcfile=.pylintrc",
 #         ]
 
-# - repo: https://github.com/nbQA-dev/nbQA
-#   rev: 1.8.5
-#   hooks:
-#     - id: nbqa-ruff
-#       args: ["--fix"]
-#     - id: nbqa-black
-#       args: ["--line-length=88"]
-#     - id: nbqa-pyupgrade
-#       args: [--py36-plus]
-#     - id: nbqa-isort
-#       args: ["--profile=black"]
-#     - id: nbqa-pylint
-#       args: [--rcfile=.pylintrc]
+- repo: https://github.com/nbQA-dev/nbQA
+  rev: 1.8.5
+  hooks:
+    # - id: nbqa-ruff
+    #   args: ["--fix"]
+    - id: nbqa-black
+      args: ["--line-length=88"]
+    # - id: nbqa-pyupgrade
+    #   args: [--py37-plus]
+    - id: nbqa-isort
+      args: ["--profile=black"]
+    # - id: nbqa-pylint
+    #   args: [--rcfile=.pylintrc]
