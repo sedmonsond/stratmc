@@ -4,7 +4,7 @@ channels:
 - defaults
 dependencies:
 # Base dependencies
-- python>=3.12
+- python>3.9
 # - "libblas=*=*accelerate"
 - pip
 - pip:
