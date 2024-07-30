@@ -7,8 +7,7 @@ import numpy as np
 import pandas as pd
 
 pd.options.mode.chained_assignment = None
-warnings.filterwarnings("ignore", message="X_new group is not defined in the InferenceData scheme")
-
+warnings.filterwarnings("ignore", ".*X_new group is not defined in the InferenceData scheme.*")
 
 pd.options.mode.chained_assignment = None
 

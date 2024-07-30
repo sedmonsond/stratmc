@@ -18,7 +18,7 @@ from tqdm.notebook import tqdm
 numpyro.enable_x64()
 
 os.environ["AESARA_FLAGS"] = "mode=FAST_RUN,device=cpu,floatX=float64"
-warnings.filterwarnings("ignore", message="X_new group is not defined in the InferenceData scheme")
+warnings.filterwarnings("ignore", ".*X_new group is not defined in the InferenceData scheme.*")
 
 
 from stratmc.data import clean_data, drop_chains
@@ -181,7 +181,7 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
 
     bad_chains = check_inference(full_trace, sample_df, ages_df, quiet = True, sections = sections)
     if len(bad_chains) > 0:
-        warnings.warn("Superposition violated in chains ' + str(bad_chains) + '. These chains were removed from the trace; the original trace (with the bad chains) is saved in the `traces` folder. To investigate the cause of the superposition violation, load the original trace and run the functions in the `stratmc.tests` module with `quiet = False`.")
+        warnings.warn(f"Superposition violated in chains {str(bad_chains)}. These chains were removed from the trace; the original trace (with the bad chains) is saved in the `traces` folder. To investigate the cause of the superposition violation, load the original trace and run the functions in the `stratmc.tests` module with `quiet = False`.")
 
         full_trace = drop_chains(full_trace, bad_chains)
 
@@ -219,7 +219,7 @@ def extend_age_model(full_trace, sample_df, ages_df, new_proxies, new_proxy_df =
     Returns
     -------
     interpolated_df: pandas.DataFrame
-        :class:`pandas.DataFrame` with interpolated age draws and sample age summary statistics (maximum likelihood estimate, median, and 68\% and 95\% confidence intervals) for each new proxy observation.
+        :class:`pandas.DataFrame` with interpolated age draws and sample age summary statistics (maximum likelihood estimate, median, and 68% and 95% confidence intervals) for each new proxy observation.
     """
 
 
@@ -376,7 +376,7 @@ def interpolate_proxy(interp_df, proxy, ages):
     Returns
     -------
     interpolated_proxy_df: pandas.DataFrame
-        :class:`pandas.DataFrame` with interpolated proxy values and summary statistics (maximum likelihood estimate, median, and 68\% and 95\% confidence intervals) at each age in ``ages``.
+        :class:`pandas.DataFrame` with interpolated proxy values and summary statistics (maximum likelihood estimate, median, and 68% and 95% confidence intervals) at each age in ``ages``.
     """
 
     age_paths = np.vstack(np.asarray(interp_df['age_draws']))
@@ -451,7 +451,7 @@ def age_range_to_height(full_trace, sample_df, ages_df, lower_age, upper_age, **
     Returns
     -------
     height_range_df: pandas.DataFrame
-        Summary statistics for the base and top height of the target age interval (maximum likelihood estimate, median, and 68\% and 95\% confidence intervals) for each section.
+        Summary statistics for the base and top height of the target age interval (maximum likelihood estimate, median, and 68% and 95% confidence intervals) for each section.
 
     """
 

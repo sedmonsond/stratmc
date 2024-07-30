@@ -1,5 +1,6 @@
 import random
 import sys
+import warnings
 
 import arviz as az
 import numpy as np
@@ -7,6 +8,8 @@ import pandas as pd
 import pymc as pm
 from scipy.interpolate import UnivariateSpline, interp1d
 from scipy.stats import gaussian_kde
+
+warnings.filterwarnings("ignore", ".*X_new group is not defined in the InferenceData scheme.*")
 
 pd.options.mode.chained_assignment = None
 

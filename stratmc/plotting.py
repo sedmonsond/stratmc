@@ -150,13 +150,24 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
         y_range = yl[1] - yl[0]
 
         if print_ages:
-            for age, height, sigma in zip(ages_df['age'][(ages_df['section']==section) & (ages_df['Exclude?'] != True)],
+            for age, height, sigma, dist_type, param1, param2 in zip(ages_df['age'][(ages_df['section']==section) & (ages_df['Exclude?'] != True)],
                                           ages_df['height'][(ages_df['section']==section) & (ages_df['Exclude?'] != True)],
-                                          ages_df['age_std'][(ages_df['section']==section) & (ages_df['Exclude?'] != True)]):
-                ax.text(xl[0] + x_range * 0.05, # 0.45
-                        height + y_range * 0.01,
-                        s = f'{age:.1f} $\pm$ {2*sigma:.1f} Ma',
-                        fontsize = 10)
+                                          ages_df['age_std'][(ages_df['section']==section) & (ages_df['Exclude?'] != True)],
+                                          ages_df['distribution_type'][(ages_df['section']==section) & (ages_df['Exclude?'] != True)],
+                                          ages_df['param_1'][(ages_df['section']==section) & (ages_df['Exclude?'] != True)],
+                                          ages_df['param_2'][(ages_df['section']==section) & (ages_df['Exclude?'] != True)]):
+                if dist_type == 'Normal':
+                    ax.text(xl[0] + x_range * 0.05, # 0.45
+                            height + y_range * 0.01,
+                            s = f'{age:.1f}' + r'$\pm$' + f'{2*sigma:.1f} Ma',
+                            fontsize = 10)
+
+                elif dist_type == 'Uniform':
+                    ax.text(xl[0] + x_range * 0.05, # 0.45
+                            height + y_range * 0.01,
+                            s = f'{param1:.1f} - {param2:.1f} Ma',
+                            fontsize = 10)
+
 
         ax.set_xlim(xl)
 
