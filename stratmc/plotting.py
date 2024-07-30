@@ -163,7 +163,7 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
         ax.set_ylabel('Height (m)', fontsize = fs)
 
         if proxy == 'd13c':
-            ax.set_xlabel('$\delta^{13}$C$_{\mathrm{carb}} (‰)$', fontsize = 12)
+            ax.set_xlabel(r'$\delta^{13}$C$_{\mathrm{carb}} (‰)$', fontsize = 12)
         else:
             ax.set_xlabel(proxy, fontsize = fs)
 
@@ -558,7 +558,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
     if vertical:
         ax.set_ylabel('Age (Ma)', fontsize = fs)
         if proxy == 'd13c':
-            ax.set_xlabel('$\delta^{13}$C$_{\mathrm{carb}}$ (‰)', fontsize = fs)
+            ax.set_xlabel(r'$\delta^{13}$C$_{\mathrm{carb}}$ (‰)', fontsize = fs)
         else:
             ax.set_xlabel(proxy, fontsize = fs)
 
@@ -568,7 +568,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
     if horizontal:
         ax.set_xlabel('Age (Ma)', fontsize = fs)
         if proxy == 'd13c':
-            ax.set_ylabel('$\delta^{13}$C$_{\mathrm{carb}}$ (‰)', fontsize = fs)
+            ax.set_ylabel(r'$\delta^{13}$C$_{\mathrm{carb}}$ (‰)', fontsize = fs)
         else:
             ax.set_ylabel(proxy, fontsize = fs)
 
@@ -898,7 +898,7 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
         hi = np.percentile(sec_ages, 97.5, axis=1).flatten()
 
         if include_excluded_samples:
-            ax.fill_betweenx(section_df['height'], hi, lo,color=(.95,.95,.95),label='2-$\sigma$')
+            ax.fill_betweenx(section_df['height'], hi, lo,color=(.95,.95,.95),label=r'2-$\sigma$')
 
         else:
             included_idx = ~section_df['Exclude?'].values.astype(bool)
@@ -906,7 +906,7 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
                              hi[included_idx],
                              lo[included_idx],
                              color=(.95,.95,.95),
-                             label='2-$\sigma$')
+                             label=r'2-$\sigma$')
 
         lo = np.percentile(sec_ages,16,axis=1).flatten()
         hi = np.percentile(sec_ages,100-16,axis=1).flatten()
@@ -916,13 +916,13 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
                              hi,
                              lo,
                              color=(.8,.8,.8),
-                             label='1-$\sigma$')
+                             label=r'1-$\sigma$')
         else:
             ax.fill_betweenx(section_df['height'][included_idx],
                              hi[included_idx],
                              lo[included_idx],
                              color=(.8,.8,.8),
-                             label='1-$\sigma$')
+                             label=r'1-$\sigma$')
 
         if include_excluded_samples:
             ax.plot(np.mean(sec_ages, axis = 1),
@@ -949,7 +949,7 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
         ax.scatter(section_ages_df['age'][(~section_ages_df['intermediate intrusive?']) & (~section_ages_df['intermediate detrital?'])],
                     section_ages_df['height'][(~section_ages_df['intermediate intrusive?']) & (~section_ages_df['intermediate detrital?'])],
                     color = cs[section],
-                    label = 'Age ($\pm2\sigma$)')
+                    label = r'Age ($\pm2\sigma$)')
 
 
         if section_ages_df['age'][section_ages_df['intermediate intrusive?']].shape[0] > 0:
@@ -957,14 +957,14 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
                         section_ages_df['height'][section_ages_df['intermediate intrusive?']],
                        marker = 's',
                         color = cs[section],
-                        label = 'Intrusive Age ($\pm2\sigma$)')
+                        label = r'Intrusive Age ($\pm2\sigma$)')
 
         if section_ages_df['age'][section_ages_df['intermediate detrital?']].shape[0] > 0:
             ax.scatter(section_ages_df['age'][section_ages_df['intermediate detrital?']],
                         section_ages_df['height'][section_ages_df['intermediate detrital?']],
                        marker = '^',
                         color = cs[section],
-                        label = 'Detrital Age ($\pm2\sigma$)')
+                        label = r'Detrital Age ($\pm2\sigma$)')
 
         if legend:
             plt.legend(loc = 'upper right',
@@ -1177,7 +1177,7 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
                     ax.axhline(h, color = cs[section], linestyle = 'dashed', zorder = -1)
 
             if proxy == 'd13c':
-                ax.set_xlabel('$\delta^{13}$C$_{\mathrm{carb}}$ (‰)', fontsize = fs)
+                ax.set_xlabel(r'$\delta^{13}$C$_{\mathrm{carb}}$ (‰)', fontsize = fs)
 
             else:
                 ax.set_xlabel(proxy, fontsize = fs)
@@ -1247,7 +1247,7 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
             ax.invert_yaxis()
 
             if proxy == 'd13c':
-                ax.set_xlabel('$\delta^{13}$C$_{\mathrm{carb}}$ (‰)', fontsize = fs)
+                ax.set_xlabel(r'$\delta^{13}$C$_{\mathrm{carb}}$ (‰)', fontsize = fs)
 
             else:
                 ax.set_xlabel(proxy, fontsize = fs)
@@ -3066,7 +3066,7 @@ def section_age_range(full_trace, sample_df, ages_df, lower_age, upper_age, lege
 
         ax.set_ylabel('Height (m)', fontsize = fs)
         if proxy == 'd13c':
-            ax.set_xlabel('$\delta^{13}$C$_{\mathrm{carb}} (‰)$', fontsize = fs)
+            ax.set_xlabel(r'$\delta^{13}$C$_{\mathrm{carb}} (‰)$', fontsize = fs)
         else:
             ax.set_xlabel(proxy, fontsize = fs)
 

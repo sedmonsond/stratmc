@@ -20,14 +20,14 @@ Before installing StratMC, activate the new environment and install ``pip``:
 You can then install StratMC and its dependencies using ``pip``, or by compiling directly from the GitHub repository:
 
 PIP
-^^^^^^^^^^^^^^^^^^^
+#####
 
 .. code-block:: bash
 
   pip install stratmc
 
 Latest (*unstable*)
-^^^^^^^^^^^^^^^^^^^
+####################
 
 .. code-block:: bash
 
@@ -35,7 +35,7 @@ Latest (*unstable*)
 
 
 Installing on Apple Silicon
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+############################
 On Apple Silicon machines (M1 chip or later), sampling is significantly faster when the Apple Accelerate BLAS library is used, rather than the default OpenBLAS library. After installing StratMC in a new conda environment, run:
 
 .. code-block:: bash

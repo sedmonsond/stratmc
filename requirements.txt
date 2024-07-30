@@ -3,6 +3,7 @@ fastprogress
 ipywidgets
 jax
 matplotlib
+netCDF4
 numpyro
 pymc >= 5.16.2
 pytest

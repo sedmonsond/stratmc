@@ -1,22 +1,21 @@
+import os
+import sys
 import warnings
 from datetime import date
+from pathlib import Path
+from time import asctime
 
 import arviz as az
 import numpy as np
 import numpyro
-
-numpyro.enable_x64()
-import os
-import sys
-from pathlib import Path
-from time import asctime
-
 import pandas as pd
 import pymc as pm
 import pymc.sampling.jax
 import xarray as xr
 from scipy.stats import gaussian_kde
 from tqdm.notebook import tqdm
+
+numpyro.enable_x64()
 
 os.environ["AESARA_FLAGS"] = "mode=FAST_RUN,device=cpu,floatX=float64"
 warnings.filterwarnings("ignore", message="X_new group is not defined in the InferenceData scheme")
@@ -30,7 +29,7 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
     """
     Sample the prior and posterior distributions for a :class:`pymc.model.core.Model` returned by :py:meth:`build_model() <stratmc.model.build_model>` in :py:mod:`stratmc.model`. By default, uses :py:func:`pymc.sampling.jax.sample_numpyro_nuts() <pymc.sampling.jax.sample_numpyro_nuts>` to sample the posterior; change ``sampler`` to 'blackjax` to use :py:func:`pymc.sampling.jax.sample_blackjax_nuts() <pymc.sampling.jax.sample_blackjax_nuts>`.
 
-    After the posterior has been sampled, runs :py:meth:`check_inference() <stratmc.tests.check_inference>` in :py:mod:`stratmc.tests` to check that superposition is never violated in the posterior. Any chains with superposition violations are removed from the trace with :py:meth:`drop_chains() <stratmc.data.drop_chains>` before it is returned (if ``save = True``, both the original and 'cleaned' traces are saved to the ``traces`` subfolder), and a warning is printed. See :py:meth:`check_inference() <stratmc.tests.check_inference>` for details; superposition issues are rare, and typically are related to minor violations of detrital or intrusive age constraints.
+    After the posterior has been sampled, runs :py:meth:`check_inference() <stratmc.tests.check_inference>` in :py:mod:`stratmc.tests` to check that superposition is never violated in the posterior. Any chains with superposition violations are removed from the trace with :py:meth:`drop_chains() <stratmc.data.drop_chains>` before it is returned (if ``save = True``, both the original and 'cleaned' traces are saved to the ``traces`` subfolder), and a warning is issued. See :py:meth:`check_inference() <stratmc.tests.check_inference>` for details; superposition issues are rare, and typically are related to minor violations of detrital or intrusive age constraints.
 
     Problems during sampling, including frequent divergences or minor violations of limiting age constraints, might be resolved by increasing the number of ``tune`` steps and/or increasing ``target_accept`` (which decreases the step size).
 
@@ -182,7 +181,7 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
 
     bad_chains = check_inference(full_trace, sample_df, ages_df, quiet = True, sections = sections)
     if len(bad_chains) > 0:
-        print('Superposition violated in chains ' + str(bad_chains) + '. These chains were removed from the trace; the original trace (with the bad chains) is saved in the `traces` folder. To investigate the cause of the superposition violation, load the original trace and run the functions in the `stratmc.tests` module with `quiet = False`.')
+        warnings.warn("Superposition violated in chains ' + str(bad_chains) + '. These chains were removed from the trace; the original trace (with the bad chains) is saved in the `traces` folder. To investigate the cause of the superposition violation, load the original trace and run the functions in the `stratmc.tests` module with `quiet = False`.")
 
         full_trace = drop_chains(full_trace, bad_chains)
 
