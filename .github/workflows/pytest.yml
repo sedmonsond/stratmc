@@ -31,7 +31,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         floatx: [float64]
-        python-version: ["3.12"]
+        # python-version: ["3.12"]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     env:
@@ -64,6 +64,7 @@ jobs:
             hashFiles('requirements.txt') }}
       - uses: conda-incubator/setup-miniconda@v2
         with:
+          miniforge-version: "latest"
           activate-environment: stratmc-dev
           channel-priority: strict
           environment-file: conda-envs/environment-dev.yml
