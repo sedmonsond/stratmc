@@ -1,0 +1,823 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Tools for generating synthetic data &#8212; StratMC v1.0 Manual</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/synthetics';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tests and checks" href="tests.html" />
+    <link rel="prev" title="Plotting" href="plotting.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jul 29, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../_static/stratmc.png" class="logo__image only-light" alt="StratMC v1.0 Manual - Home"/>
+    <script>document.write(`<img src="../_static/stratmc.png" class="logo__image only-dark" alt="StratMC v1.0 Manual - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="data.html"> Data Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model.html"> Statistical model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inference.html"> Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html"> Plotting</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#"> Synthetic signals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html"> Tests and checks</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="userguide.html" class="nav-link">User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="api.html" class="nav-link">API Reference</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Tools for...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="tools-for-generating-synthetic-data">
+<h1>Tools for generating synthetic data<a class="headerlink" href="#tools-for-generating-synthetic-data" title="Link to this heading">#</a></h1>
+<p>Functions for creating synthetic proxy signals/stratigraphic observations and evaluating model performance for synthetic tests.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.synthetics.make_excursion" title="stratmc.synthetics.make_excursion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_excursion</span></code></a></p></td>
+<td><p>Function for generating a synthetic proxy signal that contains a number of user-specified excursions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.synthetics.synthetic_sections" title="stratmc.synthetics.synthetic_sections"><code class="xref py py-obj docutils literal notranslate"><span class="pre">synthetic_sections</span></code></a></p></td>
+<td><p>Function for generating synthetic proxy observations and age constraints using a predefined proxy signal.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.synthetics.synthetic_observations_from_prior" title="stratmc.synthetics.synthetic_observations_from_prior"><code class="xref py py-obj docutils literal notranslate"><span class="pre">synthetic_observations_from_prior</span></code></a></p></td>
+<td><p>Given age constraints for a set of stratigraphic sections in <code class="docutils literal notranslate"><span class="pre">ages_df</span></code>, generate synthetic proxy observations by sampling the model prior.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.synthetics.synthetic_signal_from_prior" title="stratmc.synthetics.synthetic_signal_from_prior"><code class="xref py py-obj docutils literal notranslate"><span class="pre">synthetic_signal_from_prior</span></code></a></p></td>
+<td><p>Draws synthetic signals from the model prior, and returns the signal conditioned over the points in <code class="docutils literal notranslate"><span class="pre">ages</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.synthetics.quantify_signal_recovery" title="stratmc.synthetics.quantify_signal_recovery"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantify_signal_recovery</span></code></a></p></td>
+<td><p>Calculates the likelihood of the true signal (for synthetic tests, where the true signal is known) given draws from the posterior (default) or prior.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.synthetics.sample_age_recovery" title="stratmc.synthetics.sample_age_recovery"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_age_recovery</span></code></a></p></td>
+<td><p>Calculates the likelihood of the true sample ages (for synthetic tests, where the true age of each sample is known) given draws from the posterior (default) or prior.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.synthetics.sample_age_residuals" title="stratmc.synthetics.sample_age_residuals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_age_residuals</span></code></a></p></td>
+<td><p>Calculates the residual (for each draw) between the true age and the posterior (default) or prior age of each sample.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.synthetics.synthetic_signal_to_df" title="stratmc.synthetics.synthetic_signal_to_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">synthetic_signal_to_df</span></code></a></p></td>
+<td><p>Helper function for generating artificial sample and age data using <a class="reference internal" href="#module-stratmc.synthetics" title="stratmc.synthetics"><code class="xref py py-meth docutils literal notranslate"><span class="pre">synthetic_sections()</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="target" id="module-stratmc.synthetics"></span><dl class="py function">
+<dt class="sig sig-object py" id="stratmc.synthetics.make_excursion">
+<span class="sig-prename descclassname"><span class="pre">stratmc.synthetics.</span></span><span class="sig-name descname"><span class="pre">make_excursion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rising_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excursion_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smoothing_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/synthetics.html#make_excursion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.synthetics.make_excursion" title="Link to this definition">#</a></dt>
+<dd><p>Function for generating a synthetic proxy signal that contains a number of user-specified excursions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time: numpy.array(float)</strong></dt><dd><p>Time vector over which to generate proxy signal.</p>
+</dd>
+<dt><strong>amplitude: float, list(float), or numpy.array(float)</strong></dt><dd><p>Amplitude of excursion; pass a list or array to generate multiple excursions.</p>
+</dd>
+<dt><strong>baseline: float, optional</strong></dt><dd><p>Baseline proxy value; defaults to 0.</p>
+</dd>
+<dt><strong>rising_time: float, list(float), or numpy.array(float), optional</strong></dt><dd><p>Fraction of excursion duration spent on the rising limb (linear increase/decrease toward peak).
+Must be between 0 and 1. If not provided, randomly generated if <code class="docutils literal notranslate"><span class="pre">rate_offset</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> and set to 0.5 if <code class="docutils literal notranslate"><span class="pre">rate_offset</span></code> is  <code class="docutils literal notranslate"><span class="pre">False</span></code>. Pass a list to specify different rising times for each excursion.</p>
+</dd>
+<dt><strong>rate_offset: bool, optional</strong></dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">False</span></code>, rising and falling limbs of excursion have equal duration. If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the fraction of the excursion duration spent on the rising limb is set by <code class="docutils literal notranslate"><span class="pre">rising_time</span></code>. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>excursion_duration: float, list(float), or numpy.array(float), optional</strong></dt><dd><p>Duration of excursion; pass a list or array to generate multiple excursions. Random if not provided.</p>
+</dd>
+<dt><strong>min_duration: float, optional</strong></dt><dd><p>Minimum excursion duration if <code class="docutils literal notranslate"><span class="pre">excursion_duration</span></code> is not provided. Defaults to 1.</p>
+</dd>
+<dt><strong>smooth: bool, optional</strong></dt><dd><p>Smooth excursion peaks; defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>smoothing_factor: float, optional</strong></dt><dd><p>Smoothing factor if <code class="docutils literal notranslate"><span class="pre">smooth</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>; higher values produce smoother signals. Defaults to 10.</p>
+</dd>
+<dt><strong>seed: int, optional</strong></dt><dd><p>Random seed used to generate signal.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>interp_proxy: np.array</dt><dd><p>Tracer signal interpolated to points in the <code class="docutils literal notranslate"><span class="pre">time</span></code> vector</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.synthetics.quantify_signal_recovery">
+<span class="sig-prename descclassname"><span class="pre">stratmc.synthetics.</span></span><span class="sig-name descname"><span class="pre">quantify_signal_recovery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_signal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'d13c'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'posterior'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/synthetics.html#quantify_signal_recovery"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.synthetics.quantify_signal_recovery" title="Link to this definition">#</a></dt>
+<dd><p>Calculates the likelihood of the true signal (for synthetic tests, where the true signal is known) given draws from the posterior (default) or prior. The likelihood is evaluated at each age (the posterior signal and the true signal must be evaluated at the same ages). Provides a measure of signal recovery.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData or list(arviz.InferenceData)</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>. If passed as a list, the posterior draws for all traces will be combined when calculating <cite>posterior_likelihood</cite>.</p>
+</dd>
+<dt><strong>true_signal: np.array</strong></dt><dd><p>True values for the proxy signal, evaluated at the same ages as the posterior signal in <code class="docutils literal notranslate"><span class="pre">full_trace</span></code>.</p>
+</dd>
+<dt><strong>proxy: str, optional</strong></dt><dd><p>Tracer signal to evaluate; defaults to <a href="#id1"><span class="problematic" id="id2">`</span></a>d13c’.</p>
+</dd>
+<dt><strong>mode: str, optional</strong></dt><dd><p>Whether to use the posterior or prior to calculate signal recovery; defaults to <cite>posterior</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>posterior_likelihood: np.array</dt><dd><p>Array of posterior likelihoods (evaluated at each age).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.synthetics.sample_age_recovery">
+<span class="sig-prename descclassname"><span class="pre">stratmc.synthetics.</span></span><span class="sig-name descname"><span class="pre">sample_age_recovery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sections</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'posterior'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/synthetics.html#sample_age_recovery"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.synthetics.sample_age_recovery" title="Link to this definition">#</a></dt>
+<dd><p>Calculates the likelihood of the true sample ages (for synthetic tests, where the true age of each sample is known) given draws from the posterior (default) or prior. Provides a measure of age model recovery.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData or list(arviz.InferenceData)</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>. If passed as a list, the posterior draws for all traces will be combined when calculating <cite>posterior_likelihood</cite>.</p>
+</dd>
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for synthetic sections.</p>
+</dd>
+<dt><strong>sections: list(str) or numpy.array(str), optional</strong></dt><dd><p>List of sections to evaluate; defaults to all sections in sample_df.</p>
+</dd>
+<dt><strong>mode: str, optional</strong></dt><dd><p>Whether to use the posterior or prior age models; defaults to <cite>posterior</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>posterior_likelihood: dict{float} or np.array(float)</dt><dd><p>Posterior likelihoods for the true age of each sample. Returned as an array if only one section is evaluated, or a dictionary of arrays if multiple sections are evaluated.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.synthetics.sample_age_residuals">
+<span class="sig-prename descclassname"><span class="pre">stratmc.synthetics.</span></span><span class="sig-name descname"><span class="pre">sample_age_residuals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sections</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'posterior'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/synthetics.html#sample_age_residuals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.synthetics.sample_age_residuals" title="Link to this definition">#</a></dt>
+<dd><p>Calculates the residual (for each draw) between the true age and the posterior (default) or prior age of each sample.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData or list(arviz.InferenceData)</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>. If passed as a list, the posterior draws for all traces will be combined when calculating <cite>age_residuals</cite>.</p>
+</dd>
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for synthetic sections.</p>
+</dd>
+<dt><strong>sections: list(str) or numpy.array(str), optional</strong></dt><dd><p>List of sections to evaluate; defaults to all sections in sample_df.</p>
+</dd>
+<dt><strong>mode: str, optional</strong></dt><dd><p>Whether to use the posterior or prior age models; defaults to <cite>posterior</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>age_residuals: np.array</dt><dd><p>Sample age residuals; shape is (number of samples, number of posterior draws). Returned as an array if only one section is evaluated, or a dictionary of arrays if multiple sections are evaluated.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.synthetics.synthetic_observations_from_prior">
+<span class="sig-prename descclassname"><span class="pre">stratmc.synthetics.</span></span><span class="sig-name descname"><span class="pre">synthetic_observations_from_prior</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">age_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_heights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uniform_heights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples_per_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['d13c']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxy_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Wald'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls_mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls_lambda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">white_noise_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gp_mean_mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gp_mean_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approximate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hsgp_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hsgp_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'section'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_prior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Laplace'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'section'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_prior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HalfCauchy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/synthetics.html#synthetic_observations_from_prior"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.synthetics.synthetic_observations_from_prior" title="Link to this definition">#</a></dt>
+<dd><p>Given age constraints for a set of stratigraphic sections in <code class="docutils literal notranslate"><span class="pre">ages_df</span></code>, generate synthetic proxy observations by sampling the model prior. Accepts all arguments that can be passed to <a class="reference internal" href="model.html#stratmc.model.build_model" title="stratmc.model.build_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_model()</span></code></a> in <a class="reference internal" href="model.html#module-stratmc.model" title="stratmc.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.model</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>age_vector: np.array(float)</strong></dt><dd><p>Vector of ages at which to evaluate synthetic proxy signal(s).</p>
+</dd>
+<dt><strong>ages_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for synthetic sections.</p>
+</dd>
+<dt><strong>sample_heights: dict{list(float) or numpy.array(float)}, optional</strong></dt><dd><p>Sample heights for each stratigraphic section in <code class="docutils literal notranslate"><span class="pre">ages_df</span></code>; must be a dictionary with section names as keys. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>, which results in either uniformly spaced or randomly spaced sample heights (depending on the <code class="docutils literal notranslate"><span class="pre">uniform_heights</span></code> argument).</p>
+</dd>
+<dt><strong>uniform_heights: bool, optional</strong></dt><dd><p>Whether to generate uniformly spaced (set to <code class="docutils literal notranslate"><span class="pre">True</span></code>) or randomly spaced (set to <code class="docutils literal notranslate"><span class="pre">False</span></code>) sample heights if dictionary of <code class="docutils literal notranslate"><span class="pre">sample_heights</span></code> not provided; defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code> (randomly spaced samples).</p>
+</dd>
+<dt><strong>samples_per_section: int or dict(int), optional</strong></dt><dd><p>Number of samples per section to generate if <code class="docutils literal notranslate"><span class="pre">sample_heights</span></code> not provided; either an integer (if the same for all sections) or a dictionary with section names as keys. Defaults to 20.</p>
+</dd>
+<dt><strong>proxies: list(str), optional</strong></dt><dd><p>List of proxies to generate synthetic observations for; defaults to <cite>d13c</cite>.</p>
+</dd>
+<dt><strong>proxy_std: float or dict(float), optional</strong></dt><dd><p>Measurement uncertainty for each proxy; pass a dictionary of floats with the elements of <code class="docutils literal notranslate"><span class="pre">proxies</span></code> as keys to use a different value for each proxy, or an integer to use the same value for all proxies. Defaults to 0.1.</p>
+</dd>
+<dt><strong>seed: int, optional</strong></dt><dd><p>Seed to use while generating synthetic observations.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>signals: dict(float)</dt><dd><p>Tracers signals drawn from the model prior (evaluated at the points in <code class="docutils literal notranslate"><span class="pre">age_vector</span></code>) used to generate synthetic observations; dictionary keys are <code class="docutils literal notranslate"><span class="pre">proxies</span></code>.</p>
+</dd>
+<dt>sample_df: pandas.DataFrame</dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for synthetic stratigraphic sections.</p>
+</dd>
+<dt>prior: arviz.InferenceData</dt><dd><p>An  <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the prior draw from the model used to generate synthetic observations.</p>
+</dd>
+<dt>model: pymc.Model</dt><dd><p><a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/model/generated/pymc.model.core.Model.html#pymc.model.core.Model" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.model.core.Model</span></code></a> object used to generate synthetic observations.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.synthetics.synthetic_sections">
+<span class="sig-prename descclassname"><span class="pre">stratmc.synthetics.</span></span><span class="sig-name descname"><span class="pre">synthetic_sections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">true_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_proxy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_sections</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_section_thickness</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['d13c']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_amp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/synthetics.html#synthetic_sections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.synthetics.synthetic_sections" title="Link to this definition">#</a></dt>
+<dd><p>Function for generating synthetic proxy observations and age constraints using a predefined proxy signal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>true_time: numpy.array(float)</strong></dt><dd><p>True time vector for input signal.</p>
+</dd>
+<dt><strong>true_proxy: numpy.array(float)</strong></dt><dd><p>True proxy vector for input signal.</p>
+</dd>
+<dt><strong>num_sections: int</strong></dt><dd><p>Number of synthetic sections to generate.</p>
+</dd>
+<dt><strong>num_samples: int</strong></dt><dd><p>Number of samples per synthetic section.</p>
+</dd>
+<dt><strong>max_section_thickness: float</strong></dt><dd><p>Maximum thickness of synthetic sections.</p>
+</dd>
+<dt><strong>proxies: str or list(str), optional</strong></dt><dd><p>Column name(s) for synthetic proxy observations in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>; defaults to ‘d13c’.</p>
+</dd>
+<dt><strong>noise: bool, optional</strong></dt><dd><p>Whether to add white noise to proxy observations; defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>noise_amp: float, optional</strong></dt><dd><p>Amplitude of white noise added to proxy observations (if <code class="docutils literal notranslate"><span class="pre">noise</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>); defaults to 0.1.</p>
+</dd>
+<dt><strong>min_constraints: int, optional</strong></dt><dd><p>Minimum number of age constraints per synthetic section (must be at least 2); defaults to 2.</p>
+</dd>
+<dt><strong>max_constraints: int, optional</strong></dt><dd><p>Maximum number of age constraints per synthetic section; defaults to 3.</p>
+</dd>
+<dt><strong>seed: int, optional</strong></dt><dd><p>Random seed used to generate synthetic sections.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>sample_df: pandas.DataFrame</dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for synthetic sections.</p>
+</dd>
+<dt>ages_df: pandas.DataFrame</dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for synthetic sections.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.synthetics.synthetic_signal_from_prior">
+<span class="sig-prename descclassname"><span class="pre">stratmc.synthetics.</span></span><span class="sig-name descname"><span class="pre">synthetic_signal_from_prior</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ages</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_signals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Wald'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls_mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls_lambda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gp_mean_mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gp_mean_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/synthetics.html#synthetic_signal_from_prior"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.synthetics.synthetic_signal_from_prior" title="Link to this definition">#</a></dt>
+<dd><p>Draws synthetic signals from the model prior, and returns the signal conditioned over the points in <code class="docutils literal notranslate"><span class="pre">ages</span></code>. To generate both signals and synthetic stratigraphic sections, instead use <a class="reference internal" href="#module-stratmc.synthetics" title="stratmc.synthetics"><code class="xref py py-meth docutils literal notranslate"><span class="pre">synthetic_observations_from_prior()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ages: numpy.array(float)</strong></dt><dd><p>Array of ages over which to condition the signal.</p>
+</dd>
+<dt><strong>num_signals: int, optional</strong></dt><dd><p>Number of signals to draw from prior; defaults to 100.</p>
+</dd>
+<dt><strong>ls_dist: str, optional</strong></dt><dd><p>Prior distribution for the lengthscale hyperparameter of the exponential quadratic covariance kernel (<a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a>); set to <code class="docutils literal notranslate"><span class="pre">Wald</span></code> (<a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/distributions/generated/pymc.Wald.html#pymc.Wald" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.Wald</span></code></a>) or <code class="docutils literal notranslate"><span class="pre">HalfNormal</span></code> (<a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/distributions/generated/pymc.HalfNormal.html#pymc.HalfNormal" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.HalfNormal</span></code></a>). Defaults to <code class="docutils literal notranslate"><span class="pre">Wald</span></code> with <code class="docutils literal notranslate"><span class="pre">mu</span> <span class="pre">=</span> <span class="pre">20</span></code> and <code class="docutils literal notranslate"><span class="pre">lambda</span> <span class="pre">=</span> <span class="pre">50</span></code>; to change <code class="docutils literal notranslate"><span class="pre">mu</span></code> and <code class="docutils literal notranslate"><span class="pre">lambda</span></code>, pass the <code class="docutils literal notranslate"><span class="pre">ls_mu</span></code> and <code class="docutils literal notranslate"><span class="pre">ls_lambda</span></code> parameters. For <code class="docutils literal notranslate"><span class="pre">HalfNormal</span></code>, the variance defaults to <code class="docutils literal notranslate"><span class="pre">sigma</span> <span class="pre">=</span> <span class="pre">50</span></code>; change by passing <code class="docutils literal notranslate"><span class="pre">ls_sigma</span></code>.</p>
+</dd>
+<dt><strong>ls_min: float, optional</strong></dt><dd><p>Minimum value for the lengthscale hyperparameter of the <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a> covariance kernel; shifts the lengthscale prior by <code class="docutils literal notranslate"><span class="pre">ls_min</span></code>. Defaults to 0.</p>
+</dd>
+<dt><strong>ls_mu: float, optional</strong></dt><dd><p>Mean (<cite>mu</cite>) of the <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a> lengthscale prior if <code class="docutils literal notranslate"><span class="pre">ls_dist</span> <span class="pre">=</span> <span class="pre">`Wald`</span></code>; defaults to 20.</p>
+</dd>
+<dt><strong>ls_lambda: float, optional</strong></dt><dd><p>Relative precision (<cite>lam</cite>) of the <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a> lengthscale hyperparameter prior if <code class="docutils literal notranslate"><span class="pre">ls_dist</span> <span class="pre">=</span> <span class="pre">`Wald`</span></code>; defaults to 50.</p>
+</dd>
+<dt><strong>ls_sigma: float, optional</strong></dt><dd><p>Scale parameter (<cite>sigma</cite>) of the <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a> lengthscale hyperparameter prior if <code class="docutils literal notranslate"><span class="pre">ls_dist</span> <span class="pre">=</span> <span class="pre">`HalfNormal`</span></code>; defaults to 50.</p>
+</dd>
+<dt><strong>var_sigma: float, optional</strong></dt><dd><p>Scale parameter (<cite>sigma’) of the covariance kernel variance hyperparameter prior, which is a :class:`pymc.HalfNormal</cite> distribution; defaults to 10.</p>
+</dd>
+<dt><strong>gp_mean_mu: float, optional</strong></dt><dd><p>Mean (<cite>mu</cite>) of the GP mean function prior, which is a <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/distributions/generated/pymc.Normal.html#pymc.Normal" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.Normal</span></code></a> distribution; defaults to 0.</p>
+</dd>
+<dt><strong>gp_mean_sigma: float, optional</strong></dt><dd><p>Standard deviation (<cite>sigma</cite>) of the GP mean function prior, which is a <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/distributions/generated/pymc.Normal.html#pymc.Normal" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.Normal</span></code></a> distribution; defaults to 5.</p>
+</dd>
+<dt><strong>seed: int, optional</strong></dt><dd><p>Random seed used to generate signals.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>signal: numpy.ndarray(float)</dt><dd><p>Array with shape <code class="docutils literal notranslate"><span class="pre">ages</span> <span class="pre">x</span> <span class="pre">number</span> <span class="pre">of</span> <span class="pre">signals</span></code> containing the <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">=</span> <span class="pre">num_signals</span></code> synthetic signals drawn from the prior.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.synthetics.synthetic_signal_to_df">
+<span class="sig-prename descclassname"><span class="pre">stratmc.synthetics.</span></span><span class="sig-name descname"><span class="pre">synthetic_signal_to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proxy_vec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_ages</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">age_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">age_heights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">age_section_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['d13c']</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/synthetics.html#synthetic_signal_to_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.synthetics.synthetic_signal_to_df" title="Link to this definition">#</a></dt>
+<dd><p>Helper function for generating artificial sample and age data using <a class="reference internal" href="#module-stratmc.synthetics" title="stratmc.synthetics"><code class="xref py py-meth docutils literal notranslate"><span class="pre">synthetic_sections()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>proxy_vec: np.array of float</strong></dt><dd><p>Array of proxy observations. Pass as a dictionary if more than one proxy.</p>
+</dd>
+<dt><strong>heights: np.array of float</strong></dt><dd><p>Array of heights corresponding to proxy observations in <code class="docutils literal notranslate"><span class="pre">proxy_vec</span></code>.</p>
+</dd>
+<dt><strong>section_ages: np.array of float</strong></dt><dd><p>Array of ages corresponding to proxy observations in <code class="docutils literal notranslate"><span class="pre">proxy_vec</span></code>.</p>
+</dd>
+<dt><strong>section_names: np.array of str</strong></dt><dd><p>Array of section names corresponding to proxy observations in <code class="docutils literal notranslate"><span class="pre">proxy_vec</span></code>.</p>
+</dd>
+<dt><strong>ages: np.array of float</strong></dt><dd><p>Array of age constraints.</p>
+</dd>
+<dt><strong>age_std: np.array of float</strong></dt><dd><p>Array of uncertainties for each age constraint in <code class="docutils literal notranslate"><span class="pre">ages</span></code>.</p>
+</dd>
+<dt><strong>age_heights: np.array of float</strong></dt><dd><p>Array of heights for each age constraint in <code class="docutils literal notranslate"><span class="pre">ages</span></code>.</p>
+</dd>
+<dt><strong>age_section_names: np.array of str</strong></dt><dd><p>Array of section names corresponding to age constraints in <code class="docutils literal notranslate"><span class="pre">ages</span></code>.</p>
+</dd>
+<dt><strong>proxies: str or list(str), optional</strong></dt><dd><p>Name(s) of proxies; defaults to <cite>d13c</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>sample_df: pandas.DataFrame</dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for synthetic sections.</p>
+</dd>
+<dt>ages_df: pandas.DataFrame</dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for synthetic sections.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.synthetics.make_excursion"><code class="docutils literal notranslate"><span class="pre">make_excursion()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.synthetics.quantify_signal_recovery"><code class="docutils literal notranslate"><span class="pre">quantify_signal_recovery()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.synthetics.sample_age_recovery"><code class="docutils literal notranslate"><span class="pre">sample_age_recovery()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.synthetics.sample_age_residuals"><code class="docutils literal notranslate"><span class="pre">sample_age_residuals()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.synthetics.synthetic_observations_from_prior"><code class="docutils literal notranslate"><span class="pre">synthetic_observations_from_prior()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.synthetics.synthetic_sections"><code class="docutils literal notranslate"><span class="pre">synthetic_sections()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.synthetics.synthetic_signal_from_prior"><code class="docutils literal notranslate"><span class="pre">synthetic_signal_from_prior()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.synthetics.synthetic_signal_to_df"><code class="docutils literal notranslate"><span class="pre">synthetic_signal_to_df()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/docs/synthetics.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Stacey Edmonsond.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

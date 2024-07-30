@@ -1,0 +1,598 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>API Reference &#8212; StratMC v1.0 Manual</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/api';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Loading and processing data" href="data.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jul 29, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../_static/stratmc.png" class="logo__image only-light" alt="StratMC v1.0 Manual - Home"/>
+    <script>document.write(`<img src="../_static/stratmc.png" class="logo__image only-dark" alt="StratMC v1.0 Manual - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="data.html"> Data Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model.html"> Statistical model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inference.html"> Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html"> Plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synthetics.html"> Synthetic signals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html"> Tests and checks</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="userguide.html" class="nav-link">User Guide</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">API Reference</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="data.html"> Data Processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data.html#stratmc.data.accumulation_rate"><code class="docutils literal notranslate"><span class="pre">accumulation_rate()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html#stratmc.data.clean_data"><code class="docutils literal notranslate"><span class="pre">clean_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html#stratmc.data.combine_data"><code class="docutils literal notranslate"><span class="pre">combine_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html#stratmc.data.combine_duplicates"><code class="docutils literal notranslate"><span class="pre">combine_duplicates()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html#stratmc.data.combine_traces"><code class="docutils literal notranslate"><span class="pre">combine_traces()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html#stratmc.data.depth_to_height"><code class="docutils literal notranslate"><span class="pre">depth_to_height()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html#stratmc.data.drop_chains"><code class="docutils literal notranslate"><span class="pre">drop_chains()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html#stratmc.data.load_data"><code class="docutils literal notranslate"><span class="pre">load_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html#stratmc.data.load_object"><code class="docutils literal notranslate"><span class="pre">load_object()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html#stratmc.data.load_trace"><code class="docutils literal notranslate"><span class="pre">load_trace()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html#stratmc.data.save_object"><code class="docutils literal notranslate"><span class="pre">save_object()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html#stratmc.data.save_trace"><code class="docutils literal notranslate"><span class="pre">save_trace()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model.html"> Statistical model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model.html#stratmc.model.build_model"><code class="docutils literal notranslate"><span class="pre">build_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html#stratmc.model.intermediate_detrital_potential"><code class="docutils literal notranslate"><span class="pre">intermediate_detrital_potential()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html#stratmc.model.intermediate_intrusive_potential"><code class="docutils literal notranslate"><span class="pre">intermediate_intrusive_potential()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html#stratmc.model.superposition"><code class="docutils literal notranslate"><span class="pre">superposition()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html#stratmc.model.transformed_initval"><code class="docutils literal notranslate"><span class="pre">transformed_initval()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="inference.html"> Inference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inference.html#stratmc.inference.age_range_to_height"><code class="docutils literal notranslate"><span class="pre">age_range_to_height()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="inference.html#stratmc.inference.calculate_lengthscale_stability"><code class="docutils literal notranslate"><span class="pre">calculate_lengthscale_stability()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="inference.html#stratmc.inference.calculate_proxy_signal_stability"><code class="docutils literal notranslate"><span class="pre">calculate_proxy_signal_stability()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="inference.html#stratmc.inference.count_samples"><code class="docutils literal notranslate"><span class="pre">count_samples()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="inference.html#stratmc.inference.extend_age_model"><code class="docutils literal notranslate"><span class="pre">extend_age_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="inference.html#stratmc.inference.find_gaps"><code class="docutils literal notranslate"><span class="pre">find_gaps()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="inference.html#stratmc.inference.get_trace"><code class="docutils literal notranslate"><span class="pre">get_trace()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="inference.html#stratmc.inference.interpolate_proxy"><code class="docutils literal notranslate"><span class="pre">interpolate_proxy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="inference.html#stratmc.inference.map_ages_to_section"><code class="docutils literal notranslate"><span class="pre">map_ages_to_section()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html"> Plotting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.accumulation_rate_stratigraphy"><code class="docutils literal notranslate"><span class="pre">accumulation_rate_stratigraphy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.age_constraints"><code class="docutils literal notranslate"><span class="pre">age_constraints()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.age_height_model"><code class="docutils literal notranslate"><span class="pre">age_height_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.covariance_hyperparameters"><code class="docutils literal notranslate"><span class="pre">covariance_hyperparameters()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.interpolated_proxy_inference"><code class="docutils literal notranslate"><span class="pre">interpolated_proxy_inference()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.lengthscale_stability"><code class="docutils literal notranslate"><span class="pre">lengthscale_stability()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.lengthscale_traceplot"><code class="docutils literal notranslate"><span class="pre">lengthscale_traceplot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.limiting_age_constraints"><code class="docutils literal notranslate"><span class="pre">limiting_age_constraints()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.noise_summary"><code class="docutils literal notranslate"><span class="pre">noise_summary()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.offset_summary"><code class="docutils literal notranslate"><span class="pre">offset_summary()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.proxy_data_density"><code class="docutils literal notranslate"><span class="pre">proxy_data_density()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.proxy_data_gaps"><code class="docutils literal notranslate"><span class="pre">proxy_data_gaps()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.proxy_inference"><code class="docutils literal notranslate"><span class="pre">proxy_inference()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.proxy_signal_stability"><code class="docutils literal notranslate"><span class="pre">proxy_signal_stability()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.proxy_strat"><code class="docutils literal notranslate"><span class="pre">proxy_strat()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.sadler_plot"><code class="docutils literal notranslate"><span class="pre">sadler_plot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.sample_ages"><code class="docutils literal notranslate"><span class="pre">sample_ages()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.sample_ages_per_chain"><code class="docutils literal notranslate"><span class="pre">sample_ages_per_chain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.section_age_range"><code class="docutils literal notranslate"><span class="pre">section_age_range()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.section_proxy_residuals"><code class="docutils literal notranslate"><span class="pre">section_proxy_residuals()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.section_proxy_signal"><code class="docutils literal notranslate"><span class="pre">section_proxy_signal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#stratmc.plotting.section_summary"><code class="docutils literal notranslate"><span class="pre">section_summary()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="synthetics.html"> Synthetic signals</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="synthetics.html#stratmc.synthetics.make_excursion"><code class="docutils literal notranslate"><span class="pre">make_excursion()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetics.html#stratmc.synthetics.quantify_signal_recovery"><code class="docutils literal notranslate"><span class="pre">quantify_signal_recovery()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetics.html#stratmc.synthetics.sample_age_recovery"><code class="docutils literal notranslate"><span class="pre">sample_age_recovery()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetics.html#stratmc.synthetics.sample_age_residuals"><code class="docutils literal notranslate"><span class="pre">sample_age_residuals()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetics.html#stratmc.synthetics.synthetic_observations_from_prior"><code class="docutils literal notranslate"><span class="pre">synthetic_observations_from_prior()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetics.html#stratmc.synthetics.synthetic_sections"><code class="docutils literal notranslate"><span class="pre">synthetic_sections()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetics.html#stratmc.synthetics.synthetic_signal_from_prior"><code class="docutils literal notranslate"><span class="pre">synthetic_signal_from_prior()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetics.html#stratmc.synthetics.synthetic_signal_to_df"><code class="docutils literal notranslate"><span class="pre">synthetic_signal_to_df()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html"> Tests and checks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#stratmc.tests.check_detrital_ages"><code class="docutils literal notranslate"><span class="pre">check_detrital_ages()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#stratmc.tests.check_inference"><code class="docutils literal notranslate"><span class="pre">check_inference()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#stratmc.tests.check_intrusive_ages"><code class="docutils literal notranslate"><span class="pre">check_intrusive_ages()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#stratmc.tests.check_superposition"><code class="docutils literal notranslate"><span class="pre">check_superposition()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="indices-and-tables">
+<h2>Indices and Tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="../py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="../search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#indices-and-tables">Indices and Tables</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/docs/api.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Stacey Edmonsond.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1358 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Plotting &#8212; StratMC v1.0 Manual</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/plotting';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tools for generating synthetic data" href="synthetics.html" />
+    <link rel="prev" title="Inference" href="inference.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jul 29, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../_static/stratmc.png" class="logo__image only-light" alt="StratMC v1.0 Manual - Home"/>
+    <script>document.write(`<img src="../_static/stratmc.png" class="logo__image only-dark" alt="StratMC v1.0 Manual - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="data.html"> Data Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model.html"> Statistical model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inference.html"> Inference</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#"> Plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synthetics.html"> Synthetic signals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html"> Tests and checks</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="userguide.html" class="nav-link">User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="api.html" class="nav-link">API Reference</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Plotting</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="plotting">
+<h1>Plotting<a class="headerlink" href="#plotting" title="Link to this heading">#</a></h1>
+<p>Functions for plotting the input data, inference results, and convergence/stability metrics.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.plotting.proxy_strat" title="stratmc.plotting.proxy_strat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">proxy_strat</span></code></a></p></td>
+<td><p>Plot stratigraphic data (proxy observations and age constraints) for each section.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.plotting.proxy_inference" title="stratmc.plotting.proxy_inference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">proxy_inference</span></code></a></p></td>
+<td><p>Plot the inferred proxy signal over time.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.plotting.interpolated_proxy_inference" title="stratmc.plotting.interpolated_proxy_inference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolated_proxy_inference</span></code></a></p></td>
+<td><p>Plot interpolated proxy signal over time (by extending the posterior section age models to a new proxy not included in the inference model) using interpolated age models from <a class="reference internal" href="inference.html#stratmc.inference.extend_age_model" title="stratmc.inference.extend_age_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">extend_age_model()</span></code></a> and interpolated proxy values from <a class="reference internal" href="inference.html#stratmc.inference.interpolate_proxy" title="stratmc.inference.interpolate_proxy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">interpolate_proxy()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.plotting.age_height_model" title="stratmc.plotting.age_height_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">age_height_model</span></code></a></p></td>
+<td><p>Generate a posterior age-height plot for each section.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.plotting.section_proxy_signal" title="stratmc.plotting.section_proxy_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section_proxy_signal</span></code></a></p></td>
+<td><p>Map the posterior proxy signal back to height in each section (using its most likely posterior age model), and plot alongside the proxy observations (plotted by most likely posterior age).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.plotting.covariance_hyperparameters" title="stratmc.plotting.covariance_hyperparameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">covariance_hyperparameters</span></code></a></p></td>
+<td><p>Plot prior and posterior distributions for the lengthscale (<span class="math notranslate nohighlight">\(\ell\)</span>) and variance (<span class="math notranslate nohighlight">\(\sigma\)</span>) hyperparameters of the <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a> Gaussian process covariance kernel:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.plotting.section_summary" title="stratmc.plotting.section_summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section_summary</span></code></a></p></td>
+<td><p>For a given section, plot posterior estimates of sample age, sedimentation rate, noise, and offset.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.plotting.noise_summary" title="stratmc.plotting.noise_summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">noise_summary</span></code></a></p></td>
+<td><p>Plot posterior noise distributions for each section or group of samples (depending on <code class="docutils literal notranslate"><span class="pre">noise_type</span></code> used in <a class="reference internal" href="model.html#stratmc.model.build_model" title="stratmc.model.build_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_model()</span></code></a>) for a given proxy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.plotting.offset_summary" title="stratmc.plotting.offset_summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">offset_summary</span></code></a></p></td>
+<td><p>Plot posterior offset distributions for each section or group of samples (depending on <code class="docutils literal notranslate"><span class="pre">offset_type</span></code> used in <a class="reference internal" href="model.html#stratmc.model.build_model" title="stratmc.model.build_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_model()</span></code></a>).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.plotting.section_proxy_residuals" title="stratmc.plotting.section_proxy_residuals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section_proxy_residuals</span></code></a></p></td>
+<td><p>Plot the residuals between the observed proxy values for each section and the inferred proxy signal (using the posterior section age models to map the signal back to height in section).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.plotting.sample_ages" title="stratmc.plotting.sample_ages"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_ages</span></code></a></p></td>
+<td><p>Plot sample age prior and posterior distributions for a given section.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.plotting.sample_ages_per_chain" title="stratmc.plotting.sample_ages_per_chain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_ages_per_chain</span></code></a></p></td>
+<td><p>Plot sample age posterior distributions for a given section, with separate distributions for each chain.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.plotting.age_constraints" title="stratmc.plotting.age_constraints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">age_constraints</span></code></a></p></td>
+<td><p>For a given section, plot prior and posterior age distributions for all depositional age constraints (and limiting age constraints that provide a minimum or maximum age for the entire section).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.plotting.limiting_age_constraints" title="stratmc.plotting.limiting_age_constraints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">limiting_age_constraints</span></code></a></p></td>
+<td><p>For a given section, plot prior and posterior age distributions for all intermediate limiting (i.e., detrital and intrusive ages in the middle of a section) age constraints.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.plotting.sadler_plot" title="stratmc.plotting.sadler_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sadler_plot</span></code></a></p></td>
+<td><p>Plot accumulation rate against duration.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.plotting.accumulation_rate_stratigraphy" title="stratmc.plotting.accumulation_rate_stratigraphy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">accumulation_rate_stratigraphy</span></code></a></p></td>
+<td><p>Plot the probability density of sediment accumulation rates (calculated between successive samples) through time.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.plotting.section_age_range" title="stratmc.plotting.section_age_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section_age_range</span></code></a></p></td>
+<td><p>Plot the stratigraphic interval corresponding to a given age range (based on the posterior section age models).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.plotting.proxy_data_gaps" title="stratmc.plotting.proxy_data_gaps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">proxy_data_gaps</span></code></a></p></td>
+<td><p>For a set of discrete time bins, shows the number of draws from the posterior where there are no proxy observations (i.e., where there are temporal <cite>gaps</cite> in the proxy data).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.plotting.proxy_data_density" title="stratmc.plotting.proxy_data_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">proxy_data_density</span></code></a></p></td>
+<td><p>Plot the mean number proxy observations in discrete time bins (averaged over all posterior draws).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.plotting.lengthscale_traceplot" title="stratmc.plotting.lengthscale_traceplot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lengthscale_traceplot</span></code></a></p></td>
+<td><p>Generate trace plot (parameter value vs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.plotting.lengthscale_stability" title="stratmc.plotting.lengthscale_stability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lengthscale_stability</span></code></a></p></td>
+<td><p>Plot the posterior standard deviation of the <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a> covariance kernel lengthscale when 1 through <em>N</em> chains are considered.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.plotting.proxy_signal_stability" title="stratmc.plotting.proxy_signal_stability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">proxy_signal_stability</span></code></a></p></td>
+<td><p>Plot the sum (over all time slices) of the residuals between the median inferred proxy signal when all <em>N</em> chains are considered compared to when 1 to <em>N-1</em> chains are considered.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="target" id="module-stratmc.plotting"></span><dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.accumulation_rate_stratigraphy">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">accumulation_rate_stratigraphy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">age_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">age_bin_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_bin_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_age_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'jet'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(8,</span> <span class="pre">4)</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#accumulation_rate_stratigraphy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.accumulation_rate_stratigraphy" title="Link to this definition">#</a></dt>
+<dd><p>Plot the probability density of sediment accumulation rates (calculated between successive samples) through time. Probability density for each age bin sums to 1. Unless a <code class="docutils literal notranslate"><span class="pre">sections</span></code> argument is passed, includes accumulation rates for all sections.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/da92fcca59def574c15e72526f77c486/plotting-1.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/aa52280bd8c7ddbdb59d7e7fea94bec1/plotting-1.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/2021cab4926472b50944861ac3849613/plotting-1.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/226c1ef4878200d3ef87f2dcc03f754f/plotting-1.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-1.png" class="plot-directive" src="../_images/plotting-1.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for all sections.</p>
+</dd>
+<dt><strong>ages_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for all sections.</p>
+</dd>
+<dt><strong>age_bins: int, optional</strong></dt><dd><p>Number of bin edges for age data (if <code class="docutils literal notranslate"><span class="pre">age_bin_edges</span></code> not provided). Defaults to 50.</p>
+</dd>
+<dt><strong>rate_bins: int, optional</strong></dt><dd><p>Number of bin edges for rate data (if <code class="docutils literal notranslate"><span class="pre">rate_bin_edges</span></code> not provided). Defaults to 50.</p>
+</dd>
+<dt><strong>age_bin_edges: list(float) or numpy.array(float), optional</strong></dt><dd><p>List or array of bin edges for the age data.</p>
+</dd>
+<dt><strong>rate_bin_edges: list(float) numpy.array(float), optional</strong></dt><dd><p>List or array of bin edges for the rate data.</p>
+</dd>
+<dt><strong>rate_scale: str, optional</strong></dt><dd><p>Scaling for rate (‘linear’ or ‘log’). Defaults to ‘log’.</p>
+</dd>
+<dt><strong>include_age_constraints: bool, optional</strong></dt><dd><p>Include age constraints in sedimentation rate calculations. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+<dt><strong>sections: list(str) or numpy.array(str), optional</strong></dt><dd><p>Section(s) to include. If not provided, combines data from all sections in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with accumulation rate probability density through time.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.age_constraints">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">age_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#age_constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.age_constraints" title="Link to this definition">#</a></dt>
+<dd><p>For a given section, plot prior and posterior age distributions for all depositional age constraints (and limiting age constraints that provide a minimum or maximum age for the entire section). To plot intermediate limiting ages (i.e., detrital and intrusive age constraints in the middle of a section), use <a class="reference internal" href="#stratmc.plotting.limiting_age_constraints" title="stratmc.plotting.limiting_age_constraints"><code class="xref py py-meth docutils literal notranslate"><span class="pre">limiting_age_constraints()</span></code></a>.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/8574cff4ceb594a995116decd04bb0e5/plotting-2.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/f5f108959faf4c123ce6f9d27f29b633/plotting-2.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/83ecec8f3a5465275da481a474b98e6b/plotting-2.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/9dd889964d1a6cc508194988c3062125/plotting-2.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-2.png" class="plot-directive" src="../_images/plotting-2.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>section: str</strong></dt><dd><p>Name of target section.</p>
+</dd>
+<dt><strong>cmap: str, optional</strong></dt><dd><p>Name of seaborn color palette to use for age distributions. Defaults to ‘viridis’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with prior and posterior depositional age constraint distributions.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.age_height_model">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">age_height_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_excluded_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Spectral'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#age_height_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.age_height_model" title="Link to this definition">#</a></dt>
+<dd><p>Generate a posterior age-height plot for each section.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/4679bf85b31a255636d13bd4abbdbe12/plotting-3.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/60fd32bee496280c425a62b462e521c8/plotting-3.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/a1f2f3dad82bc89735faec5410d26332/plotting-3.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/ae50dd39f92db30e37b5cc1ebc54df53/plotting-3.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-3.png" class="plot-directive" src="../_images/plotting-3.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for all sections.</p>
+</dd>
+<dt><strong>ages_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for all sections.</p>
+</dd>
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>sections: list(str) or numpy.array(str), optional</strong></dt><dd><p>List of sections to plot. Defaults to all sections in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>.</p>
+</dd>
+<dt><strong>cmap: str, optional</strong></dt><dd><p>Name of seaborn color palette to use for sections. Defaults to ‘Spectral’.</p>
+</dd>
+<dt><strong>legend: bool, optional</strong></dt><dd><p>Generate a legend. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>include_excluded_samples: bool, optional</strong></dt><dd><p>Whether to consider excluded samples (<code class="docutils literal notranslate"><span class="pre">Exclude?</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>) whose ages were passively tracked in the inference model. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with age-height models for each section.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.covariance_hyperparameters">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">covariance_hyperparameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(4,</span> <span class="pre">3.5)</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#covariance_hyperparameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.covariance_hyperparameters" title="Link to this definition">#</a></dt>
+<dd><p>Plot prior and posterior distributions for the lengthscale (<span class="math notranslate nohighlight">\(\ell\)</span>) and variance (<span class="math notranslate nohighlight">\(\sigma\)</span>) hyperparameters of the <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a> Gaussian process covariance kernel:</p>
+<div class="math notranslate nohighlight">
+\[k(x, x') = \sigma^2 \mathrm{exp} \left[-\frac{(x - x')^2}{2 \ell^2} \right]\]</div>
+<p>(<a class="reference download internal" download="" href="../_downloads/88a5fc97eca5fc5a80c9f0c9f41e63d3/plotting-4.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/d6a3a191f4a2099ed9524a264c868066/plotting-4.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/29f8c1e82103c4d8b68362930d2a1b9f/plotting-4.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/d349df6868dca0a50f784cf4274750dc/plotting-4.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-4.png" class="plot-directive" src="../_images/plotting-4.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>proxy: str, optional</strong></dt><dd><p>Tracer to plot model parameters for (each proxy has a different covariance kernel); only required if more than one proxy was included in the inference.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with prior and posterior model parameters.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.interpolated_proxy_inference">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">interpolated_proxy_inference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interpolated_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolated_proxy_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_mle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'horizontal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marker_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Spectral'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#interpolated_proxy_inference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.interpolated_proxy_inference" title="Link to this definition">#</a></dt>
+<dd><p>Plot interpolated proxy signal over time (by extending the posterior section age models to a new proxy not included in the inference model) using interpolated age models from <a class="reference internal" href="inference.html#stratmc.inference.extend_age_model" title="stratmc.inference.extend_age_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">extend_age_model()</span></code></a> and interpolated proxy values from <a class="reference internal" href="inference.html#stratmc.inference.interpolate_proxy" title="stratmc.inference.interpolate_proxy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">interpolate_proxy()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/e101f01420057394a1bd65258dffbc03/plotting-5.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/e16c809172848f8527ab8ca31022071e/plotting-5.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/67db64549556efb8a65e919621a20b0f/plotting-5.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/d7c9528f3713ba8a34dfa42b5e6097b7/plotting-5.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-5.png" class="plot-directive" src="../_images/plotting-5.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>interpolated_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> with interpolated age draws and sample age summary statistics from <a class="reference internal" href="inference.html#stratmc.inference.extend_age_model" title="stratmc.inference.extend_age_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">extend_age_model()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>interpolated_proxy_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> with interpolated proxy values and summary statistics at target ages from <a class="reference internal" href="inference.html#stratmc.inference.interpolate_proxy" title="stratmc.inference.interpolate_proxy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">interpolate_proxy()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>proxy: str</strong></dt><dd><p>Name of new proxy (must match column name in <code class="docutils literal notranslate"><span class="pre">interpolated_proxy_df</span></code>).</p>
+</dd>
+<dt><strong>legend: bool, optional</strong></dt><dd><p>Generate a legend. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+<dt><strong>plot_data: bool, optional</strong></dt><dd><p>Plot proxy observations by most likely posterior age. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>plot_mle: bool, optional</strong></dt><dd><p>Plot the maximum likelihood estimate. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+<dt><strong>orientation: str, optional</strong></dt><dd><p>Orientation of figure (‘horizontal’ or ‘vertical’). Defaults to ‘horizontal’.</p>
+</dd>
+<dt><strong>marker_size: int, optional</strong></dt><dd><p>Size of markers if <code class="docutils literal notranslate"><span class="pre">plot_data</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>. Defaults to 20.</p>
+</dd>
+<dt><strong>section_legend: bool, optional</strong></dt><dd><p>Include section names in the legend (if <code class="docutils literal notranslate"><span class="pre">plot_data</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>). Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>section_cmap: str, optional</strong></dt><dd><p>Name of seaborn color palette to use for sections (if <code class="docutils literal notranslate"><span class="pre">plot_data</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>). Defaults to ‘Spectral’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with interpolated proxy signal over time.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.lengthscale_stability">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">lengthscale_stability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(5,</span> <span class="pre">3.5)</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#lengthscale_stability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.lengthscale_stability" title="Link to this definition">#</a></dt>
+<dd><p>Plot the posterior standard deviation of the <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a> covariance kernel lengthscale when 1 through <em>N</em> chains are considered. When the posterior has been sufficiently explored, the standard deviation will stabilize; if it has not stabilized, then additional chains should be run.</p>
+<p>To consider chains from multiple traces associated with the same inference model, first combine the traces (saved as NetCDF files) using <a class="reference internal" href="data.html#module-stratmc.data" title="stratmc.data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">combine_traces()</span></code></a> in <a class="reference internal" href="data.html#module-stratmc.data" title="stratmc.data"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.data</span></code></a>.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/8b5d8b2f0e1d0fbf776dfbc15bc0e327/plotting-6.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/cc766b77fd0c91d6555a255bcd43d41a/plotting-6.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/1108e57bbe36a7c985acc82653c7612f/plotting-6.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/7ed4996edc155549b30bfe5c6591d8ae/plotting-6.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-6.png" class="plot-directive" src="../_images/plotting-6.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>proxy: str, optional</strong></dt><dd><p>Target proxy; only required if more than one proxy was included in the inference.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure showing the standard deviation of the covariance kernel lengthscale hyperparameter posterior for 1 through <em>N</em> chains.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.lengthscale_traceplot">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">lengthscale_traceplot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chains</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(5,</span> <span class="pre">3.5)</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#lengthscale_traceplot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.lengthscale_traceplot" title="Link to this definition">#</a></dt>
+<dd><p>Generate trace plot (parameter value vs. step in Markov chain) for the <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a> covariance kernel lengthscale. By default, includes all chains; to plot the draws for only a subset of chains, past list of chain indices to <code class="docutils literal notranslate"><span class="pre">chains</span></code>. Use to check for posterior multimodality.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/a7bb24c50eb576d86d6d74275be8aed0/plotting-7.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/71e9be78cd1694c4651bdf9751f33d61/plotting-7.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/2d82f2781b25b10c8a8d206fb911bd44/plotting-7.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/14e726e725d04bcc8e18fa045600d530/plotting-7.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-7.png" class="plot-directive" src="../_images/plotting-7.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>chains: list(int) or numpy.array(int); optional</strong></dt><dd><p>Indices of chains to plot; optional (defaults to all chains).</p>
+</dd>
+<dt><strong>proxy: str, optional</strong></dt><dd><p>Target proxy; only required if more than one proxy was included in the inference.</p>
+</dd>
+<dt><strong>legend: bool, optional</strong></dt><dd><p>Generate a legend. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with lengthscale trace plot.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.limiting_age_constraints">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">limiting_age_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#limiting_age_constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.limiting_age_constraints" title="Link to this definition">#</a></dt>
+<dd><p>For a given section, plot prior and posterior age distributions for all intermediate limiting (i.e., detrital and intrusive ages in the middle of a section) age constraints. To plot depositional age constraints (and limiting age constraints that provide a minimum or maximum age for the entire section), use <a class="reference internal" href="#stratmc.plotting.age_constraints" title="stratmc.plotting.age_constraints"><code class="xref py py-meth docutils literal notranslate"><span class="pre">age_constraints()</span></code></a>.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/d66f017f67b740bc3a3fd5c34615791b/plotting-8.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/dc12fce34a8b384f1157ad106bfb3744/plotting-8.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/3ab0e1610c0131bbedd0a024e940021c/plotting-8.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/939955e6c6c2bb5e2a88e02d853ecaf3/plotting-8.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-8.png" class="plot-directive" src="../_images/plotting-8.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for all sections.</p>
+</dd>
+<dt><strong>ages_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for all sections.</p>
+</dd>
+<dt><strong>section: str</strong></dt><dd><p>Name of target section.</p>
+</dd>
+<dt><strong>cmap: str, optional</strong></dt><dd><p>Name of seaborn color palette to use for age distributions. Defaults to ‘viridis’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with prior and posterior limiting age constraint distributions.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.noise_summary">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">noise_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#noise_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.noise_summary" title="Link to this definition">#</a></dt>
+<dd><p>Plot posterior noise distributions for each section or group of samples (depending on <code class="docutils literal notranslate"><span class="pre">noise_type</span></code> used in <a class="reference internal" href="model.html#stratmc.model.build_model" title="stratmc.model.build_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_model()</span></code></a>) for a given proxy. If multiple proxies were included in the inference, pass a <code class="docutils literal notranslate"><span class="pre">proxy</span></code> argument to specify which noise terms to plot.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/6026af5081d326237cd9f3a810af5dc2/plotting-9.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/2549e5887ab84ec65d8e381f14871c52/plotting-9.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/35c8b45ef99a4906a243d64923ac3aa5/plotting-9.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/589dbfce79001f9b2e65c6fd8c9d3a82/plotting-9.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-9.png" class="plot-directive" src="../_images/plotting-9.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>proxy: str, optional</strong></dt><dd><p>Target proxy; only required if more than one proxy was included in the inference.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with noise distributions for each section or group of samples.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.offset_summary">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">offset_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#offset_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.offset_summary" title="Link to this definition">#</a></dt>
+<dd><p>Plot posterior offset distributions for each section or group of samples (depending on <code class="docutils literal notranslate"><span class="pre">offset_type</span></code> used in <a class="reference internal" href="model.html#stratmc.model.build_model" title="stratmc.model.build_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_model()</span></code></a>). If multiple proxies were included in the inference, pass a <code class="docutils literal notranslate"><span class="pre">proxy</span></code> argument to specify which offset terms to plot.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/ed232dc92fb8cab0ff2ae7f0080da485/plotting-10.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/bd21da5b2af26bbd50bcc8f127892f99/plotting-10.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/1aa8b7b4cc96f565bf65148125fa0b54/plotting-10.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/94d01cd633cc4c1b8905cc5ff95586bc/plotting-10.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-10.png" class="plot-directive" src="../_images/plotting-10.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>proxy: str, optional</strong></dt><dd><p>Target proxy; only required if more than one proxy was included in the inference.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with offset distributions for each section or group of samples.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.proxy_data_density">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">proxy_data_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(6,</span> <span class="pre">3.5)</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#proxy_data_density"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.proxy_data_density" title="Link to this definition">#</a></dt>
+<dd><p>Plot the mean number proxy observations in discrete time bins (averaged over all posterior draws). This plot can be used to determine where proxy observations are relatively sparse, and additional observations may improve the inference.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/4c144465b290b7f012294e3f733f6254/plotting-11.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/e01a0fc50f3d1d4d84de43c5300fd4b9/plotting-11.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/5053ccec9df74464d6e988c74dab3fdd/plotting-11.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/e65744d8281825f0363a4f4196786285/plotting-11.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-11.png" class="plot-directive" src="../_images/plotting-11.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>time_grid: np.array, optional</strong></dt><dd><p>Time bin edges; if not provided, defaults to the <code class="docutils literal notranslate"><span class="pre">ages</span></code> array passed to <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with bar plot of mean number of observations in each time bin.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.proxy_data_gaps">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">proxy_data_gaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'percentage'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(6,</span> <span class="pre">3.5)</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#proxy_data_gaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.proxy_data_gaps" title="Link to this definition">#</a></dt>
+<dd><p>For a set of discrete time bins, shows the number of draws from the posterior where there are no proxy observations (i.e., where there are temporal <cite>gaps</cite> in the proxy data). This plot can be used to determine where additional observations are needed to improve the inference.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/54b1c417512a94ee843ec6ae0f40b82a/plotting-12.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/791a29010901bcddffdac4335064ea3e/plotting-12.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/67d60e14c1662844073403a18fabb1fe/plotting-12.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/d687b060d5bea81c40e656289787d871/plotting-12.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-12.png" class="plot-directive" src="../_images/plotting-12.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>time_grid: np.array, optional</strong></dt><dd><p>Time bin edges; if not provided, defaults to the <code class="docutils literal notranslate"><span class="pre">ages</span></code> array passed to <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a>.</p>
+</dd>
+<dt><strong>yaxis: str, optional</strong></dt><dd><p>Set y-axis to percentage of posterior draws without observations (‘percentage’) or to the number of posterior draws without observations (‘count`). Defaults to ‘percentage`.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with bar plot of number of posterior draws with gaps for each time bin.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.proxy_inference">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">proxy_inference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_excluded_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_mle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'horizontal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marker_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Spectral'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#proxy_inference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.proxy_inference" title="Link to this definition">#</a></dt>
+<dd><p>Plot the inferred proxy signal over time.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/6595affa7a16993f6404cb17e38cc6d5/plotting-13.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/0ef72ba06e22d6c43bd97917daba4858/plotting-13.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/41b255300483db9956109e41ee5d48b8/plotting-13.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/5c5c9ff17832068c205109296a87f886/plotting-13.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-13.png" class="plot-directive" src="../_images/plotting-13.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for all sections.</p>
+</dd>
+<dt><strong>ages_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for all sections.</p>
+</dd>
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>proxy: str, optional</strong></dt><dd><p>Tracer to plot; only required if more than one proxy was included in the inference.</p>
+</dd>
+<dt><strong>legend: bool, optional</strong></dt><dd><p>Generate a legend. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+<dt><strong>plot_constraints: bool, optional</strong></dt><dd><p>Plot age constraints for each section as dashed lines. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>plot_data: bool, optional</strong></dt><dd><p>Plot proxy observations by most likely posterior age. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>plot_excluded_samples: bool, optional</strong></dt><dd><p>Plot proxy observations that were excluded from the inference (<code class="docutils literal notranslate"><span class="pre">Exclude?</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>). Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>plot_mean: bool, optional</strong></dt><dd><p>Plot the mean as a dashed line. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>plot_mle: bool, optional</strong></dt><dd><p>Plot the maximum likelihood estimate. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+<dt><strong>orientation: str, optional</strong></dt><dd><p>Orientation of figure (‘horizontal’ with age on the x-axis, or ‘vertical’ with age on the y-axis). Defaults to ‘horizontal’.</p>
+</dd>
+<dt><strong>marker_size: int, optional</strong></dt><dd><p>Size of markers if <code class="docutils literal notranslate"><span class="pre">plot_data</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>. Defaults to 20.</p>
+</dd>
+<dt><strong>section_legend: bool, optional</strong></dt><dd><p>Include section names in the legend (if <code class="docutils literal notranslate"><span class="pre">plot_data</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>). Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>section_cmap: str, optional</strong></dt><dd><p>Name of seaborn color palette to use for sections (if <code class="docutils literal notranslate"><span class="pre">plot_data</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>). Defaults to ‘Spectral’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with the proxy signal inference.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.proxy_signal_stability">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">proxy_signal_stability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(5,</span> <span class="pre">3.5)</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#proxy_signal_stability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.proxy_signal_stability" title="Link to this definition">#</a></dt>
+<dd><p>Plot the sum (over all time slices) of the residuals between the median inferred proxy signal when all <em>N</em> chains are considered compared to when 1 to <em>N-1</em> chains are considered. When the posterior has been sufficiently explored, the residuals will stabilize and approach zero; if they have not stabilized, then additional chains should be run.</p>
+<p>To consider chains from multiple traces associated with the same inference model, first combine the traces (saved as NetCDF files) using <a class="reference internal" href="data.html#module-stratmc.data" title="stratmc.data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">combine_traces()</span></code></a> in <a class="reference internal" href="data.html#module-stratmc.data" title="stratmc.data"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.data</span></code></a>.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/bca07735978f06152c7bfde83b5028d5/plotting-14.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/1de9ed0dfba35ac9dcf41f79fa452e3b/plotting-14.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/5d1ede6e2931d5710ef676d263766d9f/plotting-14.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/47a4c90fc1caed5b0aefb1baa44a013a/plotting-14.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-14.png" class="plot-directive" src="../_images/plotting-14.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>proxy: str, optional</strong></dt><dd><p>Target proxy; only required if more than one proxy was included in the inference.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure showing the stability of the proxy signal inference.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.proxy_strat">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">proxy_strat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'d13c'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_excluded_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Spectral'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#proxy_strat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.proxy_strat" title="Link to this definition">#</a></dt>
+<dd><p>Plot stratigraphic data (proxy observations and age constraints) for each section.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/a316a666cea70599ddf95fcc3d865a6f/plotting-15.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/c125ac139e9422992408202a4cbc97ea/plotting-15.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/79dd78a7504dc02268ccdc22ee55cced/plotting-15.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/06f25f0baca1d534cd07f5f0f6a6e597/plotting-15.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-15.png" class="plot-directive" src="../_images/plotting-15.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for all sections.</p>
+</dd>
+<dt><strong>ages_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for all sections.</p>
+</dd>
+<dt><strong>proxy: str, optional</strong></dt><dd><p>Name of proxy. Defaults to ‘d13c’.</p>
+</dd>
+<dt><strong>sections: list(str) or numpy.array(str), optional</strong></dt><dd><p>List of sections to plot. Defaults to all sections in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>.</p>
+</dd>
+<dt><strong>plot_constraints: bool, optional</strong></dt><dd><p>Whether to plot age constraints as dashed lines. Ages are printed above dashed lines by defalut; to turn off age labels, pass <code class="docutils literal notranslate"><span class="pre">print_ages</span> <span class="pre">=</span> <span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>plot_excluded_samples: bool, optional</strong></dt><dd><p>Whether to plot proxy observations for excluded samples (<code class="docutils literal notranslate"><span class="pre">Exclude?</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>) as red dots. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>cmap: str, optional</strong></dt><dd><p>Name of seaborn color palette to use for sections. Defaults to ‘Spectral’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with observations for each section.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.sadler_plot">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">sadler_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'density'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_age_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density_cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'jet'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Spectral'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(6,</span> <span class="pre">4)</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#sadler_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.sadler_plot" title="Link to this definition">#</a></dt>
+<dd><p>Plot accumulation rate against duration.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/2b7577261d57df4c573e19622e7320b3/plotting-16.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/877ee009a57063d7525aa99795cc5a5c/plotting-16.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/db4e1cf01961d20ac94fbb91e4c9eee4/plotting-16.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/11f5c26fc91f87a69b471246fc9de4f5/plotting-16.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-16.png" class="plot-directive" src="../_images/plotting-16.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for all sections.</p>
+</dd>
+<dt><strong>ages_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for all sections.</p>
+</dd>
+<dt><strong>method: str, optional</strong></dt><dd><p>Plot as a 2D histogram (‘density’) or as a scatter plot (‘scatter’). The density plot will combine data for all sections in <code class="docutils literal notranslate"><span class="pre">sections</span></code>, while a scatter plot will assign a unique color to each section. Defaults to ‘density’.</p>
+</dd>
+<dt><strong>duration_bins: int, optional</strong></dt><dd><p>Number of bin edges to use for the duration data. Defaults to 50.</p>
+</dd>
+<dt><strong>rate_bins: int, optional</strong></dt><dd><p>Number of bin edges to use for the rate data. Defaults to 50.</p>
+</dd>
+<dt><strong>scale: str, optional</strong></dt><dd><p>Scaling for x- and y-axes (‘linear’ or ‘log’). Defaults to ‘log’.</p>
+</dd>
+<dt><strong>sections: list(str) numpy.array(str), optional</strong></dt><dd><p>List of target sections. Defaults to all sections in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>.</p>
+</dd>
+<dt><strong>include_age_constraints: bool, optional</strong></dt><dd><p>Include age constraints in sedimentation rate calculations. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>density_cmap: str, optional</strong></dt><dd><p>Name of matplotlib colormap to use for probability density if <code class="docutils literal notranslate"><span class="pre">method</span></code> is ‘density`. Defaults to ‘jet’.</p>
+</dd>
+<dt><strong>section_cmap: str, optional</strong></dt><dd><p>Name of seaborn color palette to use for sections if <code class="docutils literal notranslate"><span class="pre">method</span></code> is ‘scatter`. Defaults to ‘Spectral’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with sediment accumulation rate plotted against duration.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.sample_ages">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">sample_ages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_excluded_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#sample_ages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.sample_ages" title="Link to this definition">#</a></dt>
+<dd><p>Plot sample age prior and posterior distributions for a given section. Each subplot contains posterior distributions for a different sample.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/72b5316d08340c36c66e1baa8cc7ca11/plotting-17.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/c9a3fca32edb0c1a5b81fc87c7ded2d2/plotting-17.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/6655a7855e774985fd261a64283946c7/plotting-17.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/52e7a39da1b574f2fc482f1316111045/plotting-17.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-17.png" class="plot-directive" src="../_images/plotting-17.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for all sections.</p>
+</dd>
+<dt><strong>section: str</strong></dt><dd><p>Name of target section.</p>
+</dd>
+<dt><strong>plot_excluded_samples: bool, optional</strong></dt><dd><p>Plot age distributions for proxy observations that were excluded from the inference (<code class="docutils literal notranslate"><span class="pre">Exclude?</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>). Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>cmap: str, optional</strong></dt><dd><p>Name of seaborn color palette to use for age distributions. Defaults to ‘viridis’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with prior and posterior sample age distributions.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.sample_ages_per_chain">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">sample_ages_per_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chains</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_prior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_excluded_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#sample_ages_per_chain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.sample_ages_per_chain" title="Link to this definition">#</a></dt>
+<dd><p>Plot sample age posterior distributions for a given section, with separate distributions for each chain. Each subplot contains posterior distributions for a different sample. Use to check for posterior multimodality (in this example, each chain has explored a different mode of the posterior age distributions).</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/5f08e78271933f8ae7bb35c23538bba9/plotting-18.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/13587da0c754e89511cfaa4dc20c6048/plotting-18.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/0111bdad283f3a85c6e4d96645b73a93/plotting-18.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/5d96aea9c8b5cf5baa844efee2796e9c/plotting-18.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-18.png" class="plot-directive" src="../_images/plotting-18.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for all sections.</p>
+</dd>
+<dt><strong>section: str</strong></dt><dd><p>Name of target section.</p>
+</dd>
+<dt><strong>chains: list(int) or numpy.array(int); optional</strong></dt><dd><p>Indices of chains to include; optional (defaults to all chains).</p>
+</dd>
+<dt><strong>plot_prior: bool, optional</strong></dt><dd><p>Plot prior distributions for sample ages. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>plot_excluded_samples: bool, optional</strong></dt><dd><p>Plot age distributions for proxy observations that were excluded from the inference (<code class="docutils literal notranslate"><span class="pre">Exclude?</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>). Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>legend: bool, optional</strong></dt><dd><p>Generate a legend. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+<dt><strong>cmap: str, optional</strong></dt><dd><p>Name of seaborn color palette to use for different chains. Defaults to ‘viridis’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with per-chain posterior sample age distributions.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.section_age_range">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">section_age_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_age</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_age</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Spectral'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#section_age_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.section_age_range" title="Link to this definition">#</a></dt>
+<dd><p>Plot the stratigraphic interval corresponding to a given age range (based on the posterior section age models). If <code class="docutils literal notranslate"><span class="pre">sections</span></code> is not provided, includes each section that overlaps the target age range.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/ce8119f57873edf7da77e36ccd8f6007/plotting-19.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/75c6f9e6828047d2350e26a0c198cfab/plotting-19.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/511abfe3e5a117085c5049949c4eaf84/plotting-19.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/5ed9b49c67303b2d3ea244287cce3407/plotting-19.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-19.png" class="plot-directive" src="../_images/plotting-19.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for all sections.</p>
+</dd>
+<dt><strong>ages_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for all sections.</p>
+</dd>
+<dt><strong>lower_age: float</strong></dt><dd><p>Lower bound (youngest) of the target age interval.</p>
+</dd>
+<dt><strong>upper_age: float</strong></dt><dd><p>Upper bound (oldest) of the target age interval.</p>
+</dd>
+<dt><strong>legend: bool, optional</strong></dt><dd><p>Generate a legend. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+<dt><strong>cmap: str, optional</strong></dt><dd><p>Name of seaborn color palette to use for sections. Defaults to ‘Spectral’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Tracer stratigraphy for each section, with the stratigraphic interval corresponding to the input age range highlighted.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.section_proxy_residuals">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">section_proxy_residuals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Spectral'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_excluded_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#section_proxy_residuals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.section_proxy_residuals" title="Link to this definition">#</a></dt>
+<dd><p>Plot the residuals between the observed proxy values for each section and the inferred proxy signal (using the posterior section age models to map the signal back to height in section). Use to check for stratigraphic trends in the residuals, which may give insight to the processes that cause noisy sections to deviate from the inferred common signal. If multiple proxies were included in the inference, pass a <code class="docutils literal notranslate"><span class="pre">proxy</span></code> argument.</p>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>should this function (optionally) correct for the inferred offset before calulating the residuals? so that residuals just represent noise that cannot be explained as a constant offset</p>
+</div>
+<p>(<a class="reference download internal" download="" href="../_downloads/3a1d27b79b54d256ea1bde580d0dde69/plotting-20.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/9b55d80d0b798e70b55eb58d39b0c62e/plotting-20.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/4db7030300e1140ba3cd60aacd5c2576/plotting-20.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/141b1433561495924202e5f2a3bece3f/plotting-20.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-20.png" class="plot-directive" src="../_images/plotting-20.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for all sections.</p>
+</dd>
+<dt><strong>legend: bool, optional</strong></dt><dd><p>Generate a legend. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+<dt><strong>cmap: str, optional</strong></dt><dd><p>Name of seaborn color palette to use for sections. Defaults to ‘Spectral’.</p>
+</dd>
+<dt><strong>proxy: str, optional</strong></dt><dd><p>Target proxy; only required if more than one proxy was included in the inference.</p>
+</dd>
+<dt><strong>include_excluded_samples: bool, optional</strong></dt><dd><p>Whether to plot the residuals for samples that were excluded from the inference (<code class="docutils literal notranslate"><span class="pre">Exclude?</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>). Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with residuals for each section.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.section_proxy_signal">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">section_proxy_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_radiometric_ages</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'height'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Spectral'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#section_proxy_signal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.section_proxy_signal" title="Link to this definition">#</a></dt>
+<dd><p>Map the posterior proxy signal back to height in each section (using its most likely posterior age model), and plot alongside the proxy observations (plotted by most likely posterior age).</p>
+<div class="admonition-todo admonition" id="id2">
+<p class="admonition-title">Todo</p>
+<p>update how interpolation works (see note on map_ages_to_section)</p>
+</div>
+<p>(<a class="reference download internal" download="" href="../_downloads/36261445af1cab6b0530fc46c8c6b162/plotting-21.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/9ededcc85426387dd2748cca657d1017/plotting-21.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/159064db90f371ffa7fba1a058583ac6/plotting-21.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/29d03b83cefaf9bd36a67c4b91bd7be9/plotting-21.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-21.png" class="plot-directive" src="../_images/plotting-21.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for all sections.</p>
+</dd>
+<dt><strong>ages_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for all sections.</p>
+</dd>
+<dt><strong>include_radiometric_ages: bool, optional</strong></dt><dd><p>Whether to consider radiometric ages in the posterior age model for each section. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>plot_constraints: bool, optional</strong></dt><dd><p>Plot age constraints for each section as dashed lines. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>yax: str, optional</strong></dt><dd><p>Scale for the y-axis (‘height’ or ‘age’). Defaults to ‘height’.</p>
+</dd>
+<dt><strong>legend: bool, optional</strong></dt><dd><p>Generate a legend. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+<dt><strong>cmap: str, optional</strong></dt><dd><p>Name of seaborn color palette to use for sections. Defaults to ‘Spectral’.</p>
+</dd>
+<dt><strong>proxy: str, optional</strong></dt><dd><p>Tracer to plot; only required if more than one proxy was included in the inference.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure with inferred proxy signal mapped to height in each section.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.plotting.section_summary">
+<span class="sig-prename descclassname"><span class="pre">stratmc.plotting.</span></span><span class="sig-name descname"><span class="pre">section_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_excluded_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_noise_prior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_offset_prior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_age_constraints_sedrate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(8,</span> <span class="pre">9)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/plotting.html#section_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.plotting.section_summary" title="Link to this definition">#</a></dt>
+<dd><p>For a given section, plot posterior estimates of sample age, sedimentation rate, noise, and offset. Noise and offset terms must be either per-section or global; to plot per-sample noise and offset terms, use <a class="reference internal" href="#module-stratmc.plotting" title="stratmc.plotting"><code class="xref py py-meth docutils literal notranslate"><span class="pre">noise_summary()</span></code></a> and <a class="reference internal" href="#module-stratmc.plotting" title="stratmc.plotting"><code class="xref py py-meth docutils literal notranslate"><span class="pre">offset_summary()</span></code></a>.</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/b15c272ff8299136b1083040422f09f8/plotting-22.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../_downloads/fde21bf65c62afbd2be1150297a0e180/plotting-22.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/686579f1146c06555e8063bd1bf62695/plotting-22.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/d241c96c1551d558b3a53a5a07586501/plotting-22.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../_images/plotting-22.png" class="plot-directive" src="../_images/plotting-22.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for all sections.</p>
+</dd>
+<dt><strong>ages_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for all sections.</p>
+</dd>
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="inference.html#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="inference.html#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>section: str</strong></dt><dd><p>Name of target section.</p>
+</dd>
+<dt><strong>plot_excluded_samples: bool, optional</strong></dt><dd><p>Plot age estimates for proxy observations that were excluded from the inference (<code class="docutils literal notranslate"><span class="pre">Exclude?</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>). Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>plot_noise_prior: bool, optional</strong></dt><dd><p>Plot prior distribution for noise term. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>plot_offset_prior: bool, optional</strong></dt><dd><p>Plot prior distribution for offset term. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>include_age_constraints_sedrate: bool, optional</strong></dt><dd><p>Include age constraints in sedimentation rate calculations. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>fig: matplotlib.pyplot.figure</dt><dd><p>Figure summarizing posterior sample ages, sedimentation rate, and posterior noise and offset terms for the input section.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.accumulation_rate_stratigraphy"><code class="docutils literal notranslate"><span class="pre">accumulation_rate_stratigraphy()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.age_constraints"><code class="docutils literal notranslate"><span class="pre">age_constraints()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.age_height_model"><code class="docutils literal notranslate"><span class="pre">age_height_model()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.covariance_hyperparameters"><code class="docutils literal notranslate"><span class="pre">covariance_hyperparameters()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.interpolated_proxy_inference"><code class="docutils literal notranslate"><span class="pre">interpolated_proxy_inference()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.lengthscale_stability"><code class="docutils literal notranslate"><span class="pre">lengthscale_stability()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.lengthscale_traceplot"><code class="docutils literal notranslate"><span class="pre">lengthscale_traceplot()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.limiting_age_constraints"><code class="docutils literal notranslate"><span class="pre">limiting_age_constraints()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.noise_summary"><code class="docutils literal notranslate"><span class="pre">noise_summary()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.offset_summary"><code class="docutils literal notranslate"><span class="pre">offset_summary()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.proxy_data_density"><code class="docutils literal notranslate"><span class="pre">proxy_data_density()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.proxy_data_gaps"><code class="docutils literal notranslate"><span class="pre">proxy_data_gaps()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.proxy_inference"><code class="docutils literal notranslate"><span class="pre">proxy_inference()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.proxy_signal_stability"><code class="docutils literal notranslate"><span class="pre">proxy_signal_stability()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.proxy_strat"><code class="docutils literal notranslate"><span class="pre">proxy_strat()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.sadler_plot"><code class="docutils literal notranslate"><span class="pre">sadler_plot()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.sample_ages"><code class="docutils literal notranslate"><span class="pre">sample_ages()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.sample_ages_per_chain"><code class="docutils literal notranslate"><span class="pre">sample_ages_per_chain()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.section_age_range"><code class="docutils literal notranslate"><span class="pre">section_age_range()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.section_proxy_residuals"><code class="docutils literal notranslate"><span class="pre">section_proxy_residuals()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.section_proxy_signal"><code class="docutils literal notranslate"><span class="pre">section_proxy_signal()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.plotting.section_summary"><code class="docutils literal notranslate"><span class="pre">section_summary()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/docs/plotting.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Stacey Edmonsond.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1862 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Figure 11: Proxy noise &#8212; StratMC v1.0 Manual</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/GMD_paper/Fig 11 - Proxy noise';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jul 29, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../_static/stratmc.png" class="logo__image only-light" alt="StratMC v1.0 Manual - Home"/>
+    <script>document.write(`<img src="../../_static/stratmc.png" class="logo__image only-dark" alt="StratMC v1.0 Manual - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Figure 11:...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="figure-11-proxy-noise">
+<h1>Figure 11: Proxy noise<a class="headerlink" href="#figure-11-proxy-noise" title="Link to this heading">#</a></h1>
+<p>This notebook can be used to:</p>
+<ul class="simple">
+<li><p>Generate/load and plot the synthetic d13C and age constraint data used for the white noise experiments in Fig. 11</p></li>
+<li><p>Build and sample the inference model using proxy observations with different amplitudes of added white noise</p></li>
+<li><p>Load the inference results from the model runs used to produce Fig. 11</p></li>
+<li><p>Quantify signal recovery for each experiment</p></li>
+<li><p>Reproduce Fig. 11 using the provided inference results</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">rcParams</span>
+
+<span class="kn">import</span> <span class="nn">stratmc</span>
+
+<span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sans-serif&quot;</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.sans-serif&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Avenir&quot;</span><span class="p">]</span>
+<span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;text.usetex&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">scipy.ndimage</span> <span class="kn">import</span> <span class="n">gaussian_filter</span> <span class="k">as</span> <span class="n">gaussian</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gaussian_kde</span><span class="p">,</span> <span class="n">norm</span>
+<span class="kn">from</span> <span class="nn">tqdm.notebook</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="synthetic-d13c-signal-fig-6a">
+<h2>Synthetic d13C signal (Fig. 6a)<a class="headerlink" href="#synthetic-d13c-signal-fig-6a" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">age_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="mi">250</span><span class="p">)</span>
+<span class="n">amplitude</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">]</span>
+<span class="n">seed</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">d13c_signal</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">synthetics</span><span class="o">.</span><span class="n">make_excursion</span><span class="p">(</span>
+    <span class="n">age_vector</span><span class="p">,</span>
+    <span class="n">amplitude</span><span class="p">,</span>
+    <span class="n">excursion_duration</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+    <span class="n">rising_time</span><span class="o">=</span><span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+    <span class="n">smooth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">smoothing_factor</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">rate_offset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+    <span class="n">baseline</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>  <span class="c1"># seed = 3</span>
+<span class="n">d13c_signal</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">d13c_signal</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+
+
+<span class="n">fs</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>  <span class="c1"># &#39;#87BED5&#39;</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Age (Ma)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$\delta^</span><span class="si">{13}</span><span class="s2">$C (‰)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">direction</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_axisbelow</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mi">130</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(130.0, 100.0)
+</pre></div>
+</div>
+<img alt="../../_images/81ed8e44507a05f0879faffc6ffc49faedf6230f4f4818427613508b7294d3a7.png" src="../../_images/81ed8e44507a05f0879faffc6ffc49faedf6230f4f4818427613508b7294d3a7.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">signal_func</span><span class="p">(</span><span class="n">new_ages</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">new_ages</span><span class="p">,</span> <span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="construct-gamma-age-models">
+<h2>Construct gamma age models<a class="headerlink" href="#construct-gamma-age-models" title="Link to this heading">#</a></h2>
+<p>To load the observations directly (instead of generating it yourself), skip this section and run the <a class="reference internal" href="#Load-the-data"><span class="xref myst">Load the data</span></a> section instead</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">make_path</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span> <span class="n">g_shape</span><span class="p">,</span> <span class="n">g_scale</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+    <span class="c1"># separate a number of points (X) along a [0,1] path</span>
+    <span class="k">if</span> <span class="n">pts</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># X numbers are drawn from a gamma distribution (G)</span>
+        <span class="c1"># --&gt; these represent the distances between successive points</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="n">g_shape</span><span class="p">,</span> <span class="n">g_scale</span><span class="p">,</span> <span class="n">pts</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># if X = 0, then path is simply [0,1]</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>  <span class="c1"># add 0 as the path beginning</span>
+    <span class="c1"># scale first to be between 0 and 1, and then 0 to delta</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">/</span> <span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">delta</span>
+    <span class="k">return</span> <span class="n">path</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">delta_h</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">g_shape</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="n">sections</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;4&quot;</span><span class="p">]</span>
+
+<span class="n">sample_dfs</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">ages_dfs</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">sample_ages</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+<span class="n">sample_heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+<span class="n">proxy_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+<span class="n">section_names</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">age_heights</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">ages_vec</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">ages_std_vec</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">age_section_names</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># age constraints for each section</span>
+<span class="n">ages</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">ages_std</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">ages</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">130</span><span class="p">,</span> <span class="mf">100.5</span><span class="p">]</span>
+<span class="n">ages_std</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="n">ages</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span>
+<span class="n">ages_std</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">]</span>
+
+<span class="n">ages</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">129</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span>
+<span class="n">ages_std</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="n">ages</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">130</span><span class="p">,</span> <span class="mi">101</span><span class="p">]</span>
+<span class="n">ages_std</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">]</span>
+
+
+<span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">sections</span><span class="p">:</span>
+    <span class="n">delta_t</span> <span class="o">=</span> <span class="n">ages</span><span class="p">[</span><span class="n">section</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">ages</span><span class="p">[</span><span class="n">section</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">section</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">samples</span> <span class="o">=</span> <span class="mi">29</span>
+    <span class="n">sample_ages_temp</span> <span class="o">=</span> <span class="n">ages</span><span class="p">[</span><span class="n">section</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">make_path</span><span class="p">(</span>
+        <span class="n">samples</span><span class="p">,</span> <span class="n">g_shape</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta_t</span>
+    <span class="p">)</span>  <span class="c1"># age change between knots</span>
+    <span class="n">sample_ages</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sample_ages</span><span class="p">,</span> <span class="n">sample_ages_temp</span><span class="p">)</span>
+
+    <span class="c1"># high k so that change in height is relatively constant (to simulate a constant stratigraphic sampling rate)</span>
+    <span class="n">heights</span> <span class="o">=</span> <span class="n">make_path</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta_h</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.1</span>  <span class="c1"># position change between knots</span>
+    <span class="n">sample_heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sample_heights</span><span class="p">,</span> <span class="n">heights</span><span class="p">)</span>
+
+    <span class="n">section_proxy</span> <span class="o">=</span> <span class="n">signal_func</span><span class="p">(</span><span class="n">sample_ages_temp</span><span class="p">)</span>
+    <span class="n">proxy_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proxy_vec</span><span class="p">,</span> <span class="n">section_proxy</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">section_proxy</span><span class="p">)):</span>
+        <span class="n">section_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+
+    <span class="n">age_heights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">age_heights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">heights</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">ages_vec</span> <span class="o">+=</span> <span class="n">ages</span><span class="p">[</span><span class="n">section</span><span class="p">]</span>
+    <span class="n">ages_std_vec</span> <span class="o">+=</span> <span class="n">ages_std</span><span class="p">[</span><span class="n">section</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">age_section_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+
+
+<span class="n">ages_df</span><span class="p">,</span> <span class="n">sample_df</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">synthetics</span><span class="o">.</span><span class="n">synthetic_signal_to_df</span><span class="p">(</span>
+    <span class="n">proxy_vec</span><span class="p">,</span>
+    <span class="n">sample_heights</span><span class="p">,</span>
+    <span class="n">sample_ages</span><span class="p">,</span>
+    <span class="n">section_names</span><span class="p">,</span>
+    <span class="n">ages_vec</span><span class="p">,</span>
+    <span class="n">ages_std_vec</span><span class="p">,</span>
+    <span class="n">age_heights</span><span class="p">,</span>
+    <span class="n">age_section_names</span><span class="p">,</span>
+    <span class="n">proxies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">proxy_strat</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/b21920a42b498b71e51f423ee1fbc8e93c5d01d912b2705e6f87a0cf9658078e.png" src="../../_images/b21920a42b498b71e51f423ee1fbc8e93c5d01d912b2705e6f87a0cf9658078e.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot 1) the true age model for each section, and 2) the proxy observations on top of the synthetic signal</span>
+<span class="n">sections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">])</span>
+
+<span class="n">section_cs</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">section_cs</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;indianred&quot;</span>
+<span class="n">section_cs</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#87BED5&quot;</span>
+<span class="n">section_cs</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;mediumseagreen&quot;</span>
+<span class="n">section_cs</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;gold&quot;</span>
+
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">fig2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig2</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sections</span><span class="p">)):</span>
+
+    <span class="n">section</span> <span class="o">=</span> <span class="n">sections</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s2">&quot;age&quot;</span><span class="p">],</span>
+        <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s2">&quot;height&quot;</span><span class="p">],</span>
+        <span class="n">c</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+        <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+        <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s2">&quot;age&quot;</span><span class="p">],</span>
+        <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s2">&quot;height&quot;</span><span class="p">],</span>
+        <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">c</span><span class="o">=</span><span class="n">section_cs</span><span class="p">[</span><span class="n">section</span><span class="p">],</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+        <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Age (Ma)&quot;</span><span class="p">)</span>
+
+    <span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+        <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s2">&quot;age&quot;</span><span class="p">],</span>
+        <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s2">&quot;d13c&quot;</span><span class="p">],</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">section_cs</span><span class="p">[</span><span class="n">section</span><span class="p">],</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+        <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">invert_xaxis</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Height (m)&quot;</span><span class="p">)</span>
+
+
+<span class="n">ax2</span><span class="o">.</span><span class="n">invert_xaxis</span><span class="p">()</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Age (Ma)&quot;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;d13C&quot;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;k = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">g_shape</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;k = 100&#39;)
+</pre></div>
+</div>
+<img alt="../../_images/7f9ea8bd5d128735f293a99e7a8a84ba2b37111bbd1c5a9d028e66e73fb5c726.png" src="../../_images/7f9ea8bd5d128735f293a99e7a8a84ba2b37111bbd1c5a9d028e66e73fb5c726.png" />
+<img alt="../../_images/8c70a1c66bb2e6f6c30be906fc012c15eae1520cb16f1fd4de44c000ec2229d2.png" src="../../_images/8c70a1c66bb2e6f6c30be906fc012c15eae1520cb16f1fd4de44c000ec2229d2.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># stratmc.data.save_object(sample_df, &#39;data/proxy_noise_sample_df_unmodified&#39;)</span>
+<span class="c1"># stratmc.data.save_object(ages_df, &#39;data/proxy_noise_ages_df&#39;)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="load-the-data">
+<h2>Load the data<a class="headerlink" href="#load-the-data" title="Link to this heading">#</a></h2>
+<p>Load the data that were generated in the <a class="reference internal" href="#Construct-gamma-age-models"><span class="xref myst">Construct gamma age models</span></a> section.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sections</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;4&quot;</span><span class="p">]</span>
+
+<span class="n">sample_df</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_object</span><span class="p">(</span><span class="s2">&quot;data/Fig11_proxy_noise_sample_df_unmodified&quot;</span><span class="p">)</span>
+<span class="n">ages_df</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_object</span><span class="p">(</span><span class="s2">&quot;data/Fig11_proxy_noise_ages_df&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="make-lithostratigraphy-for-each-section">
+<h2>Make lithostratigraphy for each section<a class="headerlink" href="#make-lithostratigraphy-for-each-section" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">facies_colors</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">facies_widths</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">facies_colors</span><span class="p">[</span><span class="s2">&quot;limestone&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#F4F2F3&quot;</span>
+
+<span class="n">facies_widths</span><span class="p">[</span><span class="s2">&quot;limestone&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.75</span>
+
+<span class="n">section_facies</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">section_facies_thicknesses</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="c1"># section 1</span>
+<span class="n">section_facies</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;limestone&quot;</span><span class="p">]</span>
+<span class="n">section_facies_thicknesses</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ages_df</span><span class="p">[</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">][</span><span class="s2">&quot;height&quot;</span><span class="p">])]</span>
+
+
+<span class="c1"># section 2</span>
+<span class="n">section_facies</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;limestone&quot;</span><span class="p">]</span>
+<span class="n">section_facies_thicknesses</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ages_df</span><span class="p">[</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span><span class="p">][</span><span class="s2">&quot;height&quot;</span><span class="p">])]</span>
+
+<span class="c1"># section 3</span>
+<span class="n">section_facies</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;limestone&quot;</span><span class="p">]</span>
+<span class="n">section_facies_thicknesses</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ages_df</span><span class="p">[</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;3&quot;</span><span class="p">][</span><span class="s2">&quot;height&quot;</span><span class="p">])]</span>
+
+<span class="c1"># section 4</span>
+<span class="n">section_facies</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;limestone&quot;</span><span class="p">]</span>
+<span class="n">section_facies_thicknesses</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ages_df</span><span class="p">[</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;4&quot;</span><span class="p">][</span><span class="s2">&quot;height&quot;</span><span class="p">])]</span>
+
+<span class="c1"># save the unmodified d13C values</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;d13c_original&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">clean_data</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">],</span> <span class="n">sections</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="add-white-noise-to-proxy-observations">
+<h2>Add white noise to proxy observations<a class="headerlink" href="#add-white-noise-to-proxy-observations" title="Link to this heading">#</a></h2>
+<p>For each experiment, add white noise with amplitude between 0.5 and 5 permil to the data. To generate the data for each trial, change <code class="docutils literal notranslate"><span class="pre">np.random.seed</span></code> as directed. You can also skip this section and load the modified observations for each trial in <a class="reference internal" href="#Load-the-modified-proxy-data"><span class="xref myst">Load the modified proxy data</span></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># concatenating two arrays to make sure the data are reproducible (after adding new test amplitudes)</span>
+<span class="n">noise_amp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">,</span> <span class="mf">2.25</span><span class="p">])]</span>
+<span class="p">)</span>
+
+<span class="c1">## modify the random seed for each trial</span>
+<span class="c1"># trial 1: np.random.seed(0)</span>
+<span class="c1"># trial 2: np.random.seed(1)</span>
+<span class="c1"># trial 3: np.random.seed(2)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">sample_dfs_white</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">for</span> <span class="n">amp</span> <span class="ow">in</span> <span class="n">noise_amp</span><span class="p">:</span>
+    <span class="n">sample_dfs_white</span><span class="p">[</span><span class="n">amp</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">sample_dfs_white</span><span class="p">[</span><span class="n">amp</span><span class="p">][</span><span class="s2">&quot;d13c&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample_dfs_white</span><span class="p">[</span><span class="n">amp</span><span class="p">][</span>
+        <span class="s2">&quot;d13c_original&quot;</span>
+    <span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">amp</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_dfs_white</span><span class="p">[</span><span class="n">amp</span><span class="p">][</span><span class="s2">&quot;d13c&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+
+<span class="c1"># save the modified data</span>
+<span class="c1"># stratmc.data.save_object(sample_dfs_white, &#39;data/Fig11_white_noise_sample_df_trial_3&#39;)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="load-the-modified-proxy-data">
+<h2>Load the modified proxy data<a class="headerlink" href="#load-the-modified-proxy-data" title="Link to this heading">#</a></h2>
+<p>Load the modified proxy observations generated in <a class="reference internal" href="#Add-white-noise-to-proxy-observations"><span class="xref myst">Add white noise to proxy observations</span></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">noise_amp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">,</span> <span class="mf">2.25</span><span class="p">])]</span>
+<span class="p">)</span>
+
+<span class="c1"># trial 1</span>
+<span class="c1"># sample_dfs_white = stratmc.data.load_object(&#39;data/Fig11_white_noise_sample_df_trial_1&#39;)</span>
+
+<span class="c1"># trial 2</span>
+<span class="c1"># sample_dfs_white = stratmc.data.load_object(&#39;data/Fig11_white_noise_sample_df_trial_1&#39;)</span>
+
+<span class="c1"># trial 3</span>
+<span class="n">sample_dfs_white</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_object</span><span class="p">(</span><span class="s2">&quot;data/Fig11_white_noise_sample_df_trial_3&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-proxy-observations-for-section-1-fig-11a">
+<h2>Example proxy observations for Section 1 (Fig. 11a)<a class="headerlink" href="#example-proxy-observations-for-section-1-fig-11a" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">age_colors</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">age_colors</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#7C78A0&quot;</span><span class="p">,</span> <span class="s2">&quot;#FFEB7F&quot;</span><span class="p">]</span>
+<span class="n">age_colors</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#87BED5&quot;</span><span class="p">,</span> <span class="s2">&quot;mediumseagreen&quot;</span><span class="p">]</span>
+<span class="n">age_colors</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#F4A27C&quot;</span><span class="p">,</span> <span class="s2">&quot;gray&quot;</span><span class="p">]</span>
+<span class="n">age_colors</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pink&quot;</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span><span class="p">]</span>
+
+<span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+
+<span class="n">section</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
+
+<span class="n">widths</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">]</span> <span class="o">+</span> <span class="mi">7</span> <span class="o">*</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="mi">8</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">8.5</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">),</span>
+    <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">sharex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width_ratios&quot;</span><span class="p">:</span> <span class="n">widths</span><span class="p">},</span>
+<span class="p">)</span>
+
+<span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sharex</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]</span>
+
+<span class="n">idx</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">amp</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">noise_amp</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">))):</span>
+    <span class="n">section_ages_df</span> <span class="o">=</span> <span class="n">ages_df</span><span class="p">[</span>
+        <span class="p">(</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">)</span>
+        <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]))</span>
+        <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;intermediate detrital?&quot;</span><span class="p">])</span>
+    <span class="p">]</span>
+    <span class="n">section_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">]</span>
+
+    <span class="n">sec_sample_ages</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s2">&quot;age&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">sec_sample_heights</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s2">&quot;height&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="n">sec_radio_ages</span> <span class="o">=</span> <span class="n">section_ages_df</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">sec_ages_comb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">sec_radio_ages</span><span class="p">,</span> <span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]])</span>
+
+    <span class="n">heights_comb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">section_ages_df</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">],</span> <span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]])</span>
+
+    <span class="n">heights_comb_sort_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">heights_comb</span><span class="p">)</span>
+
+    <span class="n">sec_ages_comb</span> <span class="o">=</span> <span class="n">sec_ages_comb</span><span class="p">[</span><span class="n">heights_comb_sort_idx</span><span class="p">]</span>
+    <span class="n">heights_comb</span> <span class="o">=</span> <span class="n">heights_comb</span><span class="p">[</span><span class="n">heights_comb_sort_idx</span><span class="p">]</span>
+
+    <span class="n">new_heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">heights_comb</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">heights_comb</span><span class="p">),</span> <span class="mi">400</span><span class="p">)</span>
+    <span class="n">sec_age_interp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">new_heights</span><span class="p">,</span> <span class="n">heights_comb</span><span class="p">,</span> <span class="n">sec_ages_comb</span><span class="p">)</span>
+
+    <span class="n">d13c_section_interp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">sec_age_interp</span><span class="p">,</span> <span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d13c_section_interp</span><span class="p">,</span> <span class="n">new_heights</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">section_df</span> <span class="o">=</span> <span class="n">sample_dfs_white</span><span class="p">[</span><span class="n">amp</span><span class="p">][</span><span class="n">sample_dfs_white</span><span class="p">[</span><span class="n">amp</span><span class="p">][</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">]</span>
+
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+        <span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">],</span>
+        <span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">],</span>
+        <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span>
+        <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+        <span class="n">clip_on</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">pdf</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">amp</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">pdf</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">])</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;bottom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s2">&quot;none&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">get_ticklabels</span><span class="p">()]</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+
+
+<span class="c1"># strat column</span>
+<span class="n">current_base</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">facies</span><span class="p">,</span> <span class="n">thickness</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+    <span class="n">section_facies</span><span class="p">[</span><span class="n">section</span><span class="p">],</span> <span class="n">section_facies_thicknesses</span><span class="p">[</span><span class="n">section</span><span class="p">]</span>
+<span class="p">):</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">current_base</span><span class="p">,</span>
+        <span class="n">width</span><span class="o">=</span><span class="n">facies_widths</span><span class="p">[</span><span class="n">facies</span><span class="p">],</span>
+        <span class="n">height</span><span class="o">=</span><span class="n">thickness</span><span class="p">,</span>
+        <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+        <span class="n">align</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">facies_colors</span><span class="p">[</span><span class="n">facies</span><span class="p">],</span>
+        <span class="n">clip_on</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">current_base</span> <span class="o">+=</span> <span class="n">thickness</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="mi">0</span><span class="p">,</span>
+    <span class="n">ages_df</span><span class="p">[</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s2">&quot;height&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">color</span><span class="o">=</span><span class="n">age_colors</span><span class="p">[</span><span class="n">section</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">clip_on</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="mi">0</span><span class="p">,</span>
+    <span class="n">ages_df</span><span class="p">[</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s2">&quot;height&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">color</span><span class="o">=</span><span class="n">age_colors</span><span class="p">[</span><span class="n">section</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">clip_on</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;bottom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]:</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$\delta^</span><span class="si">{13}</span><span class="s2">$C (‰)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Height (m)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Height (m)&#39;)
+</pre></div>
+</div>
+<img alt="../../_images/6cd1ae072c7af4b0dbed4e62cd46c51d512fdb7f19b735887b45f3f46860d511.png" src="../../_images/6cd1ae072c7af4b0dbed4e62cd46c51d512fdb7f19b735887b45f3f46860d511.png" />
+</div>
+</div>
+</section>
+<section id="run-experiments-build-and-sample-the-inference-model">
+<h2>Run experiments (build and sample the inference model)<a class="headerlink" href="#run-experiments-build-and-sample-the-inference-model" title="Link to this heading">#</a></h2>
+<p>Runs the inference model in a loop that iterates over each noise amplitude, and plots each proxy signal inference. The traces for each trial can be loaded in <a class="reference internal" href="#Load-the-inference-results"><span class="xref myst">Load the inference results</span></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">age_min</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">age_max</span> <span class="o">=</span> <span class="mi">130</span>
+
+<span class="n">predict_ages</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">age_min</span><span class="p">,</span> <span class="n">age_max</span> <span class="o">+</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+
+<span class="n">target_accept</span> <span class="o">=</span> <span class="mf">0.9</span>
+
+<span class="c1"># current trial number (used for saving)</span>
+<span class="n">trial</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="k">for</span> <span class="n">amp</span> <span class="ow">in</span> <span class="n">noise_amp</span><span class="p">:</span>
+    <span class="n">model</span><span class="p">,</span> <span class="n">gp</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">build_model</span><span class="p">(</span>
+        <span class="n">sample_dfs_white</span><span class="p">[</span><span class="n">amp</span><span class="p">],</span>
+        <span class="n">ages_df</span><span class="p">,</span>
+        <span class="n">proxies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">],</span>
+        <span class="n">ls_dist</span><span class="o">=</span><span class="s2">&quot;Wald&quot;</span><span class="p">,</span>
+        <span class="n">ls_min</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">ls_mu</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">ls_lambda</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+        <span class="n">noise_type</span><span class="o">=</span><span class="s2">&quot;section&quot;</span><span class="p">,</span>  <span class="c1"># per-section noise with default prior</span>
+        <span class="n">offset_type</span><span class="o">=</span><span class="s2">&quot;section&quot;</span><span class="p">,</span>  <span class="c1"># per-section offset with default prior</span>
+    <span class="p">)</span>
+
+    <span class="n">extension</span> <span class="o">=</span> <span class="s2">&quot;Fig11_white_noise_trial_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">trial</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_noise_amp_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">amp</span><span class="p">)</span>
+
+    <span class="n">full_trace</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">gp</span><span class="p">,</span>
+        <span class="n">predict_ages</span><span class="p">,</span>
+        <span class="n">sample_dfs_white</span><span class="p">[</span><span class="n">amp</span><span class="p">],</span>
+        <span class="n">ages_df</span><span class="p">,</span>
+        <span class="n">proxies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">],</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span>
+        <span class="n">chains</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">target_accept</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># plot the proxy signal inference for the current noise amplitude</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">proxy_inference</span><span class="p">(</span>
+        <span class="n">sample_dfs_white</span><span class="p">[</span><span class="n">amp</span><span class="p">],</span>
+        <span class="n">ages_df</span><span class="p">,</span>
+        <span class="n">full_trace</span><span class="p">,</span>
+        <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span>
+        <span class="n">plot_constraints</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">plot_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">section_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Synthetic signal&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span>
+    <span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">amp</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="load-the-inference-results">
+<h2>Load the inference results<a class="headerlink" href="#load-the-inference-results" title="Link to this heading">#</a></h2>
+<p>Create dictionaries of paths to saved <code class="docutils literal notranslate"><span class="pre">NetCDF</span></code> files with traces. We’ll use the paths to calculate signal recovery/plot the results without loading all of the traces at once (which consumes a lot of memory).</p>
+<p>The full traces for trial 3 are included in the <code class="docutils literal notranslate"><span class="pre">traces</span></code> directory. Due to storage space limitations, the complete traces for trials 1 and 2 were not uploaded, but all summary statistics/data needed to reproduce Fig. 11 are available in saved <code class="docutils literal notranslate"><span class="pre">.pkl</span></code> files in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory.</p>
+<section id="dictionary-of-trace-paths">
+<h3>Dictionary of trace paths<a class="headerlink" href="#dictionary-of-trace-paths" title="Link to this heading">#</a></h3>
+<p>Keys = noise amplitudes</p>
+<section id="trial-1">
+<h4>Trial 1<a class="headerlink" href="#trial-1" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># trace_paths_white_1 = {}</span>
+
+<span class="c1"># trace_paths_white_1[0.5] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_1_noise_amp_0.5&#39;</span>
+<span class="c1"># trace_paths_white_1[0.75] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_1_noise_amp_0.75&#39;</span>
+<span class="c1"># trace_paths_white_1[1] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_1_noise_amp_1.0&#39;</span>
+<span class="c1"># trace_paths_white_1[1.25] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_1_noise_amp_1.25&#39;</span>
+<span class="c1"># trace_paths_white_1[1.5] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_1_noise_amp_1.5&#39;</span>
+<span class="c1"># trace_paths_white_1[1.75] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_1_noise_amp_1.75&#39;</span>
+<span class="c1"># trace_paths_white_1[2] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_1_noise_amp_2.0&#39;</span>
+<span class="c1"># trace_paths_white_1[2.25] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_1_noise_amp_2.25&#39;</span>
+<span class="c1"># trace_paths_white_1[2.5] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_1_noise_amp_2.5&#39;</span>
+<span class="c1"># trace_paths_white_1[3] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_1_noise_amp_3.0&#39;</span>
+<span class="c1"># trace_paths_white_1[3.5] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_1_noise_amp_3.5&#39;</span>
+<span class="c1"># trace_paths_white_1[4] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_1_noise_amp_4.0&#39;</span>
+<span class="c1"># trace_paths_white_1[4.5] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_1_noise_amp_4.5&#39;</span>
+<span class="c1"># trace_paths_white_1[5] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_1_noise_amp_5.0&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="trial-2">
+<h4>Trial 2<a class="headerlink" href="#trial-2" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># trace_paths_white_2 = {}</span>
+
+<span class="c1"># trace_paths_white_2[0.5] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_2_noise_amp_0.5&#39;</span>
+<span class="c1"># trace_paths_white_2[0.75] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_2_noise_amp_0.75&#39;</span>
+<span class="c1"># trace_paths_white_2[1] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_2_noise_amp_1.0&#39;</span>
+<span class="c1"># trace_paths_white_2[1.25] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_2_noise_amp_1.25&#39;</span>
+<span class="c1"># trace_paths_white_2[1.5] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_2_noise_amp_1.5&#39;</span>
+<span class="c1"># trace_paths_white_2[1.75] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_2_noise_amp_1.75&#39;</span>
+<span class="c1"># trace_paths_white_2[2] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_2_noise_amp_2.0&#39;</span>
+<span class="c1"># trace_paths_white_2[2.25] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_2_noise_amp_2.25&#39;</span>
+<span class="c1"># trace_paths_white_2[2.5] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_2_noise_amp_2.5&#39;</span>
+<span class="c1"># trace_paths_white_2[3] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_2_noise_amp_3.0&#39;</span>
+<span class="c1"># trace_paths_white_2[3.5] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_2_noise_amp_3.5&#39;</span>
+<span class="c1"># trace_paths_white_2[4] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_2_noise_amp_4.0&#39;</span>
+<span class="c1"># trace_paths_white_2[4.5] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_2_noise_amp_4.5&#39;</span>
+<span class="c1"># trace_paths_white_2[5] = &#39;traces/&#39; + &#39;Fig11_white_noise_trial_2_noise_amp_5.0&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="trial-3">
+<h4>Trial 3<a class="headerlink" href="#trial-3" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trace_paths_white_3</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">trace_paths_white_3</span><span class="p">[</span><span class="mf">0.5</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;traces/&quot;</span> <span class="o">+</span> <span class="s2">&quot;Fig11_white_noise_trial_3_noise_amp_0.5&quot;</span>
+<span class="n">trace_paths_white_3</span><span class="p">[</span><span class="mf">0.75</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;traces/&quot;</span> <span class="o">+</span> <span class="s2">&quot;Fig11_white_noise_trial_3_noise_amp_0.75&quot;</span>
+<span class="n">trace_paths_white_3</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;traces/&quot;</span> <span class="o">+</span> <span class="s2">&quot;Fig11_white_noise_trial_3_noise_amp_1.0&quot;</span>
+<span class="n">trace_paths_white_3</span><span class="p">[</span><span class="mf">1.25</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;traces/&quot;</span> <span class="o">+</span> <span class="s2">&quot;Fig11_white_noise_trial_3_noise_amp_1.25&quot;</span>
+<span class="n">trace_paths_white_3</span><span class="p">[</span><span class="mf">1.5</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;traces/&quot;</span> <span class="o">+</span> <span class="s2">&quot;Fig11_white_noise_trial_3_noise_amp_1.5&quot;</span>
+<span class="n">trace_paths_white_3</span><span class="p">[</span><span class="mf">1.75</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;traces/&quot;</span> <span class="o">+</span> <span class="s2">&quot;Fig11_white_noise_trial_3_noise_amp_1.75&quot;</span>
+<span class="n">trace_paths_white_3</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;traces/&quot;</span> <span class="o">+</span> <span class="s2">&quot;Fig11_white_noise_trial_3_noise_amp_2.0&quot;</span>
+<span class="n">trace_paths_white_3</span><span class="p">[</span><span class="mf">2.25</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;traces/&quot;</span> <span class="o">+</span> <span class="s2">&quot;Fig11_white_noise_trial_3_noise_amp_2.25&quot;</span>
+<span class="n">trace_paths_white_3</span><span class="p">[</span><span class="mf">2.5</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;traces/&quot;</span> <span class="o">+</span> <span class="s2">&quot;Fig11_white_noise_trial_3_noise_amp_2.5&quot;</span>
+<span class="n">trace_paths_white_3</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;traces/&quot;</span> <span class="o">+</span> <span class="s2">&quot;Fig11_white_noise_trial_3_noise_amp_3.0&quot;</span>
+<span class="n">trace_paths_white_3</span><span class="p">[</span><span class="mf">3.5</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;traces/&quot;</span> <span class="o">+</span> <span class="s2">&quot;Fig11_white_noise_trial_3_noise_amp_3.5&quot;</span>
+<span class="n">trace_paths_white_3</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;traces/&quot;</span> <span class="o">+</span> <span class="s2">&quot;Fig11_white_noise_trial_3_noise_amp_4.0&quot;</span>
+<span class="n">trace_paths_white_3</span><span class="p">[</span><span class="mf">4.5</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;traces/&quot;</span> <span class="o">+</span> <span class="s2">&quot;Fig11_white_noise_trial_3_noise_amp_4.5&quot;</span>
+<span class="n">trace_paths_white_3</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;traces/&quot;</span> <span class="o">+</span> <span class="s2">&quot;Fig11_white_noise_trial_3_noise_amp_5.0&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="quantify-signal-recovery">
+<h2>Quantify signal recovery<a class="headerlink" href="#quantify-signal-recovery" title="Link to this heading">#</a></h2>
+<p>Load relative model likelihoods (used to compare synthetic proxy signal recovery for different models) for all 3 trials (in <a class="reference internal" href="#Load-calculated-relative-model-likelihoods"><span class="xref myst">Load calculated relative model likelihoods</span></a>), and optionally re-run the calculations for trial 3.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># interpolate proxy signal to same ages where proxy signal was inferred</span>
+<span class="n">full_trace</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_trace</span><span class="p">(</span><span class="n">trace_paths_white_3</span><span class="p">[</span><span class="mf">0.5</span><span class="p">])</span>
+
+<span class="n">predict_ages</span> <span class="o">=</span> <span class="n">full_trace</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">values</span>
+
+<span class="n">d13c_signal_interp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">predict_ages</span><span class="p">,</span> <span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/staceyedmonsond/opt/anaconda3/envs/bayestrat-dev-m1-pymc516-accelerate/lib/python3.11/site-packages/arviz/data/inference_data.py:157: UserWarning: X_new group is not defined in the InferenceData scheme
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## trial 1</span>
+
+<span class="c1"># signal_recovery_white_1 = {}</span>
+
+<span class="c1"># for amp in tqdm(noise_amp):</span>
+<span class="c1">#     full_trace_white = stratmc.data.load_trace(trace_paths_white_1[amp])</span>
+
+<span class="c1">#     signal_recovery_white_1[amp] = stratmc.synthetics.quantify_signal_recovery(full_trace_white, d13c_signal_interp, proxy = &#39;d13c&#39;)</span>
+
+<span class="c1"># signal_total_white_1 = np.zeros_like(np.array(signal_recovery_white_1[amp]))</span>
+<span class="c1"># for amp in noise_amp:</span>
+<span class="c1">#     signal_total_white_1 += np.array(signal_recovery_white_1[amp])</span>
+
+<span class="c1"># relative_model_likelihood_white_1 = {}</span>
+
+<span class="c1"># for amp in noise_amp:</span>
+<span class="c1">#     relative_model_likelihood_white_1[amp] = np.array(signal_recovery_white_1[amp])/signal_total_white_1</span>
+
+<span class="c1"># stratmc.data.save_object(relative_model_likelihood_white_1, &#39;data/Fig11_relative_model_likelihood_trial_1&#39;)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "4784d9159eeb42c2bc38dd92e8c705ce", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## trial 2</span>
+
+<span class="c1"># signal_recovery_white_2 = {}</span>
+
+<span class="c1"># for amp in tqdm(noise_amp):</span>
+<span class="c1">#     full_trace_white = stratmc.data.load_trace(trace_paths_white_2[amp])</span>
+
+<span class="c1">#     signal_recovery_white_2[amp] = stratmc.synthetics.quantify_signal_recovery(full_trace_white, d13c_signal_interp, proxy = &#39;d13c&#39;)</span>
+
+<span class="c1"># signal_total_white_2 = np.zeros_like(np.array(signal_recovery_white_2[amp]))</span>
+<span class="c1"># for amp in noise_amp:</span>
+<span class="c1">#     signal_total_white_2 += np.array(signal_recovery_white_2[amp])</span>
+
+<span class="c1"># relative_model_likelihood_white_2 = {}</span>
+
+<span class="c1"># for amp in noise_amp:</span>
+<span class="c1">#     relative_model_likelihood_white_2[amp] = np.array(signal_recovery_white_2[amp])/signal_total_white_2</span>
+
+<span class="c1"># stratmc.data.save_object(relative_model_likelihood_white_2, &#39;data/Fig11_relative_model_likelihood_trial_2&#39;)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "92b58b28b9ad4d54bf93a24ec50ca7ce", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">signal_recovery_white_3</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">for</span> <span class="n">amp</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">noise_amp</span><span class="p">):</span>
+    <span class="n">full_trace_white</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_trace</span><span class="p">(</span><span class="n">trace_paths_white_3</span><span class="p">[</span><span class="n">amp</span><span class="p">])</span>
+
+    <span class="n">signal_recovery_white_3</span><span class="p">[</span><span class="n">amp</span><span class="p">]</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">synthetics</span><span class="o">.</span><span class="n">quantify_signal_recovery</span><span class="p">(</span>
+        <span class="n">full_trace_white</span><span class="p">,</span> <span class="n">d13c_signal_interp</span><span class="p">,</span> <span class="n">proxy</span><span class="o">=</span><span class="s2">&quot;d13c&quot;</span>
+    <span class="p">)</span>
+
+<span class="n">signal_total_white_3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">signal_recovery_white_3</span><span class="p">[</span><span class="n">amp</span><span class="p">]))</span>
+<span class="k">for</span> <span class="n">amp</span> <span class="ow">in</span> <span class="n">noise_amp</span><span class="p">:</span>
+    <span class="n">signal_total_white_3</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">signal_recovery_white_3</span><span class="p">[</span><span class="n">amp</span><span class="p">])</span>
+
+<span class="n">relative_model_likelihood_white_3</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">for</span> <span class="n">amp</span> <span class="ow">in</span> <span class="n">noise_amp</span><span class="p">:</span>
+    <span class="n">relative_model_likelihood_white_3</span><span class="p">[</span><span class="n">amp</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">signal_recovery_white_3</span><span class="p">[</span><span class="n">amp</span><span class="p">])</span> <span class="o">/</span> <span class="n">signal_total_white_3</span>
+    <span class="p">)</span>
+
+<span class="c1"># stratmc.data.save_object(relative_model_likelihood_white_3, &#39;data/Fig11_relative_model_likelihood_trial_3&#39;)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "afc0a2abb38d44e5aa8a9593ad6bd62e", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<section id="load-calculated-relative-model-likelihoods">
+<h3>Load calculated relative model likelihoods<a class="headerlink" href="#load-calculated-relative-model-likelihoods" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">relative_model_likelihood_white_1</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_object</span><span class="p">(</span>
+    <span class="s2">&quot;data/Fig11_relative_model_likelihood_trial_1&quot;</span>
+<span class="p">)</span>
+<span class="n">relative_model_likelihood_white_2</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_object</span><span class="p">(</span>
+    <span class="s2">&quot;data/Fig11_relative_model_likelihood_trial_2&quot;</span>
+<span class="p">)</span>
+<span class="n">relative_model_likelihood_white_3</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_object</span><span class="p">(</span>
+    <span class="s2">&quot;data/Fig11_relative_model_likelihood_trial_3&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="load-and-plot-combined-posterior-noise-terms-fig-11c">
+<h2>Load and plot combined posterior noise terms (Fig. 11c)<a class="headerlink" href="#load-and-plot-combined-posterior-noise-terms-fig-11c" title="Link to this heading">#</a></h2>
+<p>Combine the posterior noise terms for all trials and sections, and plot for three example noise amplitudes.</p>
+<p>Load concatenated results for all 3 trials in the third cell. The results for trial 3 only can be concatenated using the second cell.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Concatenate the posterior noise terms for all sections from each trial; the results can be loaded in the next cell</span>
+
+<span class="c1"># posterior_noise = {}</span>
+<span class="c1"># for amp in tqdm(noise_amp):</span>
+<span class="c1">#     posterior_noise[amp] = np.array([])</span>
+<span class="c1">#     for section in sections:</span>
+<span class="c1">#         full_trace_white = stratmc.data.load_trace(trace_paths_white_1[amp])</span>
+<span class="c1">#         posterior_noise[amp] = np.concatenate([posterior_noise[amp], az.extract(full_trace_white.posterior)[section + &#39;_section_noise_d13c&#39;].values.ravel()])</span>
+<span class="c1">#         full_trace_white =  stratmc.data.load_trace(trace_paths_white_2[amp])</span>
+<span class="c1">#         posterior_noise[amp] = np.concatenate([posterior_noise[amp], az.extract(full_trace_white.posterior)[section + &#39;_section_noise_d13c&#39;].values.ravel()])</span>
+<span class="c1">#         full_trace_white =  stratmc.data.load_trace(trace_paths_white_3[amp])</span>
+<span class="c1">#         posterior_noise[amp] = np.concatenate([posterior_noise[amp], az.extract(full_trace_white.posterior)[section + &#39;_section_noise_d13c&#39;].values.ravel()])</span>
+
+<span class="c1"># # save_object(posterior_noise, &#39;data/Fig11c_white_noise_noise_posteriors_combined&#39;)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># un-commend and run this cell to concatenate all of the noise terms for all sections from only trial 3 (traces included in the Zenodo repository)</span>
+<span class="c1"># posterior_noise = {}</span>
+<span class="c1"># for amp in tqdm(noise_amp):</span>
+<span class="c1">#     posterior_noise[amp] = np.array([])</span>
+<span class="c1">#     for section in sections:</span>
+<span class="c1">#         full_trace_white =  stratmc.data.load_trace(trace_paths_white_3[amp])</span>
+<span class="c1">#         posterior_noise[amp] = np.concatenate([posterior_noise[amp], az.extract(full_trace_white.posterior)[section + &#39;_section_noise_d13c&#39;].values.ravel()])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "7960a61cab8d48ea8d9502c5cdb0187a", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load file with combined posterior noise terms for all trials</span>
+<span class="n">posterior_noise</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_object</span><span class="p">(</span>
+    <span class="s2">&quot;data/Fig11c_white_noise_noise_posteriors_combined&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span>
+    <span class="n">posterior_noise</span><span class="p">[</span><span class="mf">0.5</span><span class="p">],</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#999999&quot;</span><span class="p">,</span>
+    <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Noise amp. = 1.0&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span>
+    <span class="n">posterior_noise</span><span class="p">[</span><span class="mf">1.5</span><span class="p">],</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#555555&quot;</span><span class="p">,</span>
+    <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Noise amp. = 3.0&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span>
+    <span class="n">posterior_noise</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#111111&quot;</span><span class="p">,</span>
+    <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Noise amp. = 5.0&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#999999&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#555555&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#111111&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Noise&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x12e3cd350&gt;
+</pre></div>
+</div>
+<img alt="../../_images/89d982b9124fe572914418f52d9afe85e608ab4c8af540773ae6b46cb506ee89.png" src="../../_images/89d982b9124fe572914418f52d9afe85e608ab4c8af540773ae6b46cb506ee89.png" />
+</div>
+</div>
+</section>
+<section id="summary-figure-fig-11">
+<h2>Summary Figure (Fig. 11)<a class="headerlink" href="#summary-figure-fig-11" title="Link to this heading">#</a></h2>
+<p>Plot example proxy data, proxy signal inferences, and signal recovery metrics using the combined results from all 3 trials</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## concatenate posterior proxy signals for trials 1-3, and save the outputs in .pkl files</span>
+
+<span class="c1"># amp = 0.5</span>
+<span class="c1"># full_trace_white =  stratmc.data.load_trace(trace_paths_white_1[amp])</span>
+<span class="c1"># ages = full_trace_white.X_new.X_new.values</span>
+<span class="c1"># proxy_pred = az.extract(full_trace_white.posterior_predictive)[&#39;f_pred_&#39; + &#39;d13c&#39;].values</span>
+<span class="c1"># full_trace_white =  stratmc.data.load_trace(trace_paths_white_2[amp])</span>
+<span class="c1"># proxy_pred = np.hstack([proxy_pred, az.extract(full_trace_white.posterior_predictive)[&#39;f_pred_&#39; + &#39;d13c&#39;].values])</span>
+<span class="c1"># full_trace_white =  stratmc.data.load_trace(trace_paths_white_3[amp])</span>
+<span class="c1"># proxy_pred = np.hstack([proxy_pred, az.extract(full_trace_white.posterior_predictive)[&#39;f_pred_&#39; + &#39;d13c&#39;].values])</span>
+
+<span class="c1"># stratmc.data.save_object(proxy_pred, &#39;data/Fig11b_white_noise_proxy_signal_0.5&#39;)</span>
+
+<span class="c1"># amp = 1.5</span>
+<span class="c1"># full_trace_white =  stratmc.data.load_trace(trace_paths_white_1[amp])</span>
+<span class="c1"># ages = full_trace_white.X_new.X_new.values</span>
+<span class="c1"># proxy_pred = az.extract(full_trace_white.posterior_predictive)[&#39;f_pred_&#39; + &#39;d13c&#39;].values</span>
+<span class="c1"># full_trace_white =  stratmc.data.load_trace(trace_paths_white_2[amp])</span>
+<span class="c1"># proxy_pred = np.hstack([proxy_pred, az.extract(full_trace_white.posterior_predictive)[&#39;f_pred_&#39; + &#39;d13c&#39;].values])</span>
+<span class="c1"># full_trace_white =  stratmc.data.load_trace(trace_paths_white_3[amp])</span>
+<span class="c1"># proxy_pred = np.hstack([proxy_pred, az.extract(full_trace_white.posterior_predictive)[&#39;f_pred_&#39; + &#39;d13c&#39;].values])</span>
+
+<span class="c1"># stratmc.data.save_object(proxy_pred, &#39;data/Fig11b_white_noise_proxy_signal_1.5&#39;)</span>
+
+<span class="c1"># amp = 5</span>
+<span class="c1"># full_trace_white =  stratmc.data.load_trace(trace_paths_white_1[amp])</span>
+<span class="c1"># ages = full_trace_white.X_new.X_new.values</span>
+<span class="c1"># proxy_pred = az.extract(full_trace_white.posterior_predictive)[&#39;f_pred_&#39; + &#39;d13c&#39;].values</span>
+<span class="c1"># full_trace_white =  stratmc.data.load_trace(trace_paths_white_2[amp])</span>
+<span class="c1"># proxy_pred = np.hstack([proxy_pred, az.extract(full_trace_white.posterior_predictive)[&#39;f_pred_&#39; + &#39;d13c&#39;].values])</span>
+<span class="c1"># full_trace_white =  stratmc.data.load_trace(trace_paths_white_3[amp])</span>
+<span class="c1"># proxy_pred = np.hstack([proxy_pred, az.extract(full_trace_white.posterior_predictive)[&#39;f_pred_&#39; + &#39;d13c&#39;].values])</span>
+
+<span class="c1"># stratmc.data.save_object(proxy_pred, &#39;data/Fig11b_white_noise_proxy_signal_5&#39;)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/staceyedmonsond/opt/anaconda3/envs/bayestrat-dev-m1-pymc516-accelerate/lib/python3.11/site-packages/arviz/data/inference_data.py:157: UserWarning: X_new group is not defined in the InferenceData scheme
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## load concatenated posterior proxy signals for trials 1-3 (only trial 3 traces are included in the archive due to size constraints)</span>
+<span class="n">proxy_pred</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">proxy_pred</span><span class="p">[</span><span class="mf">0.5</span><span class="p">]</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_object</span><span class="p">(</span><span class="s2">&quot;data/Fig11b_white_noise_proxy_signal_0.5&quot;</span><span class="p">)</span>
+<span class="n">proxy_pred</span><span class="p">[</span><span class="mf">1.5</span><span class="p">]</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_object</span><span class="p">(</span><span class="s2">&quot;data/Fig11b_white_noise_proxy_signal_1.5&quot;</span><span class="p">)</span>
+<span class="n">proxy_pred</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_object</span><span class="p">(</span><span class="s2">&quot;data/Fig11b_white_noise_proxy_signal_5&quot;</span><span class="p">)</span>
+
+<span class="c1"># grab the posterior predictive age vector for plotting</span>
+<span class="n">full_trace_white</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_trace</span><span class="p">(</span><span class="n">trace_paths_white_3</span><span class="p">[</span><span class="mf">0.5</span><span class="p">])</span>
+<span class="n">predict_ages</span> <span class="o">=</span> <span class="n">full_trace_white</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">values</span>
+<span class="k">del</span> <span class="n">full_trace_white</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/staceyedmonsond/opt/anaconda3/envs/bayestrat-dev-m1-pymc516-accelerate/lib/python3.11/site-packages/arviz/data/inference_data.py:157: UserWarning: X_new group is not defined in the InferenceData scheme
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mosaic</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    112233</span>
+<span class="s2">    444555</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+
+<span class="n">fs</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot_mosaic</span><span class="p">(</span>
+    <span class="n">mosaic</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">7.5</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sharex</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sharex</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sharey</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sharey</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">])</span>
+
+<span class="c1"># signal inferences (averaged across all 3 trials) for noise with amplitiude of 1, 3, and 5 sigma (subplots 1, 2, 3)</span>
+<span class="c1"># amplitude = 0.5</span>
+<span class="n">amp</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">],</span> <span class="mf">97.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">],</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+    <span class="c1"># label=&#39;95% envelope&#39;,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;95</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">],</span> <span class="mi">100</span> <span class="o">-</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">],</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;68</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">]),</span> <span class="mi">400</span><span class="p">)</span>
+<span class="n">max_like</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">predict_ages</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">predict_ages</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+    <span class="n">time_slice</span> <span class="o">=</span> <span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">max_like</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">time_slice</span><span class="p">,</span> <span class="n">bw_method</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">dy</span><span class="p">))]</span>
+
+<span class="n">max_like</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">max_like</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">max_like</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Most likely $\delta^</span><span class="si">{13}</span><span class="s2">$C&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True Signal&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span>
+<span class="p">)</span>
+
+<span class="c1"># amplitude = 1.5</span>
+<span class="n">amp</span> <span class="o">=</span> <span class="mf">1.5</span>
+
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">],</span> <span class="mf">97.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">],</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;95</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">],</span> <span class="mi">100</span> <span class="o">-</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">],</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;68</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">]),</span> <span class="mi">400</span><span class="p">)</span>
+<span class="n">max_like</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">predict_ages</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">predict_ages</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+    <span class="n">time_slice</span> <span class="o">=</span> <span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">max_like</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">time_slice</span><span class="p">,</span> <span class="n">bw_method</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">dy</span><span class="p">))]</span>
+
+<span class="n">max_like</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">max_like</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">max_like</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Most likely $\delta^</span><span class="si">{13}</span><span class="s2">$C&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True Signal&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span>
+<span class="p">)</span>
+
+<span class="c1"># amplitude = 5</span>
+<span class="n">amp</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">],</span> <span class="mf">97.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">],</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+    <span class="c1"># label=&#39;95% envelope&#39;,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;95</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">],</span> <span class="mi">100</span> <span class="o">-</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">],</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;68</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">]),</span> <span class="mi">400</span><span class="p">)</span>
+<span class="n">max_like</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">predict_ages</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">predict_ages</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+    <span class="n">time_slice</span> <span class="o">=</span> <span class="n">proxy_pred</span><span class="p">[</span><span class="n">amp</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">max_like</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">time_slice</span><span class="p">,</span> <span class="n">bw_method</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">dy</span><span class="p">))]</span>
+
+<span class="n">max_like</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">max_like</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">predict_ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">max_like</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Most likely $\delta^</span><span class="si">{13}</span><span class="s2">$C&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True Signal&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span>
+<span class="p">)</span>
+
+
+<span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s2">&quot;none&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">get_ticklabels</span><span class="p">()]</span>
+<span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s2">&quot;none&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">get_ticklabels</span><span class="p">()]</span>
+
+<span class="c1"># posterior noise terms (loaded from .pkl in earlier cell)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span>
+    <span class="n">posterior_noise</span><span class="p">[</span><span class="mf">0.5</span><span class="p">],</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#999999&quot;</span><span class="p">,</span>
+    <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">],</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span>
+    <span class="n">posterior_noise</span><span class="p">[</span><span class="mf">1.5</span><span class="p">],</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#555555&quot;</span><span class="p">,</span>
+    <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">],</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span>
+    <span class="n">posterior_noise</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#111111&quot;</span><span class="p">,</span>
+    <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">],</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#999999&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#555555&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#111111&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Inferred Per-Section Noise&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">amp</span> <span class="ow">in</span> <span class="n">noise_amp</span><span class="p">:</span>
+    <span class="n">vec</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">relative_model_likelihood_white_1</span><span class="p">[</span><span class="n">amp</span><span class="p">]),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">relative_model_likelihood_white_2</span><span class="p">[</span><span class="n">amp</span><span class="p">]),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">relative_model_likelihood_white_3</span><span class="p">[</span><span class="n">amp</span><span class="p">]),</span>
+    <span class="p">]</span>
+    <span class="n">ax</span><span class="p">[</span><span class="s2">&quot;5&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">amp</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vec</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;5&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Relative Model Likelihood&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;5&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$\sigma_</span><span class="si">{noise}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;5&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_label_position</span><span class="p">(</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;5&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">tick_right</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="s2">&quot;123&quot;</span><span class="p">:</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Age (Ma)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$\delta^</span><span class="si">{13}</span><span class="s2">$C (‰)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">invert_xaxis</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="s2">&quot;12345&quot;</span><span class="p">:</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_axisbelow</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/ac3cedcb41bf935fff585cd1259bfc58429287210512786fe4956742b9f95100.png" src="../../_images/ac3cedcb41bf935fff585cd1259bfc58429287210512786fe4956742b9f95100.png" />
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthetic-d13c-signal-fig-6a">Synthetic d13C signal (Fig. 6a)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construct-gamma-age-models">Construct gamma age models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-the-data">Load the data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#make-lithostratigraphy-for-each-section">Make lithostratigraphy for each section</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#add-white-noise-to-proxy-observations">Add white noise to proxy observations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-the-modified-proxy-data">Load the modified proxy data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-proxy-observations-for-section-1-fig-11a">Example proxy observations for Section 1 (Fig. 11a)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-experiments-build-and-sample-the-inference-model">Run experiments (build and sample the inference model)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-the-inference-results">Load the inference results</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dictionary-of-trace-paths">Dictionary of trace paths</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#trial-1">Trial 1</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#trial-2">Trial 2</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#trial-3">Trial 3</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quantify-signal-recovery">Quantify signal recovery</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#load-calculated-relative-model-likelihoods">Load calculated relative model likelihoods</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-and-plot-combined-posterior-noise-terms-fig-11c">Load and plot combined posterior noise terms (Fig. 11c)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-figure-fig-11">Summary Figure (Fig. 11)</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/notebooks/GMD_paper/Fig 11 - Proxy noise.ipynb.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Stacey Edmonsond.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

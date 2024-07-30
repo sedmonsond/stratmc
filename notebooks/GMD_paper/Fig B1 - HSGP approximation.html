@@ -1,0 +1,1272 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Figure B1: Hilbert Space Gaussian process (HSGP) approximation &#8212; StratMC v1.0 Manual</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/GMD_paper/Fig B1 - HSGP approximation';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jul 29, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../_static/stratmc.png" class="logo__image only-light" alt="StratMC v1.0 Manual - Home"/>
+    <script>document.write(`<img src="../../_static/stratmc.png" class="logo__image only-dark" alt="StratMC v1.0 Manual - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Figure B1:...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="figure-b1-hilbert-space-gaussian-process-hsgp-approximation">
+<h1>Figure B1: Hilbert Space Gaussian process (HSGP) approximation<a class="headerlink" href="#figure-b1-hilbert-space-gaussian-process-hsgp-approximation" title="Link to this heading">#</a></h1>
+<p>This notebook can be used to:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+
+
+<span class="kn">import</span> <span class="nn">arviz</span> <span class="k">as</span> <span class="nn">az</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pymc</span> <span class="k">as</span> <span class="nn">pm</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">rcParams</span>
+
+<span class="kn">import</span> <span class="nn">stratmc</span>
+
+<span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sans-serif&quot;</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.sans-serif&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Avenir&quot;</span><span class="p">]</span>
+<span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;text.usetex&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">scipy.ndimage</span> <span class="kn">import</span> <span class="n">gaussian_filter</span> <span class="k">as</span> <span class="n">gaussian</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gaussian_kde</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="load-synthetic-data">
+<h1>Load synthetic data<a class="headerlink" href="#load-synthetic-data" title="Link to this heading">#</a></h1>
+</section>
+<section id="synthetic-d13c-signal-and-data">
+<h1>Synthetic d13C signal and data<a class="headerlink" href="#synthetic-d13c-signal-and-data" title="Link to this heading">#</a></h1>
+<p>Use the same d13C signal and observations as in Fig. 8</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">age_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">450</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
+<span class="n">amplitude</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">d13c_signal</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">synthetics</span><span class="o">.</span><span class="n">make_excursion</span><span class="p">(</span>
+    <span class="n">age_vector</span><span class="p">,</span>
+    <span class="n">amplitude</span><span class="p">,</span>
+    <span class="n">excursion_duration</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+    <span class="n">rising_time</span><span class="o">=</span><span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span>
+    <span class="n">smooth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">smoothing_factor</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">rate_offset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">d13c_signal</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">d13c_signal</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="n">signal_dict</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">signal_dict</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d13c_signal</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">invert_xaxis</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Age (Ma)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;d13C&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/8f78f1520882d74229f400e38f3f631abdce25b0cfc6b6cc8d0e448abf55739d.png" src="../../_images/8f78f1520882d74229f400e38f3f631abdce25b0cfc6b6cc8d0e448abf55739d.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sample_df</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_object</span><span class="p">(</span>
+    <span class="s2">&quot;data/Fig8_synthetic_sample_df_multiproxy_modified&quot;</span>
+<span class="p">)</span>
+<span class="n">ages_df</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_object</span><span class="p">(</span><span class="s2">&quot;data/Fig8_synthetic_ages_df_multiproxy_modified&quot;</span><span class="p">)</span>
+
+<span class="n">sections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="hsgp-approximation-trial-1">
+<h1>HSGP approximation: Trial 1<a class="headerlink" href="#hsgp-approximation-trial-1" title="Link to this heading">#</a></h1>
+<p>First, we try the HSGP approximation with <span class="math notranslate nohighlight">\(m\)</span> and <span class="math notranslate nohighlight">\(c\)</span> parameters optimized for the full range of the lengthscale prior. Later, we’ll narrow down the likely range of lengthscales to reduce <span class="math notranslate nohighlight">\(m\)</span> and <span class="math notranslate nohighlight">\(c\)</span>, which will speed up sampling time.</p>
+<section id="configure-the-hsgp-approximation">
+<h2>Configure the HSGP approximation<a class="headerlink" href="#configure-the-hsgp-approximation" title="Link to this heading">#</a></h2>
+<p>Here, we build an inference model and sample the prior in order to estimate the full range of possible lengthscales. We’ll then use this range to estimate optimal values for the <span class="math notranslate nohighlight">\(m\)</span> and <span class="math notranslate nohighlight">\(c\)</span> parameters for the HSGP approximation using <code class="docutils literal notranslate"><span class="pre">pymc.gp.hsgp_approx.approx_hsgp_hyperparams</span></code>.</p>
+<p>Note that the recommended values might vary slightly for different sets of prior draws.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Build unapproximated GP model</span>
+<span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">]</span>
+
+<span class="n">model</span><span class="p">,</span> <span class="n">gp</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">build_model</span><span class="p">(</span>
+    <span class="n">sample_df</span><span class="p">,</span>
+    <span class="n">ages_df</span><span class="p">,</span>
+    <span class="n">proxies</span><span class="o">=</span><span class="n">proxies</span><span class="p">,</span>
+    <span class="n">ls_dist</span><span class="o">=</span><span class="s2">&quot;Wald&quot;</span><span class="p">,</span>
+    <span class="n">ls_min</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>  <span class="c1"># minimum RBF kernel lengthscale</span>
+    <span class="n">ls_mu</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># mean of Wald distribution used as RBF kernel lengthscale prior</span>
+    <span class="n">ls_lambda</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>  <span class="c1"># lambda of Wald distribution used as RBF kernel lengthscale prior</span>
+    <span class="n">offset_type</span><span class="o">=</span><span class="s2">&quot;section&quot;</span><span class="p">,</span>  <span class="c1"># per-section offset with default prior</span>
+    <span class="n">noise_type</span><span class="o">=</span><span class="s2">&quot;section&quot;</span><span class="p">,</span>  <span class="c1"># per-section noise with default prior</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Sample the model prior</span>
+<span class="n">ls_names</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">proxy</span> <span class="ow">in</span> <span class="n">proxies</span><span class="p">:</span>
+    <span class="n">ls_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;gp_ls_&quot;</span> <span class="o">+</span> <span class="n">proxy</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">model</span><span class="p">:</span>
+    <span class="n">prior</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">sample_prior_predictive</span><span class="p">(</span><span class="n">draws</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span> <span class="n">var_names</span><span class="o">=</span><span class="n">ls_names</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sampling: [gp_ls_unshifted_d13c]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># using the prior draws to estimate the range of possible lengthscales, then calculate optimal HSGP parameters</span>
+<span class="n">proxy</span> <span class="o">=</span> <span class="s2">&quot;d13c&quot;</span>
+
+<span class="n">ls_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">prior</span><span class="o">.</span><span class="n">prior</span><span class="p">)[</span><span class="s2">&quot;gp_ls_&quot;</span> <span class="o">+</span> <span class="n">proxy</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+<span class="n">ls_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">prior</span><span class="o">.</span><span class="n">prior</span><span class="p">)[</span><span class="s2">&quot;gp_ls_&quot;</span> <span class="o">+</span> <span class="n">proxy</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+
+<span class="n">m</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">gp</span><span class="o">.</span><span class="n">hsgp_approx</span><span class="o">.</span><span class="n">approx_hsgp_hyperparams</span><span class="p">(</span>
+    <span class="n">x_range</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)],</span>
+    <span class="n">lengthscale_range</span><span class="o">=</span><span class="p">[</span><span class="n">ls_min</span><span class="p">,</span> <span class="n">ls_max</span><span class="p">],</span>
+    <span class="n">cov_func</span><span class="o">=</span><span class="s2">&quot;expquad&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recommended smallest number of basis vectors (m) for&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">proxy</span><span class="p">),</span> <span class="s2">&quot;: &quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recommended smallest scaling factor (c) for&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">proxy</span><span class="p">),</span> <span class="s2">&quot;: &quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="n">hsgp_m</span> <span class="o">=</span> <span class="n">m</span>
+<span class="n">hsgp_c</span> <span class="o">=</span> <span class="n">c</span>
+
+<span class="k">del</span> <span class="n">prior</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Recommended smallest number of basis vectors (m) for d13c :  137
+Recommended smallest scaling factor (c) for d13c :  12.3
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="build-model-using-the-hsgp-approximation-with-the-recommended-m-and-c-parameters">
+<h2>Build model using the HSGP approximation with the recommended <span class="math notranslate nohighlight">\(m\)</span> and <span class="math notranslate nohighlight">\(c\)</span> parameters<a class="headerlink" href="#build-model-using-the-hsgp-approximation-with-the-recommended-m-and-c-parameters" title="Link to this heading">#</a></h2>
+<p>To load the inference results used to produce Fig. B1b, skip to <a class="reference internal" href="#Load-the-inference-results-(HSGP,-trial-1)"><span class="xref myst">Load the inference results (HSGP, trial 1)</span></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Build unapproximated GP model</span>
+<span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">]</span>
+
+<span class="n">model</span><span class="p">,</span> <span class="n">gp</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">build_model</span><span class="p">(</span>
+    <span class="n">sample_df</span><span class="p">,</span>
+    <span class="n">ages_df</span><span class="p">,</span>
+    <span class="n">proxies</span><span class="o">=</span><span class="n">proxies</span><span class="p">,</span>
+    <span class="n">approximate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">hsgp_m</span><span class="o">=</span><span class="mi">137</span><span class="p">,</span>
+    <span class="n">hsgp_c</span><span class="o">=</span><span class="mf">12.3</span><span class="p">,</span>
+    <span class="n">ls_dist</span><span class="o">=</span><span class="s2">&quot;Wald&quot;</span><span class="p">,</span>
+    <span class="n">ls_min</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>  <span class="c1"># minimum RBF kernel lengthscale</span>
+    <span class="n">ls_mu</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># mean of Wald distribution used as RBF kernel lengthscale prior</span>
+    <span class="n">ls_lambda</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>  <span class="c1"># lambda of Wald distribution used as RBF kernel lengthscale prior</span>
+    <span class="n">offset_type</span><span class="o">=</span><span class="s2">&quot;section&quot;</span><span class="p">,</span>  <span class="c1"># per-section offset with default prior</span>
+    <span class="n">noise_type</span><span class="o">=</span><span class="s2">&quot;section&quot;</span><span class="p">,</span>  <span class="c1"># per-section noise with default prior</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Using HSGP approximation for  d13c
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">age_min</span> <span class="o">=</span> <span class="mi">400</span>
+<span class="n">age_max</span> <span class="o">=</span> <span class="mi">450</span>
+
+<span class="n">predict_ages</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">age_min</span><span class="p">,</span> <span class="n">age_max</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+
+<span class="n">chains</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">draws</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">tune</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">target_accept</span> <span class="o">=</span> <span class="mf">0.9</span>
+
+<span class="n">extension</span> <span class="o">=</span> <span class="s2">&quot;FigB1_hsgp_m137_c12.3&quot;</span>
+
+<span class="n">full_trace_hggp_1</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">gp</span><span class="p">,</span>
+    <span class="n">predict_ages</span><span class="p">,</span>
+    <span class="n">sample_df</span><span class="p">,</span>
+    <span class="n">ages_df</span><span class="p">,</span>
+    <span class="n">approximate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">proxies</span><span class="o">=</span><span class="n">proxies</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span>
+    <span class="n">chains</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">target_accept</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="load-the-inference-results-hsgp-trial-1">
+<h2>Load the inference results (HSGP, trial 1)<a class="headerlink" href="#load-the-inference-results-hsgp-trial-1" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">full_trace_hsgp_1</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_trace</span><span class="p">(</span><span class="s2">&quot;traces/FigB1_hsgp_m137_c12.3&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/staceyedmonsond/opt/anaconda3/envs/bayestrat-dev-m1-pymc516-accelerate/lib/python3.11/site-packages/arviz/data/inference_data.py:157: UserWarning: X_new group is not defined in the InferenceData scheme
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="plot-the-results">
+<h2>Plot the results<a class="headerlink" href="#plot-the-results" title="Link to this heading">#</a></h2>
+<p>The results look good, but we didn’t get a huge speed-up compared to the unapproximated GP.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">proxy_inference</span><span class="p">(</span>
+    <span class="n">sample_df</span><span class="p">,</span>
+    <span class="n">ages_df</span><span class="p">,</span>
+    <span class="n">full_trace_hsgp_1</span><span class="p">,</span>
+    <span class="n">sections</span><span class="o">=</span><span class="n">sections</span><span class="p">,</span>
+    <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span>
+    <span class="n">plot_constraints</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">plot_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">section_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Synthetic signal&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;HSGP, m = 137, c = 12.3&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x139c3c4d0&gt;
+</pre></div>
+</div>
+<img alt="../../_images/9cbdc44173896bbce169aedae675104c36523a91fb8c30902f9d705589c5c098.png" src="../../_images/9cbdc44173896bbce169aedae675104c36523a91fb8c30902f9d705589c5c098.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="hsgp-approximation-trial-2">
+<h1>HSGP approximation: Trial 2<a class="headerlink" href="#hsgp-approximation-trial-2" title="Link to this heading">#</a></h1>
+<p>Now, we’re going to use the inference results from the unapproximated GP (the single-proxy d13C inference in Fig. 8) to constrain the range of likely posterior lengthscales. This will allow us to use much smaller values for <span class="math notranslate nohighlight">\(m\)</span> and <span class="math notranslate nohighlight">\(c\)</span>, which will reduce sampling time.</p>
+<section id="load-inference-from-unapproximated-gp-model">
+<h2>Load inference from unapproximated GP model<a class="headerlink" href="#load-inference-from-unapproximated-gp-model" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">full_trace_unapprox</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_trace</span><span class="p">(</span><span class="s2">&quot;traces/Fig8_multiproxy_d13c&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/staceyedmonsond/opt/anaconda3/envs/bayestrat-dev-m1-pymc516-accelerate/lib/python3.11/site-packages/arviz/data/inference_data.py:157: UserWarning: X_new group is not defined in the InferenceData scheme
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id1">
+<h2>Configure the HSGP approximation<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>Use the posterior distribution for the RBF kernel lengthscale from the unapproximated model to estimate optimal values for the <span class="math notranslate nohighlight">\(m\)</span> and <span class="math notranslate nohighlight">\(c\)</span> parameters for the HSGP approximation using <code class="docutils literal notranslate"><span class="pre">pymc.gp.hsgp_approx.approx_hsgp_hyperparams</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">proxy</span> <span class="o">=</span> <span class="s2">&quot;d13c&quot;</span>
+
+<span class="n">ls_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span>
+    <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace_unapprox</span><span class="o">.</span><span class="n">posterior</span><span class="p">)[</span><span class="s2">&quot;gp_ls_&quot;</span> <span class="o">+</span> <span class="n">proxy</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="n">ls_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
+    <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace_unapprox</span><span class="o">.</span><span class="n">posterior</span><span class="p">)[</span><span class="s2">&quot;gp_ls_&quot;</span> <span class="o">+</span> <span class="n">proxy</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="p">)</span>
+
+<span class="n">m_2</span><span class="p">,</span> <span class="n">c_2</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">gp</span><span class="o">.</span><span class="n">hsgp_approx</span><span class="o">.</span><span class="n">approx_hsgp_hyperparams</span><span class="p">(</span>
+    <span class="n">x_range</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)],</span>
+    <span class="n">lengthscale_range</span><span class="o">=</span><span class="p">[</span><span class="n">ls_min</span><span class="p">,</span> <span class="n">ls_max</span><span class="p">],</span>
+    <span class="n">cov_func</span><span class="o">=</span><span class="s2">&quot;expquad&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recommended smallest number of basis vectors (m) for&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">proxy</span><span class="p">),</span> <span class="s2">&quot;: &quot;</span><span class="p">,</span> <span class="n">m_2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recommended smallest scaling factor (c) for&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">proxy</span><span class="p">),</span> <span class="s2">&quot;: &quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">c_2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="n">hsgp_m</span> <span class="o">=</span> <span class="n">m_2</span>
+<span class="n">hsgp_c</span> <span class="o">=</span> <span class="n">c_2</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Recommended smallest number of basis vectors (m) for d13c :  15
+Recommended smallest scaling factor (c) for d13c :  1.3
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id2">
+<h2>Build model using the HSGP approximation with the recommended <span class="math notranslate nohighlight">\(m\)</span> and <span class="math notranslate nohighlight">\(c\)</span> parameters<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>These <span class="math notranslate nohighlight">\(m\)</span> and <span class="math notranslate nohighlight">\(c\)</span> values should result in much faster sampling – recall the <span class="math notranslate nohighlight">\(\mathcal{O}(mn + m)\)</span> scaling of the HSGP approximation.</p>
+<p>To load the inference results used to produce Fig. B1c, skip to <a class="reference internal" href="#Load-the-inference-results-(HSGP,-trial-2)"><span class="xref myst">Load the inference results (HSGP, trial 2)</span></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Build unapproximated GP model</span>
+<span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">]</span>
+
+<span class="n">model</span><span class="p">,</span> <span class="n">gp</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">build_model</span><span class="p">(</span>
+    <span class="n">sample_df</span><span class="p">,</span>
+    <span class="n">ages_df</span><span class="p">,</span>
+    <span class="n">proxies</span><span class="o">=</span><span class="n">proxies</span><span class="p">,</span>
+    <span class="n">approximate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">hsgp_m</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+    <span class="n">hsgp_c</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span>
+    <span class="n">ls_dist</span><span class="o">=</span><span class="s2">&quot;Wald&quot;</span><span class="p">,</span>
+    <span class="n">ls_min</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>  <span class="c1"># minimum RBF kernel lengthscale</span>
+    <span class="n">ls_mu</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># mean of Wald distribution used as RBF kernel lengthscale prior</span>
+    <span class="n">ls_lambda</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>  <span class="c1"># lambda of Wald distribution used as RBF kernel lengthscale prior</span>
+    <span class="n">offset_type</span><span class="o">=</span><span class="s2">&quot;section&quot;</span><span class="p">,</span>  <span class="c1"># per-section offset with default prior</span>
+    <span class="n">noise_type</span><span class="o">=</span><span class="s2">&quot;section&quot;</span><span class="p">,</span>  <span class="c1"># per-section noise with default prior</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Using HSGP approximation for  d13c
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">age_min</span> <span class="o">=</span> <span class="mi">400</span>
+<span class="n">age_max</span> <span class="o">=</span> <span class="mi">450</span>
+
+<span class="n">predict_ages</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">age_min</span><span class="p">,</span> <span class="n">age_max</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+
+<span class="n">chains</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">draws</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">tune</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">target_accept</span> <span class="o">=</span> <span class="mf">0.9</span>
+
+<span class="n">extension</span> <span class="o">=</span> <span class="s2">&quot;FigB1_hsgp_m15_c1.3&quot;</span>
+
+<span class="n">full_trace_hggp_2</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">gp</span><span class="p">,</span>
+    <span class="n">predict_ages</span><span class="p">,</span>
+    <span class="n">sample_df</span><span class="p">,</span>
+    <span class="n">ages_df</span><span class="p">,</span>
+    <span class="n">approximate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">proxies</span><span class="o">=</span><span class="n">proxies</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span>
+    <span class="n">chains</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">target_accept</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="load-the-inference-results-hsgp-trial-2">
+<h2>Load the inference results (HSGP, trial 2)<a class="headerlink" href="#load-the-inference-results-hsgp-trial-2" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">full_trace_hsgp_2</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_trace</span><span class="p">(</span><span class="s2">&quot;traces/FigB1_hsgp_m15_c1.3&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/staceyedmonsond/opt/anaconda3/envs/bayestrat-dev-m1-pymc516-accelerate/lib/python3.11/site-packages/arviz/data/inference_data.py:157: UserWarning: X_new group is not defined in the InferenceData scheme
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id3">
+<h2>Plot the results<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>The results look identical to the model with <span class="math notranslate nohighlight">\(m = 137\)</span> and <span class="math notranslate nohighlight">\(c = 12.3\)</span>, and sampling was much faster!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">proxy_inference</span><span class="p">(</span>
+    <span class="n">sample_df</span><span class="p">,</span>
+    <span class="n">ages_df</span><span class="p">,</span>
+    <span class="n">full_trace_hsgp_2</span><span class="p">,</span>
+    <span class="n">sections</span><span class="o">=</span><span class="n">sections</span><span class="p">,</span>
+    <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span>
+    <span class="n">plot_constraints</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">plot_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">section_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Synthetic signal&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;HSGP, m = 15, c = 1.3&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x14a8aa2d0&gt;
+</pre></div>
+</div>
+<img alt="../../_images/ec19618133247d10e15faf129a9442b60dcccd5e0cb1ec87963e91cc7130d41c.png" src="../../_images/ec19618133247d10e15faf129a9442b60dcccd5e0cb1ec87963e91cc7130d41c.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="compare-results-of-the-hsgp-approximations-with-the-unapproximated-gp-fig-b1">
+<h1>Compare results of the HSGP approximations with the unapproximated GP (Fig. B1)<a class="headerlink" href="#compare-results-of-the-hsgp-approximations-with-the-unapproximated-gp-fig-b1" title="Link to this heading">#</a></h1>
+<p>Pulling it all together, we can compare the proxy signal inference from the unappromated GP model with our two HSGP models. The proxy signal inferences for the unapproximated GP and HSGP models are practically indistinguishable.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">7.6</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">fs</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;(a) Unapproximated GP&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;(b) HSGP: m = </span><span class="si">{}</span><span class="s2">, c = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;(c) HSGP: m = </span><span class="si">{}</span><span class="s2">, c = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">m_2</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">c_2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+
+<span class="c1"># latent GP posterior</span>
+<span class="n">ages</span> <span class="o">=</span> <span class="n">full_trace_unapprox</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">values</span>
+<span class="n">proxy_pred</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace_unapprox</span><span class="o">.</span><span class="n">posterior_predictive</span><span class="p">)[</span>
+    <span class="s2">&quot;f_pred_&quot;</span> <span class="o">+</span> <span class="s2">&quot;d13c&quot;</span>
+<span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;95</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mi">100</span> <span class="o">-</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="c1"># label=&#39;68% envelope&#39;,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>  <span class="c1"># (.8,.8,.8),</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;68</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">proxy_pred</span><span class="o">.</span><span class="n">ravel</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">proxy_pred</span><span class="o">.</span><span class="n">ravel</span><span class="p">()),</span> <span class="mi">200</span><span class="p">)</span>
+<span class="n">max_like</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+    <span class="n">time_slice</span> <span class="o">=</span> <span class="n">proxy_pred</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">max_like</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">time_slice</span><span class="p">,</span> <span class="n">bw_method</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">dy</span><span class="p">))]</span>
+
+
+<span class="n">max_like</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">max_like</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">max_like</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Most likely $\delta^</span><span class="si">{13}</span><span class="s2">$C&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True Signal&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># latent GP posterior</span>
+<span class="n">ages</span> <span class="o">=</span> <span class="n">full_trace_hsgp_1</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">values</span>
+<span class="n">proxy_pred</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace_hsgp_1</span><span class="o">.</span><span class="n">posterior_predictive</span><span class="p">)[</span>
+    <span class="s2">&quot;f_pred_&quot;</span> <span class="o">+</span> <span class="s2">&quot;d13c&quot;</span>
+<span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;95</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mi">100</span> <span class="o">-</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="c1"># label=&#39;68% envelope&#39;,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>  <span class="c1"># (.8,.8,.8),</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;68</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">proxy_pred</span><span class="o">.</span><span class="n">ravel</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">proxy_pred</span><span class="o">.</span><span class="n">ravel</span><span class="p">()),</span> <span class="mi">200</span><span class="p">)</span>
+<span class="n">max_like</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+    <span class="n">time_slice</span> <span class="o">=</span> <span class="n">proxy_pred</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">max_like</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">time_slice</span><span class="p">,</span> <span class="n">bw_method</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">dy</span><span class="p">))]</span>
+
+
+<span class="n">max_like</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">max_like</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">max_like</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Most likely $\delta^</span><span class="si">{13}</span><span class="s2">$C&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True Signal&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># latent GP posterior</span>
+<span class="n">ages</span> <span class="o">=</span> <span class="n">full_trace_hsgp_2</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">values</span>
+<span class="n">proxy_pred</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace_hsgp_2</span><span class="o">.</span><span class="n">posterior_predictive</span><span class="p">)[</span>
+    <span class="s2">&quot;f_pred_&quot;</span> <span class="o">+</span> <span class="s2">&quot;d13c&quot;</span>
+<span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;95</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mi">100</span> <span class="o">-</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="c1"># label=&#39;68% envelope&#39;,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>  <span class="c1"># (.8,.8,.8),</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;68</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">proxy_pred</span><span class="o">.</span><span class="n">ravel</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">proxy_pred</span><span class="o">.</span><span class="n">ravel</span><span class="p">()),</span> <span class="mi">200</span><span class="p">)</span>
+<span class="n">max_like</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+    <span class="n">time_slice</span> <span class="o">=</span> <span class="n">proxy_pred</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">max_like</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">time_slice</span><span class="p">,</span> <span class="n">bw_method</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">dy</span><span class="p">))]</span>
+
+<span class="n">max_like</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">max_like</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">max_like</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Most likely $\delta^</span><span class="si">{13}</span><span class="s2">$C&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True Signal&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_axisbelow</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">direction</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Age (Ma)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$\delta^</span><span class="si">{13}</span><span class="s2">$C (‰)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">invert_xaxis</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mi">450</span><span class="p">,</span> <span class="mi">425</span><span class="p">,</span> <span class="mi">400</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ages</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">ages</span><span class="p">)</span> <span class="o">-</span> <span class="mf">2.5</span><span class="p">])</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/4a36f32c3dcb1996435c926969746178fbcdd488c7417b516e74374d36e7616b.png" src="../../_images/4a36f32c3dcb1996435c926969746178fbcdd488c7417b516e74374d36e7616b.png" />
+</div>
+</div>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Figure B1: Hilbert Space Gaussian process (HSGP) approximation</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#load-synthetic-data">Load synthetic data</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#synthetic-d13c-signal-and-data">Synthetic d13C signal and data</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#hsgp-approximation-trial-1">HSGP approximation: Trial 1</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configure-the-hsgp-approximation">Configure the HSGP approximation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-model-using-the-hsgp-approximation-with-the-recommended-m-and-c-parameters">Build model using the HSGP approximation with the recommended <span class="math notranslate nohighlight">\(m\)</span> and <span class="math notranslate nohighlight">\(c\)</span> parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-the-inference-results-hsgp-trial-1">Load the inference results (HSGP, trial 1)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-the-results">Plot the results</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#hsgp-approximation-trial-2">HSGP approximation: Trial 2</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-inference-from-unapproximated-gp-model">Load inference from unapproximated GP model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Configure the HSGP approximation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Build model using the HSGP approximation with the recommended <span class="math notranslate nohighlight">\(m\)</span> and <span class="math notranslate nohighlight">\(c\)</span> parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-the-inference-results-hsgp-trial-2">Load the inference results (HSGP, trial 2)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Plot the results</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-results-of-the-hsgp-approximations-with-the-unapproximated-gp-fig-b1">Compare results of the HSGP approximations with the unapproximated GP (Fig. B1)</a></li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/notebooks/GMD_paper/Fig B1 - HSGP approximation.ipynb.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Stacey Edmonsond.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1701 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Figure 10: Environmental biases in proxy values &#8212; StratMC v1.0 Manual</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/GMD_paper/Fig 10 - Environmental bias';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jul 29, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../_static/stratmc.png" class="logo__image only-light" alt="StratMC v1.0 Manual - Home"/>
+    <script>document.write(`<img src="../../_static/stratmc.png" class="logo__image only-dark" alt="StratMC v1.0 Manual - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Figure 10:...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="figure-10-environmental-biases-in-proxy-values">
+<h1>Figure 10: Environmental biases in proxy values<a class="headerlink" href="#figure-10-environmental-biases-in-proxy-values" title="Link to this heading">#</a></h1>
+<p>This notebook can be used to:</p>
+<ul class="simple">
+<li><p>Generate/load and plot the synthetic d13C and age constraint data (as in Fig. 10a)</p></li>
+<li><p>Build and sample the inference model using different offset parameterizations (Experiment 1 and Experiment 2 in Fig. 10)</p></li>
+<li><p>Load the inference results from the model run used to produce Fig. 10b-e</p></li>
+<li><p>Visualize the results using functions from <code class="docutils literal notranslate"><span class="pre">stratmc.plotting</span></code></p></li>
+<li><p>Quantify signal recovery for each experiment</p></li>
+<li><p>Reproduce Fig. 10 using the provided inference results</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+
+<span class="kn">import</span> <span class="nn">arviz</span> <span class="k">as</span> <span class="nn">az</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">rcParams</span>
+
+<span class="kn">import</span> <span class="nn">stratmc</span>
+
+<span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sans-serif&quot;</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.sans-serif&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Avenir&quot;</span><span class="p">]</span>
+<span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;text.usetex&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">scipy.ndimage</span> <span class="kn">import</span> <span class="n">gaussian_filter</span> <span class="k">as</span> <span class="n">gaussian</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gaussian_kde</span><span class="p">,</span> <span class="n">norm</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="synthetic-d13c-signal-and-data">
+<h2>Synthetic d13C signal and data<a class="headerlink" href="#synthetic-d13c-signal-and-data" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">age_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">450</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
+<span class="n">amplitude</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">d13c_signal</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">synthetics</span><span class="o">.</span><span class="n">make_excursion</span><span class="p">(</span>
+    <span class="n">age_vector</span><span class="p">,</span>
+    <span class="n">amplitude</span><span class="p">,</span>
+    <span class="n">excursion_duration</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+    <span class="n">rising_time</span><span class="o">=</span><span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span>
+    <span class="n">smooth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">smoothing_factor</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">rate_offset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">d13c_signal</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">d13c_signal</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="n">signal_dict</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">signal_dict</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d13c_signal</span>
+
+<span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">]</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">invert_xaxis</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Age (Ma)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;d13C&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/8f78f1520882d74229f400e38f3f631abdce25b0cfc6b6cc8d0e448abf55739d.png" src="../../_images/8f78f1520882d74229f400e38f3f631abdce25b0cfc6b6cc8d0e448abf55739d.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load unmodified observations (run the cells in the next section to modify)</span>
+<span class="c1"># sample_df = stratmc.data.load_object(&#39;data/Fig5_synthetic_sample_df_unmodified&#39;)</span>
+<span class="c1"># ages_df = stratmc.data.load_object(&#39;data/Fig5_synthetic_ages_df_unmodified&#39;)</span>
+
+<span class="c1"># or load the modified observations (in this case, skip the next section)</span>
+<span class="n">sample_df</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_object</span><span class="p">(</span><span class="s2">&quot;data/Fig10_local_bias_sample_df&quot;</span><span class="p">)</span>
+<span class="n">ages_df</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_object</span><span class="p">(</span><span class="s2">&quot;data/Fig10_local_bias_ages_df&quot;</span><span class="p">)</span>
+
+<span class="n">sections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="modify-observations-for-experiments">
+<h2>Modify observations for experiments<a class="headerlink" href="#modify-observations-for-experiments" title="Link to this heading">#</a></h2>
+<p><strong>Only run the code in this section if you loaded the unmodified d13C observations in <code class="docutils literal notranslate"><span class="pre">Fig5_synthetic_sample_df_unmodified.pkl</span></code> and <code class="docutils literal notranslate"><span class="pre">Fig5_synthetic_ages_df_unmodified.pkl</span></code>.</strong> The observations in <code class="docutils literal notranslate"><span class="pre">Fig10_local_gradients_sample_df.pkl</span></code> and <code class="docutils literal notranslate"><span class="pre">Fig10_local_gradients_ages_df.pkl</span></code> have already been modified.</p>
+<section id="modify-d13c-data-to-reflect-local-biases">
+<h3>Modify d13C data to reflect local biases<a class="headerlink" href="#modify-d13c-data-to-reflect-local-biases" title="Link to this heading">#</a></h3>
+<p>Creates new lithostratigraphy for each section, then shifts the d13C observations in each environment using a prescribed offset distribution</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;d13c_original&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;facies&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+<span class="c1">## section 1</span>
+<span class="c1"># start sabkha</span>
+<span class="c1"># tidal flats migrate --&gt; now have terrestrial influence</span>
+<span class="n">section_1_offset_groups</span> <span class="o">=</span> <span class="mi">18</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;sabkha&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;nearshore&quot;</span><span class="p">]</span>
+<span class="n">section_1_facies_groups</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mi">2</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;grainstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;packstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;grainstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;wackestone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;packstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;grainstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;packstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;grainstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;packstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;wackestone&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_1_offset_groups</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;facies&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_1_facies_groups</span>
+
+
+<span class="c1">## section 2</span>
+<span class="c1"># start depleted (close to terrestrial source)</span>
+<span class="c1"># terrestrial source migrates, now slightly elevated (subtidal)</span>
+<span class="c1"># cap with very elevated (restricted sabkha)</span>
+<span class="n">section_2_offset_groups</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;nearshore&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;subtidal&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;sabkha&quot;</span><span class="p">]</span>
+<span class="n">section_2_facies_groups</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mi">4</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;packstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;grainstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;mudstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;wackestone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;packstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;wackestone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;packstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">6</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;grainstone&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_2_offset_groups</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;facies&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_2_facies_groups</span>
+
+
+<span class="c1">## section 3</span>
+<span class="c1"># start elevated (shallow subtidal)</span>
+<span class="c1"># then shift to depleted as water depth shallows and terrestrial source approaches</span>
+<span class="n">section_3_offset_groups</span> <span class="o">=</span> <span class="mi">17</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;subtidal&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">13</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;nearshore&quot;</span><span class="p">]</span>
+<span class="n">section_3_facies_groups</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;mudstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;wackestone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;packstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;mudstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;wackestone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;packstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;grainstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;packstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;grainstone&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;3&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_3_offset_groups</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;facies&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;3&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_3_facies_groups</span>
+
+<span class="c1">## section 4</span>
+<span class="c1"># start sabkha at base, shallow upward to subtidal</span>
+<span class="n">section_4_offset_groups</span> <span class="o">=</span> <span class="mi">11</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;sabkha&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">14</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;subtidal&quot;</span><span class="p">]</span>
+<span class="n">section_4_facies_groups</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mi">4</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;packstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;grainstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;packstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">1</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;grainstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;mudstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;wackestone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;packstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;mudstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;wackestone&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;4&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_4_offset_groups</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;facies&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;4&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_4_facies_groups</span>
+
+<span class="c1">## section 5</span>
+<span class="c1"># start open-marine</span>
+<span class="c1"># shallow upward to subtidal</span>
+<span class="n">section_5_offset_groups</span> <span class="o">=</span> <span class="mi">18</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;open-marine&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">8</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;subtidal&quot;</span><span class="p">]</span>
+<span class="n">section_5_facies_groups</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mi">5</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;mudstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;wackestone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;mudstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;wackestone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;mudstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;wackestone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;packstone&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;5&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_5_offset_groups</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;facies&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;5&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_5_facies_groups</span>
+
+
+<span class="c1">## section 6</span>
+<span class="c1"># just open-marine</span>
+<span class="n">section_6_offset_groups</span> <span class="o">=</span> <span class="mi">30</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;open-marine&quot;</span><span class="p">]</span>
+<span class="n">section_6_facies_groups</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;mudstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;wackestone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;mudstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;wackestone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">11</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;mudstone&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;wackestone&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;6&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_6_offset_groups</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;facies&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;6&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_6_facies_groups</span>
+
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_value&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;nearshore&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+        <span class="o">-</span><span class="mi">3</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;nearshore&quot;</span><span class="p">][</span><span class="s2">&quot;d13c&quot;</span><span class="p">]),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_value&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;subtidal&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+        <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;subtidal&quot;</span><span class="p">][</span><span class="s2">&quot;d13c&quot;</span><span class="p">])</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_value&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;open-marine&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+        <span class="mi">0</span><span class="p">,</span>
+        <span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;open-marine&quot;</span><span class="p">][</span><span class="s2">&quot;d13c&quot;</span><span class="p">]),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_value&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;sabkha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+        <span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;sabkha&quot;</span><span class="p">][</span><span class="s2">&quot;d13c&quot;</span><span class="p">])</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;nearshore&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sample_df</span><span class="p">[</span>
+    <span class="s2">&quot;offset_value&quot;</span>
+<span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;nearshore&quot;</span><span class="p">]</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;subtidal&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sample_df</span><span class="p">[</span>
+    <span class="s2">&quot;offset_value&quot;</span>
+<span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;subtidal&quot;</span><span class="p">]</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;open-marine&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sample_df</span><span class="p">[</span>
+    <span class="s2">&quot;offset_value&quot;</span>
+<span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;open-marine&quot;</span><span class="p">]</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;sabkha&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sample_df</span><span class="p">[</span>
+    <span class="s2">&quot;offset_value&quot;</span>
+<span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;sabkha&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="plot-the-true-offset-for-each-environment-fig-9b">
+<h3>Plot the true offset for each environment (Fig. 9b)<a class="headerlink" href="#plot-the-true-offset-for-each-environment-fig-9b" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+
+<span class="n">env_offset</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">env_offset</span><span class="p">[</span><span class="s2">&quot;nearshore&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span>
+<span class="n">env_offset</span><span class="p">[</span><span class="s2">&quot;sabkha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="n">env_offset</span><span class="p">[</span><span class="s2">&quot;open-marine&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">env_offset</span><span class="p">[</span><span class="s2">&quot;subtidal&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="n">nearshore_pdf</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">loc</span><span class="o">=-</span><span class="mi">3</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">sabkha_pdf</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">open_pdf</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">subtidal_pdf</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">fs</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">sabkha_pdf</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#FFEB7F&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Sabkha&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">xs</span><span class="p">,</span> <span class="n">nearshore_pdf</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;mediumseagreen&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Nearshore&quot;</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">xs</span><span class="p">,</span> <span class="n">subtidal_pdf</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#87BED5&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Subtidal&quot;</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">xs</span><span class="p">,</span> <span class="n">open_pdf</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#B9B9B9&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Open ocean&quot;</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span>
+    <span class="s2">&quot;Offset from open-ocean $\delta^</span><span class="si">{13}</span><span class="s2">$C (‰)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span>
+<span class="p">)</span>  <span class="c1"># $\delta^{13}$C</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">direction</span><span class="o">=</span><span class="s2">&quot;out&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;bottom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">yl</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">yl</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x13dca3590&gt;
+</pre></div>
+</div>
+<img alt="../../_images/f6f2184c6d8377f623b87d8ef24b0635f380256dfe47b4e14f02481daffcfa15.png" src="../../_images/f6f2184c6d8377f623b87d8ef24b0635f380256dfe47b4e14f02481daffcfa15.png" />
+</div>
+</div>
+</section>
+<section id="add-a-depositional-age-at-426-ma-to-each-section">
+<h3>add a depositional age at 426 Ma to each section<a class="headerlink" href="#add-a-depositional-age-at-426-ma-to-each-section" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dep_age</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;section&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">23.57</span><span class="p">],</span>
+    <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">426</span><span class="p">],</span>
+    <span class="s2">&quot;age_std&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">],</span>
+    <span class="s2">&quot;distribution_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Normal&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;param_1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_2&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_1_name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_2_name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;shared?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate detrital?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate intrusive?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;Exclude?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">ages_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">ages_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">dep_age</span><span class="p">)],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">dep_age</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;section&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">5.65</span><span class="p">],</span>
+    <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">426</span><span class="p">],</span>
+    <span class="s2">&quot;age_std&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">],</span>
+    <span class="s2">&quot;distribution_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Normal&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;param_1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_2&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_1_name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_2_name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;shared?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate detrital?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate intrusive?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;Exclude?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">ages_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">ages_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">dep_age</span><span class="p">)],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">dep_age</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;section&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">14.15</span><span class="p">],</span>
+    <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">426</span><span class="p">],</span>
+    <span class="s2">&quot;age_std&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">],</span>
+    <span class="s2">&quot;distribution_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Normal&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;param_1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_2&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_1_name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_2_name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;shared?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate detrital?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate intrusive?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;Exclude?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">ages_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">ages_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">dep_age</span><span class="p">)],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">dep_age</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;section&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">4.7</span><span class="p">],</span>
+    <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">426</span><span class="p">],</span>
+    <span class="s2">&quot;age_std&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">],</span>
+    <span class="s2">&quot;distribution_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Normal&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;param_1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_2&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_1_name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_2_name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;shared?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate detrital?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate intrusive?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;Exclude?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">ages_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">ages_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">dep_age</span><span class="p">)],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">dep_age</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;section&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;5&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">5.75</span><span class="p">],</span>
+    <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">426</span><span class="p">],</span>
+    <span class="s2">&quot;age_std&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">],</span>
+    <span class="s2">&quot;distribution_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Normal&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;param_1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_2&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_1_name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_2_name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;shared?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate detrital?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate intrusive?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;Exclude?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">ages_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">ages_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">dep_age</span><span class="p">)],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">dep_age</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;section&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;6&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">6.6</span><span class="p">],</span>
+    <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">426</span><span class="p">],</span>
+    <span class="s2">&quot;age_std&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">],</span>
+    <span class="s2">&quot;distribution_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Normal&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;param_1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_2&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_1_name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;param_2_name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;shared?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate detrital?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;intermediate intrusive?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+    <span class="s2">&quot;Exclude?&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">ages_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">ages_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">dep_age</span><span class="p">)],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># check proxy data and age constraints with proxy_strat</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">proxy_strat</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/55894d0fce01613cce54fdb5351034708d28046feab06b8eb9288a1445ac4c13.png" src="../../_images/55894d0fce01613cce54fdb5351034708d28046feab06b8eb9288a1445ac4c13.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="plot-modified-obervations-and-lithostratigraphy-fig-10a">
+<h2>Plot modified obervations and lithostratigraphy (Fig. 10a)<a class="headerlink" href="#plot-modified-obervations-and-lithostratigraphy-fig-10a" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># strat columns</span>
+<span class="n">facies_colors</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">facies_widths</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">facies_colors</span><span class="p">[</span><span class="s2">&quot;nearshore&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;mediumseagreen&quot;</span>
+<span class="n">facies_colors</span><span class="p">[</span><span class="s2">&quot;subtidal&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#87BED5&quot;</span>
+<span class="n">facies_colors</span><span class="p">[</span><span class="s2">&quot;open-marine&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#B9B9B9&quot;</span>
+<span class="n">facies_colors</span><span class="p">[</span><span class="s2">&quot;sabkha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#FFEB7F&quot;</span>
+
+<span class="n">facies_widths</span><span class="p">[</span><span class="s2">&quot;grainstone&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.25</span>
+<span class="n">facies_widths</span><span class="p">[</span><span class="s2">&quot;packstone&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">facies_widths</span><span class="p">[</span><span class="s2">&quot;mudstone&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">facies_widths</span><span class="p">[</span><span class="s2">&quot;wackestone&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.75</span>
+
+<span class="n">fs</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="n">widths</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="mi">2</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">sections</span><span class="p">),</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">7.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">),</span>
+    <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width_ratios&quot;</span><span class="p">:</span> <span class="n">widths</span><span class="p">},</span>
+<span class="p">)</span>
+
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sections</span><span class="p">)):</span>
+    <span class="n">section</span> <span class="o">=</span> <span class="n">sections</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+    <span class="n">section_ages_df</span> <span class="o">=</span> <span class="n">ages_df</span><span class="p">[</span>
+        <span class="p">(</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">)</span>
+        <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]))</span>
+        <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;intermediate detrital?&quot;</span><span class="p">])</span>
+    <span class="p">]</span>
+    <span class="n">section_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">]</span>
+
+    <span class="n">sec_sample_ages</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s2">&quot;age&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">sec_sample_heights</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s2">&quot;height&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="n">sec_radio_ages</span> <span class="o">=</span> <span class="n">section_ages_df</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">sec_ages_comb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">sec_radio_ages</span><span class="p">,</span> <span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]])</span>
+
+    <span class="n">heights_comb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">section_ages_df</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">],</span> <span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]])</span>
+
+    <span class="n">heights_comb_sort_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">heights_comb</span><span class="p">)</span>
+
+    <span class="n">sec_ages_comb</span> <span class="o">=</span> <span class="n">sec_ages_comb</span><span class="p">[</span><span class="n">heights_comb_sort_idx</span><span class="p">]</span>
+    <span class="n">heights_comb</span> <span class="o">=</span> <span class="n">heights_comb</span><span class="p">[</span><span class="n">heights_comb_sort_idx</span><span class="p">]</span>
+
+    <span class="n">d13c_section_interp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">sec_ages_comb</span><span class="p">,</span> <span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">)</span>
+
+    <span class="n">new_heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">heights_comb</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">heights_comb</span><span class="p">),</span> <span class="mi">200</span><span class="p">)</span>
+    <span class="n">sec_age_interp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">new_heights</span><span class="p">,</span> <span class="n">heights_comb</span><span class="p">,</span> <span class="n">sec_ages_comb</span><span class="p">)</span>
+
+    <span class="n">d13c_section_interp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">sec_age_interp</span><span class="p">,</span> <span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="p">[</span><span class="n">j</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d13c_section_interp</span><span class="p">,</span> <span class="n">new_heights</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">section_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">]</span>
+    <span class="n">section_ages_df</span> <span class="o">=</span> <span class="n">ages_df</span><span class="p">[</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">]</span>
+    <span class="n">section_ages_df</span> <span class="o">=</span> <span class="n">section_ages_df</span><span class="p">[</span><span class="o">~</span><span class="n">section_ages_df</span><span class="p">[</span><span class="s2">&quot;Exclude?&quot;</span><span class="p">]]</span>
+
+    <span class="n">switch_bools</span> <span class="o">=</span> <span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;facies&quot;</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">!=</span> <span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;facies&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">switch_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">switch_bools</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">switch_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]),</span> <span class="n">switch_idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;facies&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])]</span>
+    <span class="p">)</span>
+
+    <span class="n">total_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">switch_idx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">facies</span> <span class="o">=</span> <span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;facies&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">switch_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">environment</span> <span class="o">=</span> <span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;offset_group_d13c&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">switch_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">height</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">switch_idx</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span>
+            <span class="o">-</span> <span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">switch_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="p">)</span>
+
+        <span class="n">current_base</span> <span class="o">=</span> <span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">switch_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">current_base</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="n">height</span> <span class="o">+=</span> <span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">switch_idx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">height</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">section_ages_df</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">])</span>
+
+        <span class="n">ax</span><span class="p">[</span><span class="n">j</span> <span class="o">*</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">current_base</span><span class="p">,</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">facies_widths</span><span class="p">[</span><span class="n">facies</span><span class="p">],</span>
+            <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
+            <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="n">align</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">facies_colors</span><span class="p">[</span><span class="n">environment</span><span class="p">],</span>
+            <span class="n">clip_on</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">section_ages_df</span> <span class="o">=</span> <span class="n">ages_df</span><span class="p">[</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">section_ages_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># base of sections</span>
+            <span class="n">age_color</span> <span class="o">=</span> <span class="s2">&quot;#87BED5&quot;</span>
+
+        <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">section_ages_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># top of sections</span>
+            <span class="n">age_color</span> <span class="o">=</span> <span class="s2">&quot;mediumseagreen&quot;</span>
+
+        <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">section_ages_df</span><span class="o">.</span><span class="n">index</span><span class="p">)[</span><span class="n">k</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">16</span><span class="p">]:</span>  <span class="c1"># shared constraint</span>
+            <span class="n">age_color</span> <span class="o">=</span> <span class="s2">&quot;#7C78A0&quot;</span>  <span class="c1">#&#39;#F4A27C&#39; #&#39;#FFEB7F&#39;  # yellow</span>
+
+        <span class="k">if</span> <span class="n">section_ages_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;intermediate detrital?&quot;</span><span class="p">]:</span>
+            <span class="n">ax</span><span class="p">[</span><span class="n">j</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+                <span class="mi">0</span><span class="p">,</span>
+                <span class="n">section_ages_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;height&quot;</span><span class="p">],</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">age_color</span><span class="p">,</span>
+                <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;^&quot;</span><span class="p">,</span>
+                <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+                <span class="n">s</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+                <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                <span class="n">clip_on</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ax</span><span class="p">[</span><span class="n">j</span> <span class="o">*</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+                <span class="mi">0</span><span class="p">,</span>
+                <span class="n">section_ages_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;height&quot;</span><span class="p">],</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">age_color</span><span class="p">,</span>
+                <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+                <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
+                <span class="n">s</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+                <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                <span class="n">clip_on</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="n">ax</span><span class="p">[</span><span class="n">j</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+        <span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">],</span>
+        <span class="n">section_df</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">],</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span>
+        <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+        <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">clip_on</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sharex</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">]]</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">])</span>
+
+
+<span class="p">[</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">]]</span>
+<span class="p">[</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$\delta^</span><span class="si">{13}</span><span class="s2">$C (‰)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">]]</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Height (m)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+
+<span class="p">[</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">direction</span><span class="o">=</span><span class="s2">&quot;out&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sections</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">tick</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">get_major_ticks</span><span class="p">():</span>
+        <span class="n">tick</span><span class="o">.</span><span class="n">tick1line</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">tick</span><span class="o">.</span><span class="n">tick2line</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">tick</span><span class="o">.</span><span class="n">label1</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">tick</span><span class="o">.</span><span class="n">label2</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">ravel</span><span class="p">():</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_axisbelow</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ages_df</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">])])</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">])</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">]:</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;bottom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">]:</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;bottom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">])</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">):</span>
+    <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s2">&quot;none&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">get_ticklabels</span><span class="p">()]</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/8a51691474cab911bada683cdec587edc40311e45ad7c2690d3c6892c041cb26.png" src="../../_images/8a51691474cab911bada683cdec587edc40311e45ad7c2690d3c6892c041cb26.png" />
+</div>
+</div>
+</section>
+<section id="experiment-1-environment-dependent-offset-terms">
+<h2>Experiment 1: Environment-dependent offset terms<a class="headerlink" href="#experiment-1-environment-dependent-offset-terms" title="Link to this heading">#</a></h2>
+<p>Run the inference model with a unique offset term for each depositional environment. To load the results for the inferences used to produce Fig. 10b-c, skip to <a class="reference internal" href="#Load-the-inference-results"><span class="xref myst">Load the inference results</span></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="p">,</span> <span class="n">gp</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">build_model</span><span class="p">(</span>
+    <span class="n">sample_df</span><span class="p">,</span>
+    <span class="n">ages_df</span><span class="p">,</span>
+    <span class="n">proxies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">],</span>
+    <span class="n">ls_dist</span><span class="o">=</span><span class="s2">&quot;Wald&quot;</span><span class="p">,</span>
+    <span class="n">ls_min</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>  <span class="c1"># minimum RBF kernel lengthscale</span>
+    <span class="n">ls_mu</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># mean of Wald distribution used as RBF kernel lengthscale prior</span>
+    <span class="n">ls_lambda</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>  <span class="c1"># lambda of Wald distribution used as RBF kernel lengthscale prior</span>
+    <span class="n">offset_type</span><span class="o">=</span><span class="s2">&quot;groups&quot;</span><span class="p">,</span>  <span class="c1"># environmental offset groupings with default prior</span>
+    <span class="n">noise_type</span><span class="o">=</span><span class="s2">&quot;section&quot;</span><span class="p">,</span>  <span class="c1"># per-section noise with default prior</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">predict_ages</span> <span class="o">=</span> <span class="n">age_vector</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+
+<span class="n">extension</span> <span class="o">=</span> <span class="s2">&quot;Fig10_local_bias_experiment_1&quot;</span>
+
+<span class="n">full_trace</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">gp</span><span class="p">,</span>
+    <span class="n">predict_ages</span><span class="p">,</span>
+    <span class="n">sample_df</span><span class="p">,</span>
+    <span class="n">ages_df</span><span class="p">,</span>
+    <span class="n">proxies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">],</span>
+    <span class="n">name</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span>
+    <span class="n">chains</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">target_accept</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="experiment-2-per-section-offset-terms">
+<h2>Experiment 2: Per-section offset terms<a class="headerlink" href="#experiment-2-per-section-offset-terms" title="Link to this heading">#</a></h2>
+<p>Run the inference model with a unique offset term for each section. To load the results for the inference used to produce Fig. 10d, skip to <a class="reference internal" href="#Load-the-inference-results"><span class="xref myst">Load the inference results</span></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="p">,</span> <span class="n">gp</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">build_model</span><span class="p">(</span>
+    <span class="n">sample_df</span><span class="p">,</span>
+    <span class="n">ages_df</span><span class="p">,</span>
+    <span class="n">proxies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">],</span>
+    <span class="n">ls_dist</span><span class="o">=</span><span class="s2">&quot;Wald&quot;</span><span class="p">,</span>
+    <span class="n">ls_min</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>  <span class="c1"># minimum RBF kernel lengthscale</span>
+    <span class="n">ls_mu</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># mean of Wald distribution used as RBF kernel lengthscale prior</span>
+    <span class="n">ls_lambda</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>  <span class="c1"># lambda of Wald distribution used as RBF kernel lengthscale prior</span>
+    <span class="n">offset_type</span><span class="o">=</span><span class="s2">&quot;section&quot;</span><span class="p">,</span>  <span class="c1"># per-section offset with default prior</span>
+    <span class="n">noise_type</span><span class="o">=</span><span class="s2">&quot;section&quot;</span><span class="p">,</span>  <span class="c1"># per-section noise with default prior</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">predict_ages</span> <span class="o">=</span> <span class="n">age_vector</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+
+<span class="n">extension</span> <span class="o">=</span> <span class="s2">&quot;Fig10_local_bias_experiment_2&quot;</span>
+
+<span class="n">full_trace</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">gp</span><span class="p">,</span>
+    <span class="n">predict_ages</span><span class="p">,</span>
+    <span class="n">sample_df</span><span class="p">,</span>
+    <span class="n">ages_df</span><span class="p">,</span>
+    <span class="n">proxies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;d13c&quot;</span><span class="p">],</span>
+    <span class="n">name</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span>
+    <span class="n">chains</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">target_accept</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="load-the-inference-results">
+<h2>Load the inference results<a class="headerlink" href="#load-the-inference-results" title="Link to this heading">#</a></h2>
+<p>Load traces for Experiment 1 and Experiment 2 used to produce Fig. 10</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">full_trace_1</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_trace</span><span class="p">(</span><span class="s2">&quot;traces/&quot;</span> <span class="o">+</span> <span class="s2">&quot;Fig10_local_bias_experiment_1&quot;</span><span class="p">)</span>
+<span class="n">full_trace_2</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_trace</span><span class="p">(</span><span class="s2">&quot;traces/&quot;</span> <span class="o">+</span> <span class="s2">&quot;Fig10_local_bias_experiment_2&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/staceyedmonsond/opt/anaconda3/envs/bayestrat-dev-m1-pymc516-accelerate/lib/python3.11/site-packages/arviz/data/inference_data.py:157: UserWarning: X_new group is not defined in the InferenceData scheme
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="plot-the-inference-results-with-stratmc-plotting">
+<h2>Plot the inference results with <code class="docutils literal notranslate"><span class="pre">stratmc.plotting</span></code><a class="headerlink" href="#plot-the-inference-results-with-stratmc-plotting" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot the proxy signal inference for each experiment</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">proxy_inference</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="n">full_trace_1</span><span class="p">,</span> <span class="n">plot_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">proxy_inference</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="n">full_trace_2</span><span class="p">,</span> <span class="n">plot_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/0f56a3918f060176c057ac8e3da42437e8033e94f213027604c53892648480f6.png" src="../../_images/0f56a3918f060176c057ac8e3da42437e8033e94f213027604c53892648480f6.png" />
+<img alt="../../_images/4321e81e1bda30b44cb0175c1ab261abebac5e99e20d6b9632f9c104713f1ff0.png" src="../../_images/4321e81e1bda30b44cb0175c1ab261abebac5e99e20d6b9632f9c104713f1ff0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># For each experiment, map the proxy signal back to height in each section using the most likely posterior age models</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">section_proxy_signal</span><span class="p">(</span><span class="n">full_trace_1</span><span class="p">,</span> <span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">section_proxy_signal</span><span class="p">(</span><span class="n">full_trace_2</span><span class="p">,</span> <span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/6e91b63a62b089727f759854c6f4504863f50b65f1ae43320ab8ded0ffcb87e7.png" src="../../_images/6e91b63a62b089727f759854c6f4504863f50b65f1ae43320ab8ded0ffcb87e7.png" />
+<img alt="../../_images/dcf4aff58ef931fd535178c5587c335786050517d46dad89b9f9533d24b28d84.png" src="../../_images/dcf4aff58ef931fd535178c5587c335786050517d46dad89b9f9533d24b28d84.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Posterior offset terms for each experiment</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">offset_summary</span><span class="p">(</span><span class="n">full_trace_1</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">offset_summary</span><span class="p">(</span><span class="n">full_trace_2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/2504668bd39d8f814a021767a5578a8187b332102d544c1ca23f1ccf227090d9.png" src="../../_images/2504668bd39d8f814a021767a5578a8187b332102d544c1ca23f1ccf227090d9.png" />
+<img alt="../../_images/5e46e05b2df57a0775f5337e9ef56b3829bd28978859e701ebf665517abf0a68.png" src="../../_images/5e46e05b2df57a0775f5337e9ef56b3829bd28978859e701ebf665517abf0a68.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot the residuals</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">section_proxy_residuals</span><span class="p">(</span><span class="n">full_trace_1</span><span class="p">,</span> <span class="n">sample_df</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">section_proxy_residuals</span><span class="p">(</span><span class="n">full_trace_2</span><span class="p">,</span> <span class="n">sample_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/31db5f2068d2506dd137137751c84ebba6f89d6e3f146fb92c1af7570d306cdf.png" src="../../_images/31db5f2068d2506dd137137751c84ebba6f89d6e3f146fb92c1af7570d306cdf.png" />
+<img alt="../../_images/94da1ec283cdd1c2508e5dde659e09ac16ad7998abc0c70bc74659da23a39634.png" src="../../_images/94da1ec283cdd1c2508e5dde659e09ac16ad7998abc0c70bc74659da23a39634.png" />
+</div>
+</div>
+</section>
+<section id="quantify-signal-recovery">
+<h2>Quantify signal recovery<a class="headerlink" href="#quantify-signal-recovery" title="Link to this heading">#</a></h2>
+<p>Calculate the relative likelihood of the model with environment-dependent offsets (Experiment 1) vs. per-section offsets (Experiment 2)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># d13C signal recovery for each experiment</span>
+<span class="n">signal_recovery_exp1</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">synthetics</span><span class="o">.</span><span class="n">quantify_signal_recovery</span><span class="p">(</span>
+    <span class="n">full_trace_1</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">proxy</span><span class="o">=</span><span class="s2">&quot;d13c&quot;</span>
+<span class="p">)</span>
+<span class="n">signal_recovery_exp2</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">synthetics</span><span class="o">.</span><span class="n">quantify_signal_recovery</span><span class="p">(</span>
+    <span class="n">full_trace_2</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">proxy</span><span class="o">=</span><span class="s2">&quot;d13c&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># relative likelihoods</span>
+<span class="n">d13C_ratio_vec_exp1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">signal_recovery_exp1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">signal_recovery_exp1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">signal_recovery_exp2</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">d13C_ratio_vec_exp2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">signal_recovery_exp2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">signal_recovery_exp1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">signal_recovery_exp2</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># average relative likelihood</span>
+<span class="n">d13C_probs_ratio_exp1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">d13C_ratio_vec_exp1</span><span class="p">)</span>
+<span class="n">d13C_probs_ratio_exp2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">d13C_ratio_vec_exp2</span><span class="p">)</span>
+
+<span class="c1"># vector for plotting</span>
+<span class="n">d13C_probs</span> <span class="o">=</span> <span class="p">[</span><span class="n">d13C_probs_ratio_exp1</span><span class="p">,</span> <span class="n">d13C_probs_ratio_exp2</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="summary-figure-fig-10b-e">
+<h2>Summary figure (Fig. 10b-e)<a class="headerlink" href="#summary-figure-fig-10b-e" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mosaic</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    11111...</span>
+<span class="s2">    11111222</span>
+<span class="s2">    11111222</span>
+<span class="s2">    ........</span>
+<span class="s2">    33333444</span>
+<span class="s2">    33333444</span>
+<span class="s2">    33333444</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+
+<span class="n">fs</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot_mosaic</span><span class="p">(</span>
+    <span class="n">mosaic</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="c1"># posterior signal - Experiment 1</span>
+<span class="n">ages</span> <span class="o">=</span> <span class="n">full_trace_1</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">values</span>
+<span class="n">proxy_pred</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace_1</span><span class="o">.</span><span class="n">posterior_predictive</span><span class="p">)[</span><span class="s2">&quot;f_pred_&quot;</span> <span class="o">+</span> <span class="s2">&quot;d13c&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;95</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mi">100</span> <span class="o">-</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>  <span class="c1"># &quot;#e74c3c&quot;,</span>
+    <span class="c1"># label=&#39;68% envelope&#39;,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;68</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">),</span> <span class="mi">200</span><span class="p">)</span>
+<span class="n">max_like</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+    <span class="n">time_slice</span> <span class="o">=</span> <span class="n">proxy_pred</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">max_like</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">time_slice</span><span class="p">,</span> <span class="n">bw_method</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">dy</span><span class="p">))]</span>
+
+<span class="n">max_like</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">max_like</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">max_like</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Most likely $\delta^</span><span class="si">{13}</span><span class="s2">$C&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True Signal&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">invert_xaxis</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ages</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">ages</span><span class="p">)</span> <span class="o">-</span> <span class="mf">2.5</span><span class="p">])</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$\delta^</span><span class="si">{13}</span><span class="s2">$C (‰)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Age (Ma)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_axisbelow</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># posterior environmental offsets (Experiment 1)</span>
+<span class="n">nearshore_post</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace_1</span><span class="o">.</span><span class="n">posterior</span><span class="p">)[</span>
+    <span class="s2">&quot;nearshore_group_offset_d13c&quot;</span>
+<span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="n">subtidal_post</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace_1</span><span class="o">.</span><span class="n">posterior</span><span class="p">)[</span>
+    <span class="s2">&quot;subtidal_group_offset_d13c&quot;</span>
+<span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="n">open_post</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace_1</span><span class="o">.</span><span class="n">posterior</span><span class="p">)[</span>
+    <span class="s2">&quot;open-marine_group_offset_d13c&quot;</span>
+<span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="n">sabkha_post</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace_1</span><span class="o">.</span><span class="n">posterior</span><span class="p">)[</span>
+    <span class="s2">&quot;sabkha_group_offset_d13c&quot;</span>
+<span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+<span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+
+<span class="n">nearshore_pdf</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">loc</span><span class="o">=-</span><span class="mi">3</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">sabkha_pdf</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">open_pdf</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">subtidal_pdf</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span>
+    <span class="n">sabkha_post</span><span class="p">,</span>
+    <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#FFEB7F&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Posterior&quot;</span><span class="p">,</span>
+    <span class="n">cut</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span>
+    <span class="n">nearshore_post</span><span class="p">,</span>
+    <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;mediumseagreen&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">cut</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span>
+    <span class="n">subtidal_post</span><span class="p">,</span>
+    <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#87BED5&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">cut</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span>
+    <span class="n">open_post</span><span class="p">,</span>
+    <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#B9B9B9&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">cut</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">sabkha_pdf</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#FFEB7F&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">xs</span><span class="p">,</span> <span class="n">nearshore_pdf</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;mediumseagreen&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">subtidal_pdf</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#87BED5&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">open_pdf</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#B9B9B9&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Offset (‰)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">direction</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;bottom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">])</span>
+
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="s2">&quot;1234&quot;</span><span class="p">:</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">direction</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">set_axisbelow</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># posterior signal - Experiment 2</span>
+<span class="n">ages</span> <span class="o">=</span> <span class="n">full_trace_2</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">values</span>
+<span class="n">proxy_pred</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace_2</span><span class="o">.</span><span class="n">posterior_predictive</span><span class="p">)[</span><span class="s2">&quot;f_pred_&quot;</span> <span class="o">+</span> <span class="s2">&quot;d13c&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+    <span class="c1"># label=&#39;95% envelope&#39;,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;95</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mi">100</span> <span class="o">-</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 1.5</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">hi</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;68</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">proxy_pred</span><span class="p">),</span> <span class="mi">200</span><span class="p">)</span>
+<span class="n">max_like</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+    <span class="n">time_slice</span> <span class="o">=</span> <span class="n">proxy_pred</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">max_like</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">time_slice</span><span class="p">,</span> <span class="n">bw_method</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">dy</span><span class="p">))]</span>
+
+<span class="n">max_like</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">max_like</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">ages</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+    <span class="n">max_like</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Most likely $\delta^</span><span class="si">{13}</span><span class="s2">$C&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">age_vector</span><span class="p">,</span> <span class="n">d13c_signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True Signal&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">invert_xaxis</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ages</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">ages</span><span class="p">)</span> <span class="o">-</span> <span class="mf">2.5</span><span class="p">])</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$\delta^</span><span class="si">{13}</span><span class="s2">$C (‰)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Age (Ma)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_axisbelow</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mi">450</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">430</span><span class="p">,</span> <span class="mi">420</span><span class="p">,</span> <span class="mi">410</span><span class="p">,</span> <span class="mi">400</span><span class="p">])</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sharex</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sharey</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">])</span>
+
+<span class="c1"># plot relative signal recovery</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="n">d13C_probs</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">width</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;gray&quot;</span><span class="p">],</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Age model recovery&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">d13C_probs</span><span class="p">)))</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span>
+    <span class="p">[</span><span class="s2">&quot;Environmental </span><span class="se">\n</span><span class="s2"> Offsets (Exp. 1)&quot;</span><span class="p">,</span> <span class="s2">&quot;Section Offsets </span><span class="se">\n</span><span class="s2"> (Exp. 2)&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Relative Model Likelihood&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_label_position</span><span class="p">(</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">tick_right</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">direction</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_axisbelow</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">])</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/db4acf0260cb06d2c35eb7bc40d61c7d86434948205bebfb6e5b72a746700d6a.png" src="../../_images/db4acf0260cb06d2c35eb7bc40d61c7d86434948205bebfb6e5b72a746700d6a.png" />
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthetic-d13c-signal-and-data">Synthetic d13C signal and data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modify-observations-for-experiments">Modify observations for experiments</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#modify-d13c-data-to-reflect-local-biases">Modify d13C data to reflect local biases</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-the-true-offset-for-each-environment-fig-9b">Plot the true offset for each environment (Fig. 9b)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#add-a-depositional-age-at-426-ma-to-each-section">add a depositional age at 426 Ma to each section</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-modified-obervations-and-lithostratigraphy-fig-10a">Plot modified obervations and lithostratigraphy (Fig. 10a)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#experiment-1-environment-dependent-offset-terms">Experiment 1: Environment-dependent offset terms</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#experiment-2-per-section-offset-terms">Experiment 2: Per-section offset terms</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-the-inference-results">Load the inference results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-the-inference-results-with-stratmc-plotting">Plot the inference results with <code class="docutils literal notranslate"><span class="pre">stratmc.plotting</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quantify-signal-recovery">Quantify signal recovery</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-figure-fig-10b-e">Summary figure (Fig. 10b-e)</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/notebooks/GMD_paper/Fig 10 - Environmental bias.ipynb.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Stacey Edmonsond.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

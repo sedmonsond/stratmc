@@ -1,0 +1,3671 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Generate data for pytest &#8212; StratMC v1.0 Manual</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css?v=7f9a90b1" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'stratmc/examples/Test data';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jul 29, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../_static/stratmc.png" class="logo__image only-light" alt="StratMC v1.0 Manual - Home"/>
+    <script>document.write(`<img src="../../_static/stratmc.png" class="logo__image only-dark" alt="StratMC v1.0 Manual - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Generate...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="generate-data-for-pytest">
+<h1>Generate data for pytest<a class="headerlink" href="#generate-data-for-pytest" title="Link to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+
+<span class="kn">import</span> <span class="nn">arviz</span> <span class="k">as</span> <span class="nn">az</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">stratmc</span>
+
+<span class="kn">import</span> <span class="nn">stratmc.config</span>
+
+<span class="kn">from</span> <span class="nn">scipy.ndimage</span> <span class="kn">import</span> <span class="n">gaussian_filter</span> <span class="k">as</span> <span class="n">gaussian</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gaussian_kde</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING (pytensor.tensor.blas): Using NumPy C-API based implementation for BLAS functions.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pickle</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="make-synthetic-proxy-signals">
+<h2>Make synthetic proxy signals<a class="headerlink" href="#make-synthetic-proxy-signals" title="Link to this heading">#</a></h2>
+<p>Three proxies - two for the inference, one for testing interpolation functions</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">age_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
+<span class="n">amplitude</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">]</span>
+
+<span class="n">d13c_signal</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">synthetics</span><span class="o">.</span><span class="n">make_excursion</span><span class="p">(</span><span class="n">age_vector</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">excursion_duration</span> <span class="o">=</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="n">rising_time</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> 
+                               <span class="n">smooth</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">smoothing_factor</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">rate_offset</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> 
+<span class="n">d13c_signal</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">d13c_signal</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="n">cyclic_d18o</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">age_vector</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">20</span><span class="p">))</span> 
+<span class="n">long_term_increase</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">d18o_signal</span> <span class="o">=</span> <span class="p">(</span><span class="n">cyclic_d18o</span> <span class="o">+</span> <span class="n">long_term_increase</span> <span class="o">/</span> <span class="p">(</span><span class="n">age_vector</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">age_vector</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">age_vector</span> <span class="o">-</span> <span class="mi">100</span><span class="p">))</span>
+<span class="n">d18o_signal</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">d18o_signal</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="n">amplitude</span> <span class="o">=</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">25</span><span class="p">]</span>
+<span class="n">d34s_signal</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">synthetics</span><span class="o">.</span><span class="n">make_excursion</span><span class="p">(</span><span class="n">age_vector</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">baseline</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">excursion_duration</span> <span class="o">=</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">rising_time</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> 
+                               <span class="n">smooth</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">smoothing_factor</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">rate_offset</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">d34s_signal</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">d34s_signal</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
+
+<span class="n">signal_dict</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">signal_dict</span><span class="p">[</span><span class="s1">&#39;d13c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d13c_signal</span> 
+<span class="n">signal_dict</span><span class="p">[</span><span class="s1">&#39;d18o&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d18o_signal</span> 
+<span class="n">signal_dict</span><span class="p">[</span><span class="s1">&#39;d34s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d34s_signal</span> 
+
+<span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d13c&#39;</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">,</span> <span class="s1">&#39;d34s&#39;</span><span class="p">]</span>
+
+<span class="n">fs</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">),</span> <span class="n">sharex</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">age_vector</span><span class="p">,</span> <span class="n">signal_dict</span><span class="p">[</span><span class="s1">&#39;d13c&#39;</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;indianred&#39;</span><span class="p">,</span> <span class="n">lw</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">)</span> 
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$\delta^</span><span class="si">{13}</span><span class="s1">$C (‰)&#39;</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="n">fs</span><span class="p">)</span>
+
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">age_vector</span><span class="p">,</span> <span class="n">signal_dict</span><span class="p">[</span><span class="s1">&#39;d18o&#39;</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;#87BED5&#39;</span><span class="p">,</span> <span class="n">lw</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">)</span> 
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$\delta^</span><span class="si">{18}</span><span class="s1">$O (‰)&#39;</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="n">fs</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">age_vector</span><span class="p">,</span> <span class="n">signal_dict</span><span class="p">[</span><span class="s1">&#39;d34s&#39;</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;mediumseagreen&#39;</span><span class="p">,</span> <span class="n">lw</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">)</span> 
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$\delta^</span><span class="si">{34}</span><span class="s1">$S (‰)&#39;</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="n">fs</span><span class="p">)</span>
+
+
+<span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">ravel</span><span class="p">():</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;solid&#39;</span><span class="p">,</span> <span class="n">zorder</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_axisbelow</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="n">labelsize</span> <span class="o">=</span> <span class="n">fs</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Age (Ma)&#39;</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="n">fs</span><span class="p">)</span>
+
+    
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mi">150</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+
+<span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">ravel</span><span class="p">():</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mi">150</span><span class="p">,</span> <span class="mi">125</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/546adf471efcd6e618ec522c6c2f7463051b3e925406d739718fbe6a19c6a5eb.png" src="../../_images/546adf471efcd6e618ec522c6c2f7463051b3e925406d739718fbe6a19c6a5eb.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">num_samples</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">num_sections</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">section_thickness</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">section_seed</span> <span class="o">=</span> <span class="mi">25</span>
+<span class="n">section_noise</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">section_noise_amp</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">section_noise_amp</span><span class="p">[</span><span class="s1">&#39;d13c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.75</span>
+<span class="n">section_noise_amp</span><span class="p">[</span><span class="s1">&#39;d18o&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.75</span>
+<span class="n">section_noise_amp</span><span class="p">[</span><span class="s1">&#39;d34s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+
+
+<span class="n">sections</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">age_constraints</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">age_constraints_std</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_sections</span><span class="p">):</span> 
+    <span class="n">sections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">age_constraints</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">])</span> <span class="c1"># np.random.uniform(410, 440, 1)[0]</span>
+
+    <span class="n">age_constraints_std</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+<span class="n">ages_df</span><span class="p">,</span> <span class="n">sample_df</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">synthetics</span><span class="o">.</span><span class="n">synthetic_sections</span><span class="p">(</span><span class="n">age_vector</span><span class="p">,</span> <span class="n">signal_dict</span><span class="p">,</span> <span class="n">num_sections</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">section_thickness</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="n">section_noise</span><span class="p">,</span> <span class="n">noise_amp</span> <span class="o">=</span> <span class="n">section_noise_amp</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="n">section_seed</span><span class="p">,</span> <span class="n">age_constraints</span> <span class="o">=</span> <span class="n">age_constraints</span><span class="p">,</span> <span class="n">age_constraints_std</span> <span class="o">=</span> <span class="n">age_constraints_std</span><span class="p">,</span> <span class="n">proxies</span> <span class="o">=</span> <span class="n">proxies</span><span class="p">)</span>
+
+<span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;param_1_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;param_2_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;param_1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;param_2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## modify the proxy observations </span>
+
+<span class="c1"># remove d18O for 1 sample from section 0</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;d18o&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+<span class="c1"># remove d13C for 1 sample from section 0</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;d13c&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+<span class="c1"># exclude 1 sample from section 0</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;Exclude?&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># remove 3 samples from section 1</span>
+<span class="n">sample_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># remove 3 samples from section 2</span>
+<span class="n">sample_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># remove d18O from section 2</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;d18o&#39;</span><span class="p">][</span><span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;2&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>section</th>
+      <th>height</th>
+      <th>age</th>
+      <th>d13c</th>
+      <th>d18o</th>
+      <th>d34s</th>
+      <th>Exclude?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>13</th>
+      <td>2</td>
+      <td>3.464194</td>
+      <td>143.400160</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>22.347291</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>2</td>
+      <td>4.356996</td>
+      <td>136.769865</td>
+      <td>0.337462</td>
+      <td>NaN</td>
+      <td>35.110893</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>2</td>
+      <td>6.582216</td>
+      <td>119.169039</td>
+      <td>-0.695132</td>
+      <td>NaN</td>
+      <td>22.712199</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## modify the age constraints </span>
+
+<span class="c1"># shared minimum age (normal) for sections 1 and 2</span>
+<span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;shared?&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span> <span class="o">=</span> <span class="s1">&#39;S1_S2_min_age&#39;</span>
+
+<span class="c1"># add a normal detrital age to section 1 </span>
+<span class="n">dz_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;section&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;height&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">2.3</span><span class="p">],</span> 
+            <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">130</span><span class="p">],</span>
+            <span class="s1">&#39;age_std&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span> 
+            <span class="s1">&#39;distribution_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Normal&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;param_1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>  
+            <span class="s1">&#39;param_2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>  
+            <span class="s1">&#39;param_1_name&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>  
+            <span class="s1">&#39;param_2_name&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>  
+            <span class="s1">&#39;shared?&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;intermediate detrital?&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;intermediate intrusive?&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;DETRITRAL_1&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;Exclude?&#39;</span><span class="p">:</span> <span class="kc">False</span>
+        <span class="p">}</span>
+
+<span class="n">ages_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">ages_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">dz_dict</span><span class="p">)],</span> <span class="n">ignore_index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># add a normal instrusive age to section 1 </span>
+<span class="n">intrusive_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;section&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;height&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">],</span> 
+            <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">120</span><span class="p">],</span>
+            <span class="s1">&#39;age_std&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> 
+            <span class="s1">&#39;distribution_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Normal&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;param_1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>  
+            <span class="s1">&#39;param_2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>  
+            <span class="s1">&#39;param_1_name&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>  
+            <span class="s1">&#39;param_2_name&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>  
+            <span class="s1">&#39;shared?&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;intermediate detrital?&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;intermediate intrusive?&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;INTRUSIVE_1&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;Exclude?&#39;</span><span class="p">:</span> <span class="kc">False</span>
+        <span class="p">}</span>
+
+<span class="n">ages_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">ages_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">intrusive_dict</span><span class="p">)],</span> <span class="n">ignore_index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># custom prior for max age of section 2</span>
+<span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;age_std&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;distribution_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Uniform&#39;</span>
+<span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;param_1_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;lower&#39;</span>
+<span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;param_1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mi">147</span>
+<span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;param_2_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;upper&#39;</span>
+<span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;param_2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mi">152</span>
+
+<span class="c1"># custom intrusive age prior for section 2 </span>
+<span class="n">intrusive_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;section&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;2&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;height&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span> 
+            <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+            <span class="s1">&#39;age_std&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span> 
+            <span class="s1">&#39;distribution_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Cauchy&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;param_1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">125</span><span class="p">],</span>  <span class="c1"># location of peak </span>
+            <span class="s1">&#39;param_2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>  <span class="c1"># scale </span>
+            <span class="s1">&#39;param_1_name&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">],</span>  
+            <span class="s1">&#39;param_2_name&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">],</span>  
+            <span class="s1">&#39;shared?&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;intermediate detrital?&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;intermediate intrusive?&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;INTRUSIVE_2&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;Exclude?&#39;</span><span class="p">:</span> <span class="kc">False</span>
+        <span class="p">}</span>
+
+<span class="n">ages_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">ages_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">intrusive_dict</span><span class="p">)],</span> <span class="n">ignore_index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+
+<span class="c1"># custom detrital age prior for section 2</span>
+<span class="n">dz_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;section&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;2&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;height&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">],</span> 
+            <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+            <span class="s1">&#39;age_std&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span> 
+            <span class="s1">&#39;distribution_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Uniform&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;param_1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">138</span><span class="p">],</span>  
+            <span class="s1">&#39;param_2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">142</span><span class="p">],</span> 
+            <span class="s1">&#39;param_1_name&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;lower&#39;</span><span class="p">],</span>  
+            <span class="s1">&#39;param_2_name&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;upper&#39;</span><span class="p">],</span>  
+            <span class="s1">&#39;shared?&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;intermediate detrital?&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;intermediate intrusive?&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;DETRITAL_2&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;Exclude?&#39;</span><span class="p">:</span> <span class="kc">False</span>
+        <span class="p">}</span>
+
+<span class="n">ages_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">ages_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">dz_dict</span><span class="p">)],</span> <span class="n">ignore_index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">clean_data</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="n">proxies</span> <span class="o">=</span> <span class="n">proxies</span><span class="p">,</span> <span class="n">sections</span> <span class="o">=</span> <span class="n">sections</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># add custom noise and offset groups for d13c and d18o to sample_df</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sample_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>section</th>
+      <th>height</th>
+      <th>age</th>
+      <th>d13c</th>
+      <th>d18o</th>
+      <th>d34s</th>
+      <th>Exclude?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0.726341</td>
+      <td>143.506207</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>22.174702</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>1.019653</td>
+      <td>129.113846</td>
+      <td>NaN</td>
+      <td>2.363407</td>
+      <td>20.344371</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>1.706731</td>
+      <td>120.555006</td>
+      <td>-0.150746</td>
+      <td>3.299016</td>
+      <td>21.083621</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>1.813515</td>
+      <td>113.941947</td>
+      <td>-3.295373</td>
+      <td>2.187376</td>
+      <td>28.621435</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>2.090381</td>
+      <td>109.295562</td>
+      <td>-4.373225</td>
+      <td>4.273271</td>
+      <td>21.049269</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0</td>
+      <td>6.145956</td>
+      <td>105.868777</td>
+      <td>-2.653027</td>
+      <td>5.778884</td>
+      <td>20.030358</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1</td>
+      <td>1.307739</td>
+      <td>139.461037</td>
+      <td>0.000239</td>
+      <td>0.901868</td>
+      <td>33.228554</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1</td>
+      <td>2.235939</td>
+      <td>125.969574</td>
+      <td>1.955658</td>
+      <td>3.742717</td>
+      <td>20.011178</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>1</td>
+      <td>2.553568</td>
+      <td>109.396070</td>
+      <td>-4.413917</td>
+      <td>4.217433</td>
+      <td>21.135780</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>2</td>
+      <td>3.464194</td>
+      <td>143.400160</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>22.347291</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>2</td>
+      <td>4.356996</td>
+      <td>136.769865</td>
+      <td>0.337462</td>
+      <td>NaN</td>
+      <td>35.110893</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>2</td>
+      <td>6.582216</td>
+      <td>119.169039</td>
+      <td>-0.695132</td>
+      <td>NaN</td>
+      <td>22.712199</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># twelve samples, 2 groups</span>
+<span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;deep&#39;</span><span class="p">,</span> <span class="s1">&#39;shallow&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;offset_group_d13c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">groups</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;offset_group_d18o&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">groups</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;noise_group_d13c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">groups</span>
+<span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;noise_group_d18o&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">groups</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">proxy_strat</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="n">proxy</span> <span class="o">=</span> <span class="s1">&#39;d13c&#39;</span><span class="p">,</span> <span class="n">plot_excluded_samples</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/c99165091bfca084a3610f1285562777b9bf676917309ade8e3d4e219fa8bad8.png" src="../../_images/c99165091bfca084a3610f1285562777b9bf676917309ade8e3d4e219fa8bad8.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># # save data to .csv files</span>
+<span class="c1"># sample_df.to_csv(&#39;test_sample_df.csv&#39;, index = False)</span>
+<span class="c1"># ages_df.to_csv(&#39;test_ages_df.csv&#39;, index = False)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;test_sample_df&#39;</span><span class="p">,</span> <span class="s1">&#39;test_ages_df&#39;</span><span class="p">,</span>  <span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d13c&#39;</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">,</span> <span class="s1">&#39;d34s&#39;</span><span class="p">],</span> <span class="n">proxy_sigma_default</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;d13c&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span> <span class="s1">&#39;d34s&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span>
+                                                                                                                                  
+                                                                                                                                  
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sample_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>section</th>
+      <th>height</th>
+      <th>age</th>
+      <th>d13c</th>
+      <th>d18o</th>
+      <th>d34s</th>
+      <th>Exclude?</th>
+      <th>offset_group_d13c</th>
+      <th>offset_group_d18o</th>
+      <th>noise_group_d13c</th>
+      <th>noise_group_d18o</th>
+      <th>d13c_std</th>
+      <th>d18o_std</th>
+      <th>d34s_std</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0.726341</td>
+      <td>143.506207</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>22.174702</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>0.25</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>1.019653</td>
+      <td>129.113846</td>
+      <td>NaN</td>
+      <td>2.363407</td>
+      <td>20.344371</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>0.25</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>1.706731</td>
+      <td>120.555006</td>
+      <td>-0.150746</td>
+      <td>3.299016</td>
+      <td>21.083621</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>0.25</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>1.813515</td>
+      <td>113.941947</td>
+      <td>-3.295373</td>
+      <td>2.187376</td>
+      <td>28.621435</td>
+      <td>True</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>0.25</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>2.090381</td>
+      <td>109.295562</td>
+      <td>-4.373225</td>
+      <td>4.273271</td>
+      <td>21.049269</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>0.25</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0</td>
+      <td>6.145956</td>
+      <td>105.868777</td>
+      <td>-2.653027</td>
+      <td>5.778884</td>
+      <td>20.030358</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>0.25</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1</td>
+      <td>1.307739</td>
+      <td>139.461037</td>
+      <td>0.000239</td>
+      <td>0.901868</td>
+      <td>33.228554</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>0.25</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1</td>
+      <td>2.235939</td>
+      <td>125.969574</td>
+      <td>1.955658</td>
+      <td>3.742717</td>
+      <td>20.011178</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>0.25</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>1</td>
+      <td>2.553568</td>
+      <td>109.396070</td>
+      <td>-4.413917</td>
+      <td>4.217433</td>
+      <td>21.135780</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>0.25</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>2</td>
+      <td>3.464194</td>
+      <td>143.400160</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>22.347291</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>0.25</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>2</td>
+      <td>4.356996</td>
+      <td>136.769865</td>
+      <td>0.337462</td>
+      <td>NaN</td>
+      <td>35.110893</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>0.25</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>2</td>
+      <td>6.582216</td>
+      <td>119.169039</td>
+      <td>-0.695132</td>
+      <td>NaN</td>
+      <td>22.712199</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>0.25</td>
+      <td>0.5</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+<section id="design-model-tests">
+<h2>Design model tests<a class="headerlink" href="#design-model-tests" title="Link to this heading">#</a></h2>
+<section id="test-1">
+<h3>Test 1:<a class="headerlink" href="#test-1" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>All default priors</p></li>
+<li><p>Per-section offset and noise terms</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load data </span>
+<span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;test_sample_df&#39;</span><span class="p">,</span> <span class="s1">&#39;test_ages_df&#39;</span><span class="p">,</span>  <span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d13c&#39;</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">,</span> <span class="s1">&#39;d34s&#39;</span><span class="p">],</span> <span class="n">proxy_sigma_default</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;d13c&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span> <span class="s1">&#39;d34s&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span>
+
+<span class="c1"># for this test, remove the d18o_std column to make sure that it&#39;s filled in w/in build_model if necessary</span>
+<span class="c1"># sample_df[&#39;d18o_std&#39;] = np.nan</span>
+
+<span class="n">model</span><span class="p">,</span> <span class="n">gp</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">build_model</span><span class="p">(</span>
+                        <span class="n">sample_df</span><span class="p">,</span> 
+                        <span class="n">ages_df</span><span class="p">,</span> 
+                        <span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d13c&#39;</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">],</span> 
+                        <span class="n">ls_dist</span> <span class="o">=</span> <span class="s1">&#39;Wald&#39;</span><span class="p">,</span>
+                        <span class="n">ls_min</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># minimum RBF kernel lengthscale</span>
+                        <span class="n">ls_mu</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="c1"># mean of Wald distribution used as RBF kernel lengthscale prior</span>
+                        <span class="n">ls_lambda</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span> <span class="c1"># lambda of Wald distribution used as RBF kernel lengthscale prior</span>
+                        <span class="n">offset_type</span> <span class="o">=</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span> <span class="c1"># per-section offset with default prior</span>
+                        <span class="n">noise_type</span> <span class="o">=</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span> <span class="c1"># per-section noise with default prior</span>
+                        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Using radiometric age priors specified in ages_df for section 1
+Using radiometric age priors specified in ages_df for section 2
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_latex math notranslate nohighlight">
+\[\begin{split}
+            \begin{array}{rcl}
+            \text{gp_ls_unshifted_d13c} &amp;\sim &amp; \operatorname{Wald}(5,~15,~0)\\\text{gp_var_d13c} &amp;\sim &amp; \operatorname{HalfNormal}(0,~10)\\\text{m_d13c} &amp;\sim &amp; \operatorname{Normal}(-1.21,~4.04)\\\text{gp_ls_unshifted_d18o} &amp;\sim &amp; \operatorname{Wald}(5,~15,~0)\\\text{gp_var_d18o} &amp;\sim &amp; \operatorname{HalfNormal}(0,~10)\\\text{m_d18o} &amp;\sim &amp; \operatorname{Normal}(3.35,~2.83)\\\text{S1_S2_min_age} &amp;\sim &amp; \operatorname{Normal}(100,~1)\\\text{0_flip_radiometric_age} &amp;\sim &amp; \operatorname{Normal}(\text{&lt;constant&gt;},~\text{&lt;constant&gt;})\\\text{0_0_unsorted_random_ages} &amp;\sim &amp; \operatorname{Uniform}(0,~1)\\\text{0_0_scaling_factor_1} &amp;\sim &amp; \operatorname{Uniform}(0,~1)\\\text{0_0_scaling_factor_2} &amp;\sim &amp; \operatorname{Uniform}(0,~1)\\\text{0_section_offset_d13c} &amp;\sim &amp; \operatorname{Laplace}(0,~2)\\\text{0_section_noise_d13c} &amp;\sim &amp; \operatorname{HalfCauchy}(0,~1)\\\text{0_section_offset_d18o} &amp;\sim &amp; \operatorname{Laplace}(0,~2)\\\text{0_section_noise_d18o} &amp;\sim &amp; \operatorname{HalfCauchy}(0,~1)\\\text{1_0_radiometric_age} &amp;\sim &amp; \operatorname{Normal}(150,~2)\\\text{1_0_unsorted_random_ages} &amp;\sim &amp; \operatorname{Uniform}(0,~1)\\\text{1_0_scaling_factor_1} &amp;\sim &amp; \operatorname{Uniform}(0,~1)\\\text{1_0_scaling_factor_2} &amp;\sim &amp; \operatorname{Uniform}(0,~1)\\\text{1_0_detrital_age_0} &amp;\sim &amp; \operatorname{Normal}(130,~2)\\\text{1_0_intrusive_age_0} &amp;\sim &amp; \operatorname{Normal}(120,~1)\\\text{1_section_offset_d13c} &amp;\sim &amp; \operatorname{Laplace}(0,~2)\\\text{1_section_noise_d13c} &amp;\sim &amp; \operatorname{HalfCauchy}(0,~1)\\\text{1_section_offset_d18o} &amp;\sim &amp; \operatorname{Laplace}(0,~2)\\\text{1_section_noise_d18o} &amp;\sim &amp; \operatorname{HalfCauchy}(0,~1)\\\text{2_0_radiometric_age} &amp;\sim &amp; \operatorname{Uniform}(147,~152)\\\text{2_0_unsorted_random_ages} &amp;\sim &amp; \operatorname{Uniform}(0,~1)\\\text{2_0_scaling_factor_1} &amp;\sim &amp; \operatorname{Uniform}(0,~1)\\\text{2_0_scaling_factor_2} &amp;\sim &amp; \operatorname{Uniform}(0,~1)\\\text{2_0_detrital_age_0} &amp;\sim &amp; \operatorname{Uniform}(138,~142)\\\text{2_0_intrusive_age_0} &amp;\sim &amp; \operatorname{Cauchy}(125,~1)\\\text{2_section_offset_d13c} &amp;\sim &amp; \operatorname{Laplace}(0,~2)\\\text{2_section_noise_d13c} &amp;\sim &amp; \operatorname{HalfCauchy}(0,~1)\\\text{2_section_offset_d18o} &amp;\sim &amp; \operatorname{Laplace}(0,~2)\\\text{2_section_noise_d18o} &amp;\sim &amp; \operatorname{HalfCauchy}(0,~1)\\\text{f_d13c_rotated_} &amp;\sim &amp; \operatorname{Normal}(0,~1)\\\text{f_d18o_rotated_} &amp;\sim &amp; \operatorname{Normal}(0,~1)\\\text{gp_ls_d13c} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{gp_ls_unshifted_d13c}))\\\text{gp_ls_d18o} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{gp_ls_unshifted_d18o}))\\\text{0_radiometric_age} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{0_flip_radiometric_age}))\\\text{0_0_obs_age_diff} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{0_flip_radiometric_age}))\\\text{0_0_random_ages} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{0_0_unsorted_random_ages}))\\\text{0_0_ages} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{0_0_scaling_factor_1},~\text{0_0_scaling_factor_2},~\text{0_0_unsorted_random_ages},~\text{0_flip_radiometric_age}))\\\text{0_ages} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{0_0_scaling_factor_1},~\text{0_0_scaling_factor_2},~\text{0_0_unsorted_random_ages},~\text{0_flip_radiometric_age}))\\\text{1_radiometric_age} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{S1_S2_min_age},~\text{1_0_radiometric_age}))\\\text{1_0_obs_age_diff} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{S1_S2_min_age},~\text{1_0_radiometric_age}))\\\text{1_0_random_ages} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{1_0_unsorted_random_ages}))\\\text{1_0_ages} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{1_0_scaling_factor_1},~\text{1_0_scaling_factor_2},~\text{1_0_unsorted_random_ages},~\text{S1_S2_min_age},~\text{1_0_radiometric_age}))\\\text{1_ages} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{1_0_scaling_factor_1},~\text{1_0_scaling_factor_2},~\text{1_0_unsorted_random_ages},~\text{S1_S2_min_age},~\text{1_0_radiometric_age}))\\\text{2_radiometric_age} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{S1_S2_min_age},~\text{2_0_radiometric_age}))\\\text{2_0_obs_age_diff} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{S1_S2_min_age},~\text{2_0_radiometric_age}))\\\text{2_0_random_ages} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{2_0_unsorted_random_ages}))\\\text{2_0_ages} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{2_0_scaling_factor_1},~\text{2_0_scaling_factor_2},~\text{2_0_unsorted_random_ages},~\text{S1_S2_min_age},~\text{2_0_radiometric_age}))\\\text{2_ages} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{2_0_scaling_factor_1},~\text{2_0_scaling_factor_2},~\text{2_0_unsorted_random_ages},~\text{S1_S2_min_age},~\text{2_0_radiometric_age}))\\\text{ages} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{2_0_scaling_factor_1},~\text{2_0_scaling_factor_2},~\text{2_0_unsorted_random_ages},~\text{S1_S2_min_age},~\text{1_0_scaling_factor_1},~\text{2_0_radiometric_age},~\text{1_0_scaling_factor_2},~\text{1_0_unsorted_random_ages},~\text{0_0_scaling_factor_1},~\text{1_0_radiometric_age},~\text{0_0_scaling_factor_2},~\text{0_0_unsorted_random_ages},~\text{0_flip_radiometric_age}))\\\text{offset_d13c} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{2_section_offset_d13c},~\text{1_section_offset_d13c},~\text{0_section_offset_d13c}))\\\text{noise_d13c} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{2_section_noise_d13c},~\text{1_section_noise_d13c},~\text{0_section_noise_d13c}))\\\text{f_d13c} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{f_d13c_rotated_},~\text{m_d13c},~\text{gp_var_d13c},~\text{2_0_scaling_factor_1},~\text{2_0_scaling_factor_2},~\text{2_0_unsorted_random_ages},~\text{S1_S2_min_age},~\text{1_0_scaling_factor_1},~\text{gp_ls_unshifted_d13c},~\text{2_0_radiometric_age},~\text{1_0_scaling_factor_2},~\text{1_0_unsorted_random_ages},~\text{0_0_scaling_factor_1},~\text{1_0_radiometric_age},~\text{0_0_scaling_factor_2},~\text{0_0_unsorted_random_ages},~\text{0_flip_radiometric_age}))\\\text{offset_d18o} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{1_section_offset_d18o},~\text{0_section_offset_d18o}))\\\text{noise_d18o} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{1_section_noise_d18o},~\text{0_section_noise_d18o}))\\\text{f_d18o} &amp;\sim &amp; \operatorname{Deterministic}(f(\text{f_d18o_rotated_},~\text{m_d18o},~\text{gp_var_d18o},~\text{2_0_scaling_factor_1},~\text{2_0_scaling_factor_2},~\text{2_0_unsorted_random_ages},~\text{S1_S2_min_age},~\text{1_0_scaling_factor_1},~\text{gp_ls_unshifted_d18o},~\text{2_0_radiometric_age},~\text{1_0_scaling_factor_2},~\text{1_0_unsorted_random_ages},~\text{0_0_scaling_factor_1},~\text{1_0_radiometric_age},~\text{0_0_scaling_factor_2},~\text{0_0_unsorted_random_ages},~\text{0_flip_radiometric_age}))\\\text{d13c_pred} &amp;\sim &amp; \operatorname{Normal}(f(\text{f_d13c_rotated_},~\text{m_d13c},~\text{2_section_offset_d13c},~\text{1_section_offset_d13c},~\text{gp_var_d13c},~\text{0_section_offset_d13c},~\text{2_0_scaling_factor_1},~\text{2_0_scaling_factor_2},~\text{2_0_unsorted_random_ages},~\text{S1_S2_min_age},~\text{1_0_scaling_factor_1},~\text{gp_ls_unshifted_d13c},~\text{2_0_radiometric_age},~\text{1_0_scaling_factor_2},~\text{1_0_unsorted_random_ages},~\text{0_0_scaling_factor_1},~\text{1_0_radiometric_age},~\text{0_0_scaling_factor_2},~\text{0_0_unsorted_random_ages},~\text{0_flip_radiometric_age}),~f(\text{2_section_noise_d13c},~\text{1_section_noise_d13c},~\text{0_section_noise_d13c}))\\\text{d18o_pred} &amp;\sim &amp; \operatorname{Normal}(f(\text{f_d18o_rotated_},~\text{m_d18o},~\text{1_section_offset_d18o},~\text{0_section_offset_d18o},~\text{gp_var_d18o},~\text{2_0_scaling_factor_1},~\text{2_0_scaling_factor_2},~\text{2_0_unsorted_random_ages},~\text{S1_S2_min_age},~\text{1_0_scaling_factor_1},~\text{gp_ls_unshifted_d18o},~\text{2_0_radiometric_age},~\text{1_0_scaling_factor_2},~\text{1_0_unsorted_random_ages},~\text{0_0_scaling_factor_1},~\text{1_0_radiometric_age},~\text{0_0_scaling_factor_2},~\text{0_0_unsorted_random_ages},~\text{0_flip_radiometric_age}),~f(\text{1_section_noise_d18o},~\text{0_section_noise_d18o}))\\\text{superposition_1_1} &amp;\sim &amp; \operatorname{Potential}(f(\text{S1_S2_min_age},~\text{1_0_radiometric_age}))\\\text{detrital_max_1_1_0_detrital_age_0} &amp;\sim &amp; \operatorname{Potential}(f(\text{1_0_detrital_age_0},~\text{1_0_scaling_factor_1},~\text{1_0_scaling_factor_2},~\text{1_0_unsorted_random_ages},~\text{S1_S2_min_age},~\text{1_0_radiometric_age}))\\\text{intrusive_min_1_1_0_intrusive_age_0} &amp;\sim &amp; \operatorname{Potential}(f(\text{1_0_intrusive_age_0},~\text{1_0_scaling_factor_1},~\text{1_0_scaling_factor_2},~\text{1_0_unsorted_random_ages},~\text{S1_S2_min_age},~\text{1_0_radiometric_age}))\\\text{superposition_2_1} &amp;\sim &amp; \operatorname{Potential}(f(\text{S1_S2_min_age},~\text{2_0_radiometric_age}))\\\text{detrital_max_2_2_0_detrital_age_0} &amp;\sim &amp; \operatorname{Potential}(f(\text{2_0_detrital_age_0},~\text{2_0_scaling_factor_1},~\text{2_0_scaling_factor_2},~\text{2_0_unsorted_random_ages},~\text{S1_S2_min_age},~\text{2_0_radiometric_age}))\\\text{intrusive_min_2_2_0_intrusive_age_0} &amp;\sim &amp; \operatorname{Potential}(f(\text{2_0_intrusive_age_0},~\text{2_0_scaling_factor_1},~\text{2_0_scaling_factor_2},~\text{2_0_unsorted_random_ages},~\text{S1_S2_min_age},~\text{2_0_radiometric_age}))
+            \end{array}
+            \end{split}\]</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">age_min</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">age_max</span> <span class="o">=</span> <span class="mi">150</span>
+
+<span class="n">predict_ages</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">age_min</span><span class="p">,</span> <span class="n">age_max</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">]</span>
+
+<span class="n">full_trace</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                       <span class="n">gp</span><span class="p">,</span> 
+                       <span class="n">predict_ages</span><span class="p">,</span>
+                       <span class="n">sample_df</span><span class="p">,</span> 
+                       <span class="n">ages_df</span><span class="p">,</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;test_trace_1&#39;</span><span class="p">,</span>
+                       <span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d13c&#39;</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">],</span> 
+                       <span class="n">chains</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> 
+                        <span class="n">tune</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> 
+                        <span class="n">draws</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="n">prior_draws</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>       
+                       <span class="n">target_accept</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span> 
+                       <span class="n">save</span> <span class="o">=</span> <span class="kc">False</span>
+                      <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "9ac2f1a807a240e0b977e0189259a806", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "f55c1861d4ec478a8365c2e20b6cc26b", "version_major": 2, "version_minor": 0}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>There were 2 divergences after tuning. Increase `target_accept` or reparameterize.
+We recommend running at least 4 chains for robust computation of convergence diagnostics
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+/Users/staceyedmonsond/Dropbox/stratmc/stratmc/inference.py:158: UserWarning: The effect of Potentials on other parameters is ignored during posterior predictive sampling. This is likely to lead to invalid or biased predictive samples.
+  posterior_predictive = pm.sample_posterior_predictive(
+Sampling: [f_pred_d13c, f_pred_d18o]
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "a7f8391111e84cd5a300da341d4fb129", "version_major": 2, "version_minor": 0}</script><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+</pre>
+</div><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/staceyedmonsond/Dropbox/stratmc/stratmc/inference.py:165: UserWarning: The effect of Potentials on other parameters is ignored during prior predictive sampling. This is likely to lead to invalid or biased predictive samples.
+  prior = pm.sample_prior_predictive(random_seed = seed, samples = prior_draws)
+Sampling: [0_0_scaling_factor_1, 0_0_scaling_factor_2, 0_0_unsorted_random_ages, 0_flip_radiometric_age, 0_section_noise_d13c, 0_section_noise_d18o, 0_section_offset_d13c, 0_section_offset_d18o, 1_0_detrital_age_0, 1_0_intrusive_age_0, 1_0_radiometric_age, 1_0_scaling_factor_1, 1_0_scaling_factor_2, 1_0_unsorted_random_ages, 1_section_noise_d13c, 1_section_noise_d18o, 1_section_offset_d13c, 1_section_offset_d18o, 2_0_detrital_age_0, 2_0_intrusive_age_0, 2_0_radiometric_age, 2_0_scaling_factor_1, 2_0_scaling_factor_2, 2_0_unsorted_random_ages, 2_section_noise_d13c, 2_section_noise_d18o, 2_section_offset_d13c, 2_section_offset_d18o, S1_S2_min_age, d13c_pred, d18o_pred, f_d13c_rotated_, f_d18o_rotated_, f_pred_d13c, f_pred_d18o, gp_ls_unshifted_d13c, gp_ls_unshifted_d18o, gp_var_d13c, gp_var_d18o, m_d13c, m_d18o]
+/Users/staceyedmonsond/opt/anaconda3/envs/bayestrat-dev-m1-pymc516-accelerate/lib/python3.11/site-packages/arviz/data/inference_data.py:1538: UserWarning: The group X_new is not defined in the InferenceData scheme
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="test-2">
+<h3>Test 2:<a class="headerlink" href="#test-2" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Different RBF kernel lengthscale prior (Wald vs HalfNormal) for d13C and d18O</p></li>
+<li><p>Custom RBF kernel hyperparameters for both d13C and d18O</p></li>
+<li><p>per-group offset and noise for d13C</p></li>
+<li><p>per-group noise for d13C, but per-section noise for d18O</p></li>
+<li><p>Custom offset prior for d13C</p></li>
+<li><p>Default offset prior for d18O</p></li>
+<li><p>Default noise prior for d13C</p></li>
+<li><p>HalfNormal noise prior for d18O</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">d13c_offset_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;param_1_name&#39;</span><span class="p">:</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> 
+                      <span class="s1">&#39;param_1&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> 
+                      <span class="s1">&#39;param_2_name&#39;</span><span class="p">:</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> 
+                      <span class="s1">&#39;param_2&#39;</span><span class="p">:</span> <span class="mi">3</span>
+
+<span class="p">}</span>
+
+<span class="n">d18o_offset_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;param_1_name&#39;</span><span class="p">:</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> 
+                      <span class="s1">&#39;param_1&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> 
+                      <span class="s1">&#39;param_2_name&#39;</span><span class="p">:</span> <span class="s1">&#39;sigma&#39;</span><span class="p">,</span> 
+                      <span class="s1">&#39;param_2&#39;</span><span class="p">:</span> <span class="mi">2</span>
+
+<span class="p">}</span>
+
+
+<span class="n">model</span><span class="p">,</span> <span class="n">gp</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">build_model</span><span class="p">(</span>
+                        <span class="n">sample_df</span><span class="p">,</span> 
+                        <span class="n">ages_df</span><span class="p">,</span> 
+                        <span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d13c&#39;</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">],</span> 
+                        <span class="n">ls_dist</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;d13c&#39;</span><span class="p">:</span> <span class="s1">&#39;Wald&#39;</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">:</span> <span class="s1">&#39;HalfNormal&#39;</span><span class="p">},</span>
+                        <span class="n">ls_min</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;d13c&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">},</span> <span class="c1"># minimum RBF kernel lengthscale</span>
+                        <span class="n">ls_mu</span> <span class="o">=</span>  <span class="p">{</span><span class="s1">&#39;d13c&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span> <span class="c1"># mean of Wald distribution used as RBF kernel lengthscale prior</span>
+                        <span class="n">ls_sigma</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;d18o&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span> 
+                        <span class="n">ls_lambda</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;d13c&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">},</span> <span class="c1"># lambda of Wald distribution used as RBF kernel lengthscale prior</span>
+                        <span class="n">var_sigma</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;d13c&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span> 
+                        <span class="n">offset_type</span> <span class="o">=</span> <span class="s1">&#39;groups&#39;</span><span class="p">,</span> <span class="c1"># custom offset  groups for both proxies</span>
+                        <span class="n">noise_type</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;d13c&#39;</span><span class="p">:</span> <span class="s1">&#39;groups&#39;</span><span class="p">,</span><span class="s1">&#39;d18o&#39;</span><span class="p">:</span> <span class="s1">&#39;section&#39;</span><span class="p">},</span> 
+                        <span class="n">offset_prior</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;d13c&#39;</span><span class="p">:</span> <span class="s1">&#39;Laplace&#39;</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">:</span> <span class="s1">&#39;Normal&#39;</span><span class="p">},</span>
+                        <span class="n">offset_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;d13c&#39;</span><span class="p">:</span> <span class="n">d13c_offset_params</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">:</span> <span class="n">d18o_offset_params</span><span class="p">},</span> 
+                        <span class="n">noise_prior</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;d13c&#39;</span><span class="p">:</span> <span class="s1">&#39;HalfNormal&#39;</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">:</span> <span class="s1">&#39;HalfStudentT&#39;</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Note: offset parameters passed in offset_params supersede the offset_mu and offset_b arguments
+Using radiometric age priors specified in ages_df for section 1
+Using radiometric age priors specified in ages_df for section 2
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">age_min</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">age_max</span> <span class="o">=</span> <span class="mi">150</span>
+
+<span class="n">predict_ages</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">age_min</span><span class="p">,</span> <span class="n">age_max</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">]</span>
+
+<span class="n">full_trace</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                       <span class="n">gp</span><span class="p">,</span> 
+                       <span class="n">predict_ages</span><span class="p">,</span>
+                       <span class="n">sample_df</span><span class="p">,</span> 
+                       <span class="n">ages_df</span><span class="p">,</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;test_trace_custom_priors&#39;</span><span class="p">,</span>
+                       <span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d13c&#39;</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">],</span> 
+                       <span class="n">chains</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> 
+                        <span class="n">tune</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> 
+                        <span class="n">draws</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="n">prior_draws</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>       
+                       <span class="n">target_accept</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span> 
+                       <span class="n">save</span> <span class="o">=</span> <span class="kc">True</span>
+                      <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "f668dc57bb024164a4802620e011401e", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "1c0500e52a894fce9f8a138489f9ad02", "version_major": 2, "version_minor": 0}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The number of samples is too small to check convergence reliably.
+/Users/staceyedmonsond/Dropbox/stratmc/stratmc/inference.py:158: UserWarning: The effect of Potentials on other parameters is ignored during posterior predictive sampling. This is likely to lead to invalid or biased predictive samples.
+  posterior_predictive = pm.sample_posterior_predictive(
+Sampling: [f_pred_d13c, f_pred_d18o]
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "de0e4afa7c74454d8c489c0eb7a5e605", "version_major": 2, "version_minor": 0}</script><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+</pre>
+</div><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/staceyedmonsond/Dropbox/stratmc/stratmc/inference.py:165: UserWarning: The effect of Potentials on other parameters is ignored during prior predictive sampling. This is likely to lead to invalid or biased predictive samples.
+  prior = pm.sample_prior_predictive(random_seed = seed, samples = prior_draws)
+Sampling: [0_0_scaling_factor_1, 0_0_scaling_factor_2, 0_0_unsorted_random_ages, 0_flip_radiometric_age, 0_section_noise_d18o, 1_0_detrital_age_0, 1_0_intrusive_age_0, 1_0_radiometric_age, 1_0_scaling_factor_1, 1_0_scaling_factor_2, 1_0_unsorted_random_ages, 1_section_noise_d18o, 2_0_detrital_age_0, 2_0_intrusive_age_0, 2_0_radiometric_age, 2_0_scaling_factor_1, 2_0_scaling_factor_2, 2_0_unsorted_random_ages, 2_section_noise_d18o, S1_S2_min_age, d13c_pred, d18o_pred, deep_group_noise_d13c, deep_group_offset_d13c, deep_group_offset_d18o, f_d13c_rotated_, f_d18o_rotated_, f_pred_d13c, f_pred_d18o, gp_ls_unshifted_d13c, gp_ls_unshifted_d18o, gp_var_d13c, gp_var_d18o, m_d13c, m_d18o, shallow_group_noise_d13c, shallow_group_offset_d13c, shallow_group_offset_d18o]
+/Users/staceyedmonsond/opt/anaconda3/envs/bayestrat-dev-m1-pymc516-accelerate/lib/python3.11/site-packages/arviz/data/inference_data.py:1538: UserWarning: The group X_new is not defined in the InferenceData scheme
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="s1">&#39;shallow_group_offset_d13c&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">basic_RVs</span><span class="p">))</span>
+<span class="k">assert</span> <span class="s1">&#39;deep_group_offset_d13c&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">basic_RVs</span><span class="p">))</span>
+<span class="k">assert</span> <span class="s1">&#39;shallow_group_offset_d18o&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">basic_RVs</span><span class="p">))</span>
+<span class="k">assert</span> <span class="s1">&#39;deep_group_offset_d18o&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">basic_RVs</span><span class="p">))</span>
+<span class="k">assert</span> <span class="s1">&#39;shallow_group_noise_d13c&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">basic_RVs</span><span class="p">))</span>
+<span class="k">assert</span> <span class="s1">&#39;deep_group_noise_d13c&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">basic_RVs</span><span class="p">))</span>
+<span class="k">assert</span> <span class="s1">&#39;1_section_noise_d18o&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">basic_RVs</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="test-3">
+<h2>Test 3:<a class="headerlink" href="#test-3" title="Link to this heading">#</a></h2>
+<p>Same as test 1, but use HSGP approximation</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="p">,</span> <span class="n">gp</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">build_model</span><span class="p">(</span>
+                        <span class="n">sample_df</span><span class="p">,</span> 
+                        <span class="n">ages_df</span><span class="p">,</span> 
+                        <span class="n">approximate</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                        <span class="n">hsgp_m</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> 
+                        <span class="n">hsgp_c</span> <span class="o">=</span> <span class="mf">1.3</span><span class="p">,</span>
+                        <span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d13c&#39;</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">],</span> 
+                        <span class="n">ls_dist</span> <span class="o">=</span> <span class="s1">&#39;Wald&#39;</span><span class="p">,</span>
+                        <span class="n">ls_min</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># minimum RBF kernel lengthscale</span>
+                        <span class="n">ls_mu</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="c1"># mean of Wald distribution used as RBF kernel lengthscale prior</span>
+                        <span class="n">ls_lambda</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span> <span class="c1"># lambda of Wald distribution used as RBF kernel lengthscale prior</span>
+                        <span class="n">offset_type</span> <span class="o">=</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span> <span class="c1"># per-section offset with default prior</span>
+                        <span class="n">noise_type</span> <span class="o">=</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span> <span class="c1"># per-section noise with default prior</span>
+                        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Using HSGP approximation for  d13c
+Using HSGP approximation for  d18o
+Using radiometric age priors specified in ages_df for section 1
+Using radiometric age priors specified in ages_df for section 2
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">age_min</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">age_max</span> <span class="o">=</span> <span class="mi">150</span>
+
+<span class="n">predict_ages</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">age_min</span><span class="p">,</span> <span class="n">age_max</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">]</span>
+
+<span class="n">full_trace</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                       <span class="n">gp</span><span class="p">,</span> 
+                       <span class="n">predict_ages</span><span class="p">,</span>
+                       <span class="n">sample_df</span><span class="p">,</span> 
+                       <span class="n">ages_df</span><span class="p">,</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;test_trace_hsgp&#39;</span><span class="p">,</span>
+                       <span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d13c&#39;</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">],</span> 
+                       <span class="n">chains</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> 
+                        <span class="n">tune</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> 
+                        <span class="n">draws</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="n">prior_draws</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>       
+                       <span class="n">target_accept</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span> 
+                       <span class="n">save</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                        <span class="n">approximate</span> <span class="o">=</span> <span class="kc">True</span>
+                      <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "485a42a57f3a4f70b8be24fb4a531ca8", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "a594101108b24835aa94461951ab4419", "version_major": 2, "version_minor": 0}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The number of samples is too small to check convergence reliably.
+/Users/staceyedmonsond/Dropbox/stratmc/stratmc/inference.py:158: UserWarning: The effect of Potentials on other parameters is ignored during posterior predictive sampling. This is likely to lead to invalid or biased predictive samples.
+  posterior_predictive = pm.sample_posterior_predictive(
+Sampling: []
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "b0cecfce851a4dc1bd42f27e03580209", "version_major": 2, "version_minor": 0}</script><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+</pre>
+</div><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/staceyedmonsond/Dropbox/stratmc/stratmc/inference.py:165: UserWarning: The effect of Potentials on other parameters is ignored during prior predictive sampling. This is likely to lead to invalid or biased predictive samples.
+  prior = pm.sample_prior_predictive(random_seed = seed, samples = prior_draws)
+Sampling: [0_0_scaling_factor_1, 0_0_scaling_factor_2, 0_0_unsorted_random_ages, 0_flip_radiometric_age, 0_section_noise_d13c, 0_section_noise_d18o, 0_section_offset_d13c, 0_section_offset_d18o, 1_0_detrital_age_0, 1_0_intrusive_age_0, 1_0_radiometric_age, 1_0_scaling_factor_1, 1_0_scaling_factor_2, 1_0_unsorted_random_ages, 1_section_noise_d13c, 1_section_noise_d18o, 1_section_offset_d13c, 1_section_offset_d18o, 2_0_detrital_age_0, 2_0_intrusive_age_0, 2_0_radiometric_age, 2_0_scaling_factor_1, 2_0_scaling_factor_2, 2_0_unsorted_random_ages, 2_section_noise_d13c, 2_section_noise_d18o, 2_section_offset_d13c, 2_section_offset_d18o, S1_S2_min_age, d13c_pred, d18o_pred, f_d13c_hsgp_coeffs_, f_d18o_hsgp_coeffs_, gp_ls_unshifted_d13c, gp_ls_unshifted_d18o, gp_var_d13c, gp_var_d18o, m_d13c, m_d18o]
+/Users/staceyedmonsond/opt/anaconda3/envs/bayestrat-dev-m1-pymc516-accelerate/lib/python3.11/site-packages/arviz/data/inference_data.py:1538: UserWarning: The group X_new is not defined in the InferenceData scheme
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="sampler-tests">
+<h2>Sampler tests<a class="headerlink" href="#sampler-tests" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">age_min</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">age_max</span> <span class="o">=</span> <span class="mi">150</span>
+
+<span class="n">predict_ages</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">age_min</span><span class="p">,</span> <span class="n">age_max</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">]</span>
+
+<span class="n">full_trace</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                       <span class="n">gp</span><span class="p">,</span> 
+                       <span class="n">predict_ages</span><span class="p">,</span>
+                       <span class="n">sample_df</span><span class="p">,</span> 
+                       <span class="n">ages_df</span><span class="p">,</span>
+                       <span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d13c&#39;</span><span class="p">,</span> <span class="s1">&#39;d18o&#39;</span><span class="p">],</span> 
+                       <span class="n">chains</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> 
+                        <span class="n">tune</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> 
+                        <span class="n">draws</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="n">prior_draws</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>       
+                       <span class="n">target_accept</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span> 
+                       <span class="n">save</span> <span class="o">=</span> <span class="kc">False</span>
+                      <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="load-test-traces">
+<h2>Load test traces<a class="headerlink" href="#load-test-traces" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">full_trace</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_trace</span><span class="p">(</span><span class="s1">&#39;traces/test_trace_1&#39;</span><span class="p">)</span>
+<span class="n">full_trace_custom</span> <span class="o">=</span>  <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_trace</span><span class="p">(</span><span class="s1">&#39;traces/test_trace_custom_priors&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/staceyedmonsond/opt/anaconda3/envs/bayestrat-dev-m1-pymc516-accelerate/lib/python3.11/site-packages/arviz/data/inference_data.py:157: UserWarning: X_new group is not defined in the InferenceData scheme
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">noise_summary</span><span class="p">(</span><span class="n">full_trace_custom</span><span class="p">,</span> <span class="n">proxy</span>  <span class="o">=</span> <span class="s1">&#39;d13c&#39;</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">noise_summary</span><span class="p">(</span><span class="n">full_trace_custom</span><span class="p">,</span> <span class="n">proxy</span> <span class="o">=</span> <span class="s1">&#39;d18o&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/ce0ec4797c1625e84b5b620deed93a10f5b668c4cef40d6c72d7a4126ea9acc6.png" src="../../_images/ce0ec4797c1625e84b5b620deed93a10f5b668c4cef40d6c72d7a4126ea9acc6.png" />
+<img alt="../../_images/0224b6294a77b2f7a4b5888ab4a338ec45843165ef945c3be54cb5b2ab1d683e.png" src="../../_images/0224b6294a77b2f7a4b5888ab4a338ec45843165ef945c3be54cb5b2ab1d683e.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">age_constraints</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/f4d0f9a8fdd6bc24915466771c526cd12d150b8ce28494549a49ddc1f21110c3.png" src="../../_images/f4d0f9a8fdd6bc24915466771c526cd12d150b8ce28494549a49ddc1f21110c3.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">age_constraints</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/4c236cbefb31c600e53c106338d3daa7fabb17a8ec7b1981713f02b04d4c35fa.png" src="../../_images/4c236cbefb31c600e53c106338d3daa7fabb17a8ec7b1981713f02b04d4c35fa.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">limiting_age_constraints</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/5495200712c57ace887abe1065c4896d86316e5f1da1b0640b39e91acd0ef680.png" src="../../_images/5495200712c57ace887abe1065c4896d86316e5f1da1b0640b39e91acd0ef680.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ages_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>section</th>
+      <th>height</th>
+      <th>age</th>
+      <th>age_std</th>
+      <th>shared?</th>
+      <th>name</th>
+      <th>intermediate detrital?</th>
+      <th>intermediate intrusive?</th>
+      <th>Exclude?</th>
+      <th>distribution_type</th>
+      <th>param_1_name</th>
+      <th>param_2_name</th>
+      <th>param_1</th>
+      <th>param_2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>150.0</td>
+      <td>2.0</td>
+      <td>False</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>Normal</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>7.145956</td>
+      <td>100.0</td>
+      <td>1.0</td>
+      <td>False</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>Normal</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>0.000000</td>
+      <td>150.0</td>
+      <td>2.0</td>
+      <td>False</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>Normal</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>1.500000</td>
+      <td>120.0</td>
+      <td>1.0</td>
+      <td>False</td>
+      <td>INTRUSIVE_1</td>
+      <td>False</td>
+      <td>True</td>
+      <td>False</td>
+      <td>Normal</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>2.300000</td>
+      <td>130.0</td>
+      <td>2.0</td>
+      <td>False</td>
+      <td>DETRITRAL_1</td>
+      <td>True</td>
+      <td>False</td>
+      <td>False</td>
+      <td>Normal</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>1</td>
+      <td>3.553568</td>
+      <td>100.0</td>
+      <td>1.0</td>
+      <td>True</td>
+      <td>S1_S2_min_age</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>Normal</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>2</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>Uniform</td>
+      <td>lower</td>
+      <td>upper</td>
+      <td>147.0</td>
+      <td>152.0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>2</td>
+      <td>4.000000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>INTRUSIVE_2</td>
+      <td>False</td>
+      <td>True</td>
+      <td>False</td>
+      <td>Cauchy</td>
+      <td>alpha</td>
+      <td>beta</td>
+      <td>125.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>2</td>
+      <td>5.000000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>DETRITAL_2</td>
+      <td>True</td>
+      <td>False</td>
+      <td>False</td>
+      <td>Uniform</td>
+      <td>lower</td>
+      <td>upper</td>
+      <td>138.0</td>
+      <td>142.0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>2</td>
+      <td>7.582216</td>
+      <td>100.0</td>
+      <td>1.0</td>
+      <td>True</td>
+      <td>S1_S2_min_age</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>Normal</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">sadler_plot</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="n">include_age_constraints</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">sadler_plot</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="n">include_age_constraints</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/1e695516bed4ba287bc765a4c7e65b34baa5578dbc601f15b9447d6881885443.png" src="../../_images/1e695516bed4ba287bc765a4c7e65b34baa5578dbc601f15b9447d6881885443.png" />
+<img alt="../../_images/5ac5a5c92f0c0742f37e726e123190d0efd0da3bf74cefa72b880dddbce9c369.png" src="../../_images/5ac5a5c92f0c0742f37e726e123190d0efd0da3bf74cefa72b880dddbce9c369.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">accumulation_rate_stratigraphy</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="n">include_age_constraints</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">accumulation_rate_stratigraphy</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="n">include_age_constraints</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">rate_scale</span> <span class="o">=</span> <span class="s1">&#39;log&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/bce1d068df150367ea84c9cdc35aab4c61f1426bd807212264a68cd1a5319443.png" src="../../_images/bce1d068df150367ea84c9cdc35aab4c61f1426bd807212264a68cd1a5319443.png" />
+<img alt="../../_images/c5e67fc92e77705e2055409e334ec9a04325af0685280a45eedfb212ec629020.png" src="../../_images/c5e67fc92e77705e2055409e334ec9a04325af0685280a45eedfb212ec629020.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">section_age_range</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="mi">125</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">sections</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mapping age models to sections
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "2b6d09156f8a4de08435e6f3bd9d3084", "version_major": 2, "version_minor": 0}</script><img alt="../../_images/6a60d15ec7483197a31fd4c89c9228e7b509f7d03084b97c7658619252635802.png" src="../../_images/6a60d15ec7483197a31fd4c89c9228e7b509f7d03084b97c7658619252635802.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">proxy_data_gaps</span><span class="p">(</span><span class="n">full_trace</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">proxy_data_gaps</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">yaxis</span> <span class="o">=</span> <span class="s1">&#39;count&#39;</span><span class="p">)</span>
+
+<span class="n">time_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">proxy_data_gaps</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">yaxis</span> <span class="o">=</span> <span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">time_grid</span> <span class="o">=</span> <span class="n">time_grid</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Calculating gaps in the data
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "e7dde37e181f447c9b4d6a409a0081f2", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Calculating gaps in the data
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "ccd351690ec94529b7197a92bc620e42", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Calculating gaps in the data
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "3d3b791eac714d589d4a424047b4c9dc", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">proxy_data_density</span><span class="p">(</span><span class="n">full_trace</span><span class="p">)</span>
+
+<span class="n">time_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">proxy_data_density</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">time_grid</span> <span class="o">=</span> <span class="n">time_grid</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Counting data in time bins
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "7415bdbd6f9e444097e9ac89f9d00577", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Counting data in time bins
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "65c4502b18f444a2a5e2969fe5adbf9f", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">lengthscale_traceplot</span><span class="p">(</span><span class="n">full_trace</span><span class="p">)</span>
+<span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">lengthscale_traceplot</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">chains</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/6e37dad2c2adff21134b2e13253047fb2a6130f60b756ca4ea40c8a25b6cc006.png" src="../../_images/6e37dad2c2adff21134b2e13253047fb2a6130f60b756ca4ea40c8a25b6cc006.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">lengthscale_stability</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">proxy</span> <span class="o">=</span> <span class="s1">&#39;d18o&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/2a6bb2a1f08d34965f131205a186bfe1a95b5aaff8a36a18d64608e4a9cc1387.png" src="../../_images/2a6bb2a1f08d34965f131205a186bfe1a95b5aaff8a36a18d64608e4a9cc1387.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">proxy_signal_stability</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">proxy</span> <span class="o">=</span> <span class="s1">&#39;d13c&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/9d12732e245a648d262955aa28103bcdecb16f5915f7ae7e313bec29db06ff70.png" src="../../_images/9d12732e245a648d262955aa28103bcdecb16f5915f7ae7e313bec29db06ff70.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span> <span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">proxy_signal_stability</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">proxy</span> <span class="o">=</span> <span class="s1">&#39;d18o&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/1dc6fe71a997b8f630da93fb1a16f4ba5ed70b531222758133e7998dfe71d15d.png" src="../../_images/1dc6fe71a997b8f630da93fb1a16f4ba5ed70b531222758133e7998dfe71d15d.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">proxy_strat</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="n">plot_constraints</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">plot_excluded_samples</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/d073a95e8913c2e4181a7b65cdf8a4fd0c7ac03de1b231fa5a124adc2f33d0c7.png" src="../../_images/d073a95e8913c2e4181a7b65cdf8a4fd0c7ac03de1b231fa5a124adc2f33d0c7.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sample_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>section</th>
+      <th>height</th>
+      <th>age</th>
+      <th>d13c</th>
+      <th>d18o</th>
+      <th>d34s</th>
+      <th>Exclude?</th>
+      <th>offset_group_d13c</th>
+      <th>offset_group_d18o</th>
+      <th>noise_group_d13c</th>
+      <th>noise_group_d18o</th>
+      <th>d13c_std</th>
+      <th>d13c_population_std</th>
+      <th>d18o_std</th>
+      <th>d18o_population_std</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0.726341</td>
+      <td>143.506207</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>22.174702</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>1.019653</td>
+      <td>129.113846</td>
+      <td>NaN</td>
+      <td>2.363407</td>
+      <td>20.344371</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>1.706731</td>
+      <td>120.555006</td>
+      <td>-0.150746</td>
+      <td>3.299016</td>
+      <td>21.083621</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>1.813515</td>
+      <td>113.941947</td>
+      <td>-3.295373</td>
+      <td>2.187376</td>
+      <td>28.621435</td>
+      <td>True</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>2.090381</td>
+      <td>109.295562</td>
+      <td>-4.373225</td>
+      <td>4.273271</td>
+      <td>21.049269</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0</td>
+      <td>6.145956</td>
+      <td>105.868777</td>
+      <td>-2.653027</td>
+      <td>5.778884</td>
+      <td>20.030358</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1</td>
+      <td>1.307739</td>
+      <td>139.461037</td>
+      <td>0.000239</td>
+      <td>0.901868</td>
+      <td>33.228554</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1</td>
+      <td>2.235939</td>
+      <td>125.969574</td>
+      <td>1.955658</td>
+      <td>3.742717</td>
+      <td>20.011178</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>1</td>
+      <td>2.553568</td>
+      <td>109.396070</td>
+      <td>-4.413917</td>
+      <td>4.217433</td>
+      <td>21.135780</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>2</td>
+      <td>3.464194</td>
+      <td>143.400160</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>22.347291</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>2</td>
+      <td>4.356996</td>
+      <td>136.769865</td>
+      <td>0.337462</td>
+      <td>NaN</td>
+      <td>35.110893</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>2</td>
+      <td>6.582216</td>
+      <td>119.169039</td>
+      <td>-0.695132</td>
+      <td>NaN</td>
+      <td>22.712199</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">section_proxy_residuals</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">sample_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(4, 200)
+(3, 200)
+(3, 200)
+</pre></div>
+</div>
+<img alt="../../_images/04e66a03a85fec3673ef37c866694e0c815c739292ac59d299b44c45c3fe934b.png" src="../../_images/04e66a03a85fec3673ef37c866694e0c815c739292ac59d299b44c45c3fe934b.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">section_proxy_residuals</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">sample_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(4, 200)
+(3, 200)
+(3, 200)
+</pre></div>
+</div>
+<img alt="../../_images/04e66a03a85fec3673ef37c866694e0c815c739292ac59d299b44c45c3fe934b.png" src="../../_images/04e66a03a85fec3673ef37c866694e0c815c739292ac59d299b44c45c3fe934b.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">section_proxy_residuals</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">sample_df</span><span class="p">,</span> <span class="n">include_excluded_samples</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">proxy</span> <span class="o">=</span> <span class="s1">&#39;d18o&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/420068cf3ca218737b210c85c617b90a5b458506b5e5ccca89b3939673d38b58.png" src="../../_images/420068cf3ca218737b210c85c617b90a5b458506b5e5ccca89b3939673d38b58.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">predict_ages</span> <span class="o">=</span> <span class="n">full_trace</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">values</span>
+
+<span class="n">interpolated_df</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">extend_age_model</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="n">new_proxies</span> <span class="o">=</span> <span class="s1">&#39;d34s&#39;</span><span class="p">)</span>
+<span class="n">interpolated_proxy_df</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">interpolate_proxy</span><span class="p">(</span><span class="n">interpolated_df</span><span class="p">,</span> <span class="s1">&#39;d34s&#39;</span><span class="p">,</span> <span class="n">predict_ages</span><span class="p">)</span>
+<span class="n">stratmc</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">interpolated_proxy_inference</span><span class="p">(</span><span class="n">interpolated_df</span><span class="p">,</span> <span class="n">interpolated_proxy_df</span><span class="p">,</span> <span class="s1">&#39;d34s&#39;</span><span class="p">,</span> <span class="n">plot_data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolating section age models
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "4055a2fa973a45469923f6dca4ab35b0", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolating proxy values
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "5a206cf6da984a6c9fdee7d26ae0a39e", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Calculating summary statistics
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "84183cd39ed1409386a1d74545851652", "version_major": 2, "version_minor": 0}</script><img alt="../../_images/bb09ad96514349a0f190fe7c90feaecf1256c5669f789363d67daeeb089d3e18.png" src="../../_images/bb09ad96514349a0f190fe7c90feaecf1256c5669f789363d67daeeb089d3e18.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">interpolated_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>section</th>
+      <th>height</th>
+      <th>age</th>
+      <th>d13c</th>
+      <th>d18o</th>
+      <th>d34s</th>
+      <th>Exclude?</th>
+      <th>offset_group_d13c</th>
+      <th>offset_group_d18o</th>
+      <th>noise_group_d13c</th>
+      <th>...</th>
+      <th>d18o_std</th>
+      <th>d18o_population_std</th>
+      <th>interp</th>
+      <th>age_draws</th>
+      <th>mle</th>
+      <th>2.5</th>
+      <th>16</th>
+      <th>50</th>
+      <th>84</th>
+      <th>97.5</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0.726341</td>
+      <td>143.506207</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>22.174702</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>...</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>y</td>
+      <td>[138.47873528594013, 130.51397135943617, 145.9...</td>
+      <td>136.046625</td>
+      <td>122.183350</td>
+      <td>127.262960</td>
+      <td>135.523356</td>
+      <td>142.935330</td>
+      <td>147.258926</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>1.019653</td>
+      <td>129.113846</td>
+      <td>NaN</td>
+      <td>2.363407</td>
+      <td>20.344371</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>...</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>y</td>
+      <td>[137.90390646489504, 127.49955441309709, 137.9...</td>
+      <td>131.341875</td>
+      <td>119.025287</td>
+      <td>124.779150</td>
+      <td>131.509380</td>
+      <td>137.129426</td>
+      <td>142.237339</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>1.706731</td>
+      <td>120.555006</td>
+      <td>-0.150746</td>
+      <td>3.299016</td>
+      <td>21.083621</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>...</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>y</td>
+      <td>[135.3497218754008, 125.44356274705592, 135.39...</td>
+      <td>127.382850</td>
+      <td>116.592918</td>
+      <td>120.716276</td>
+      <td>127.392750</td>
+      <td>134.188906</td>
+      <td>139.111444</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>2.090381</td>
+      <td>109.295562</td>
+      <td>-4.373225</td>
+      <td>4.273271</td>
+      <td>21.049269</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>...</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>y</td>
+      <td>[132.63001459892996, 112.6261255208306, 131.52...</td>
+      <td>118.825924</td>
+      <td>104.046143</td>
+      <td>111.084517</td>
+      <td>118.772271</td>
+      <td>128.095532</td>
+      <td>133.048960</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>6.145956</td>
+      <td>105.868777</td>
+      <td>-2.653027</td>
+      <td>5.778884</td>
+      <td>20.030358</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>...</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>y</td>
+      <td>[126.80004767460147, 110.03458247607502, 131.0...</td>
+      <td>114.576989</td>
+      <td>101.769561</td>
+      <td>106.783976</td>
+      <td>114.856048</td>
+      <td>124.873944</td>
+      <td>132.382985</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>1</td>
+      <td>1.307739</td>
+      <td>139.461037</td>
+      <td>0.000239</td>
+      <td>0.901868</td>
+      <td>33.228554</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>...</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>y</td>
+      <td>[134.97219228144763, 129.06499812640956, 140.8...</td>
+      <td>133.637085</td>
+      <td>122.029677</td>
+      <td>127.563183</td>
+      <td>133.631841</td>
+      <td>141.183745</td>
+      <td>146.049632</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1</td>
+      <td>2.235939</td>
+      <td>125.969574</td>
+      <td>1.955658</td>
+      <td>3.742717</td>
+      <td>20.011178</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>...</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>y</td>
+      <td>[131.33931777069398, 123.42558073502533, 138.1...</td>
+      <td>125.386416</td>
+      <td>107.378544</td>
+      <td>117.079081</td>
+      <td>125.280960</td>
+      <td>132.780317</td>
+      <td>139.514661</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1</td>
+      <td>2.553568</td>
+      <td>109.396070</td>
+      <td>-4.413917</td>
+      <td>4.217433</td>
+      <td>21.135780</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>...</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>y</td>
+      <td>[121.40763497457581, 107.5771520347069, 116.30...</td>
+      <td>116.923285</td>
+      <td>101.873350</td>
+      <td>108.051276</td>
+      <td>116.256567</td>
+      <td>124.024188</td>
+      <td>129.302170</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>2</td>
+      <td>3.464194</td>
+      <td>143.400160</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>22.347291</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>...</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>y</td>
+      <td>[136.0859830599092, 127.72253718105978, 127.76...</td>
+      <td>136.498245</td>
+      <td>124.348356</td>
+      <td>128.675378</td>
+      <td>136.338722</td>
+      <td>141.886696</td>
+      <td>145.570070</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>2</td>
+      <td>4.356996</td>
+      <td>136.769865</td>
+      <td>0.337462</td>
+      <td>NaN</td>
+      <td>35.110893</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>...</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>y</td>
+      <td>[126.1054650580997, 123.36945974856819, 125.92...</td>
+      <td>130.823794</td>
+      <td>120.134929</td>
+      <td>125.489667</td>
+      <td>130.984119</td>
+      <td>138.051334</td>
+      <td>142.208807</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>2</td>
+      <td>6.582216</td>
+      <td>119.169039</td>
+      <td>-0.695132</td>
+      <td>NaN</td>
+      <td>22.712199</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>...</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>y</td>
+      <td>[119.70401663159323, 122.4451383744259, 122.33...</td>
+      <td>124.797859</td>
+      <td>110.319263</td>
+      <td>116.657952</td>
+      <td>124.324489</td>
+      <td>132.258376</td>
+      <td>136.533587</td>
+    </tr>
+  </tbody>
+</table>
+<p>11 rows × 23 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">interpolated_proxy_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age</th>
+      <th>d34s_draws</th>
+      <th>mle</th>
+      <th>2.5</th>
+      <th>16</th>
+      <th>50</th>
+      <th>84</th>
+      <th>97.5</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>100.0</td>
+      <td>[22.712198862643337, 21.13578021701801, 21.135...</td>
+      <td>20.502038</td>
+      <td>20.030358</td>
+      <td>20.030358</td>
+      <td>21.135780</td>
+      <td>21.135780</td>
+      <td>22.712199</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>100.5</td>
+      <td>[22.712198862643337, 21.13578021701801, 21.135...</td>
+      <td>20.502038</td>
+      <td>20.030358</td>
+      <td>20.030358</td>
+      <td>21.135780</td>
+      <td>21.135780</td>
+      <td>22.712199</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>101.0</td>
+      <td>[22.712198862643337, 21.13578021701801, 21.135...</td>
+      <td>20.502038</td>
+      <td>20.030358</td>
+      <td>20.030358</td>
+      <td>21.135780</td>
+      <td>21.135780</td>
+      <td>22.712199</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>101.5</td>
+      <td>[22.712198862643337, 21.13578021701801, 21.135...</td>
+      <td>20.515515</td>
+      <td>20.030358</td>
+      <td>20.030358</td>
+      <td>21.109219</td>
+      <td>21.135780</td>
+      <td>22.712199</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>102.0</td>
+      <td>[22.712198862643337, 21.13578021701801, 21.135...</td>
+      <td>20.502038</td>
+      <td>20.030358</td>
+      <td>20.030358</td>
+      <td>20.983793</td>
+      <td>21.135780</td>
+      <td>22.712199</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>148.0</td>
+      <td>[22.174702219450584, 22.174702219450584, 22.17...</td>
+      <td>22.633106</td>
+      <td>22.174702</td>
+      <td>22.174702</td>
+      <td>22.347291</td>
+      <td>33.228554</td>
+      <td>33.228554</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>148.5</td>
+      <td>[22.174702219450584, 22.174702219450584, 22.17...</td>
+      <td>22.598272</td>
+      <td>22.174702</td>
+      <td>22.174702</td>
+      <td>22.347291</td>
+      <td>33.228554</td>
+      <td>33.228554</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>149.0</td>
+      <td>[22.174702219450584, 22.174702219450584, 22.17...</td>
+      <td>22.617662</td>
+      <td>22.174702</td>
+      <td>22.174702</td>
+      <td>22.347291</td>
+      <td>33.228554</td>
+      <td>33.228554</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>149.5</td>
+      <td>[22.174702219450584, 22.174702219450584, 22.17...</td>
+      <td>22.599167</td>
+      <td>22.174702</td>
+      <td>22.174702</td>
+      <td>22.347291</td>
+      <td>33.228554</td>
+      <td>33.228554</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>150.0</td>
+      <td>[22.174702219450584, 22.174702219450584, 22.17...</td>
+      <td>22.619078</td>
+      <td>22.174702</td>
+      <td>22.174702</td>
+      <td>22.347291</td>
+      <td>33.228554</td>
+      <td>33.228554</td>
+    </tr>
+  </tbody>
+</table>
+<p>101 rows × 8 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d34s&#39;</span><span class="p">]</span>
+<span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">sample_df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">sample_df</span><span class="p">[</span><span class="n">proxy</span><span class="p">])]</span> <span class="k">for</span> <span class="n">proxy</span> <span class="ow">in</span> <span class="n">proxies</span><span class="p">]))))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sample_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>section</th>
+      <th>height</th>
+      <th>age</th>
+      <th>d13c</th>
+      <th>d18o</th>
+      <th>d34s</th>
+      <th>Exclude?</th>
+      <th>offset_group_d13c</th>
+      <th>offset_group_d18o</th>
+      <th>noise_group_d13c</th>
+      <th>noise_group_d18o</th>
+      <th>d13c_std</th>
+      <th>d13c_population_std</th>
+      <th>d18o_std</th>
+      <th>d18o_population_std</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0.726341</td>
+      <td>143.506207</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>22.174702</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>1.019653</td>
+      <td>129.113846</td>
+      <td>NaN</td>
+      <td>2.363407</td>
+      <td>20.344371</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>1.706731</td>
+      <td>120.555006</td>
+      <td>-0.150746</td>
+      <td>3.299016</td>
+      <td>21.083621</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>1.813515</td>
+      <td>113.941947</td>
+      <td>-3.295373</td>
+      <td>2.187376</td>
+      <td>28.621435</td>
+      <td>True</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>2.090381</td>
+      <td>109.295562</td>
+      <td>-4.373225</td>
+      <td>4.273271</td>
+      <td>21.049269</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0</td>
+      <td>6.145956</td>
+      <td>105.868777</td>
+      <td>-2.653027</td>
+      <td>5.778884</td>
+      <td>20.030358</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1</td>
+      <td>1.307739</td>
+      <td>139.461037</td>
+      <td>0.000239</td>
+      <td>0.901868</td>
+      <td>33.228554</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1</td>
+      <td>2.235939</td>
+      <td>125.969574</td>
+      <td>1.955658</td>
+      <td>3.742717</td>
+      <td>20.011178</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>1</td>
+      <td>2.553568</td>
+      <td>109.396070</td>
+      <td>-4.413917</td>
+      <td>4.217433</td>
+      <td>21.135780</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>2</td>
+      <td>3.464194</td>
+      <td>143.400160</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>22.347291</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>2</td>
+      <td>4.356996</td>
+      <td>136.769865</td>
+      <td>0.337462</td>
+      <td>NaN</td>
+      <td>35.110893</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>2</td>
+      <td>6.582216</td>
+      <td>119.169039</td>
+      <td>-0.695132</td>
+      <td>NaN</td>
+      <td>22.712199</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sample_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d18o&#39;</span><span class="p">],</span> <span class="n">how</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)[</span><span class="s1">&#39;section&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([&#39;0&#39;, &#39;1&#39;], dtype=object)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">])</span>
+<span class="n">sections</span><span class="o">.</span><span class="n">dtype</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dtype(&#39;O&#39;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># get list of proxies included in model from full_trace</span>
+<span class="n">variables</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">l</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">full_trace</span><span class="p">[</span><span class="s2">&quot;posterior&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data_vars</span><span class="o">.</span><span class="n">keys</span><span class="p">())[:</span><span class="mi">50</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;gp_ls_&#39;</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">l</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;unshifted&#39;</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">l</span><span class="p">)</span>
+        <span class="p">]</span>
+
+<span class="n">proxies</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+    <span class="n">proxies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">[</span><span class="mi">6</span><span class="p">:])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sections</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([&#39;0&#39;, &#39;1&#39;, &#39;2&#39;], dtype=object)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_sample_df</span><span class="p">,</span> <span class="n">test_ages_df</span> <span class="o">=</span> <span class="n">stratmc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">clean_data</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d34s&#39;</span><span class="p">],</span> <span class="n">sections</span> <span class="o">=</span> <span class="n">sections</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_sample_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>section</th>
+      <th>height</th>
+      <th>age</th>
+      <th>d13c</th>
+      <th>d18o</th>
+      <th>d34s</th>
+      <th>Exclude?</th>
+      <th>offset_group_d13c</th>
+      <th>offset_group_d18o</th>
+      <th>noise_group_d13c</th>
+      <th>noise_group_d18o</th>
+      <th>d13c_std</th>
+      <th>d13c_population_std</th>
+      <th>d18o_std</th>
+      <th>d18o_population_std</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0.726341</td>
+      <td>143.506207</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>22.174702</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>1.019653</td>
+      <td>129.113846</td>
+      <td>NaN</td>
+      <td>2.363407</td>
+      <td>20.344371</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>1.706731</td>
+      <td>120.555006</td>
+      <td>-0.150746</td>
+      <td>3.299016</td>
+      <td>21.083621</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>1.813515</td>
+      <td>113.941947</td>
+      <td>-3.295373</td>
+      <td>2.187376</td>
+      <td>28.621435</td>
+      <td>True</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>2.090381</td>
+      <td>109.295562</td>
+      <td>-4.373225</td>
+      <td>4.273271</td>
+      <td>21.049269</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0</td>
+      <td>6.145956</td>
+      <td>105.868777</td>
+      <td>-2.653027</td>
+      <td>5.778884</td>
+      <td>20.030358</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1</td>
+      <td>1.307739</td>
+      <td>139.461037</td>
+      <td>0.000239</td>
+      <td>0.901868</td>
+      <td>33.228554</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1</td>
+      <td>2.235939</td>
+      <td>125.969574</td>
+      <td>1.955658</td>
+      <td>3.742717</td>
+      <td>20.011178</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>1</td>
+      <td>2.553568</td>
+      <td>109.396070</td>
+      <td>-4.413917</td>
+      <td>4.217433</td>
+      <td>21.135780</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>2</td>
+      <td>3.464194</td>
+      <td>143.400160</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>22.347291</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>2</td>
+      <td>4.356996</td>
+      <td>136.769865</td>
+      <td>0.337462</td>
+      <td>NaN</td>
+      <td>35.110893</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>2</td>
+      <td>6.582216</td>
+      <td>119.169039</td>
+      <td>-0.695132</td>
+      <td>NaN</td>
+      <td>22.712199</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>NaN</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">proxy</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;d34s&#39;</span><span class="p">]:</span> 
+    <span class="k">if</span> <span class="n">proxy</span> <span class="o">+</span> <span class="s1">&#39;_std&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">sample_df</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">sample_df</span><span class="p">[</span><span class="n">proxy</span> <span class="o">+</span> <span class="s1">&#39;_std&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">sample_df</span><span class="p">[</span><span class="n">proxy</span> <span class="o">+</span> <span class="s1">&#39;_std&#39;</span><span class="p">])</span>
+    <span class="n">idx</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">sample_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">proxy</span> <span class="o">+</span> <span class="s1">&#39;_std&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sample_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>section</th>
+      <th>height</th>
+      <th>age</th>
+      <th>d13c</th>
+      <th>d18o</th>
+      <th>d34s</th>
+      <th>Exclude?</th>
+      <th>offset_group_d13c</th>
+      <th>offset_group_d18o</th>
+      <th>noise_group_d13c</th>
+      <th>noise_group_d18o</th>
+      <th>d13c_std</th>
+      <th>d18o_std</th>
+      <th>d34s_std</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0.726341</td>
+      <td>143.506207</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>22.174702</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>0.1</td>
+      <td>0.1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>1.019653</td>
+      <td>129.113846</td>
+      <td>NaN</td>
+      <td>2.363407</td>
+      <td>20.344371</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>0.1</td>
+      <td>0.1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>1.706731</td>
+      <td>120.555006</td>
+      <td>-0.150746</td>
+      <td>3.299016</td>
+      <td>21.083621</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>0.1</td>
+      <td>0.1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>1.813515</td>
+      <td>113.941947</td>
+      <td>-3.295373</td>
+      <td>2.187376</td>
+      <td>28.621435</td>
+      <td>True</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>0.1</td>
+      <td>0.1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>2.090381</td>
+      <td>109.295562</td>
+      <td>-4.373225</td>
+      <td>4.273271</td>
+      <td>21.049269</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>0.1</td>
+      <td>0.1</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0</td>
+      <td>6.145956</td>
+      <td>105.868777</td>
+      <td>-2.653027</td>
+      <td>5.778884</td>
+      <td>20.030358</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>0.1</td>
+      <td>0.1</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1</td>
+      <td>1.307739</td>
+      <td>139.461037</td>
+      <td>0.000239</td>
+      <td>0.901868</td>
+      <td>33.228554</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>0.1</td>
+      <td>0.1</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1</td>
+      <td>2.235939</td>
+      <td>125.969574</td>
+      <td>1.955658</td>
+      <td>3.742717</td>
+      <td>20.011178</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>0.1</td>
+      <td>0.1</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>1</td>
+      <td>2.553568</td>
+      <td>109.396070</td>
+      <td>-4.413917</td>
+      <td>4.217433</td>
+      <td>21.135780</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>0.1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>2</td>
+      <td>3.464194</td>
+      <td>143.400160</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>22.347291</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>0.1</td>
+      <td>0.1</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>2</td>
+      <td>4.356996</td>
+      <td>136.769865</td>
+      <td>0.337462</td>
+      <td>NaN</td>
+      <td>35.110893</td>
+      <td>False</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>deep</td>
+      <td>0.1</td>
+      <td>0.1</td>
+      <td>0.1</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>2</td>
+      <td>6.582216</td>
+      <td>119.169039</td>
+      <td>-0.695132</td>
+      <td>NaN</td>
+      <td>22.712199</td>
+      <td>False</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>shallow</td>
+      <td>0.1</td>
+      <td>0.1</td>
+      <td>0.1</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#make-synthetic-proxy-signals">Make synthetic proxy signals</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-model-tests">Design model tests</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-1">Test 1:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-2">Test 2:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-3">Test 3:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampler-tests">Sampler tests</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-test-traces">Load test traces</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/stratmc/examples/Test data.ipynb.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Stacey Edmonsond.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

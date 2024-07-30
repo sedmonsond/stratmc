@@ -1,0 +1,828 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Inference &#8212; StratMC v1.0 Manual</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/inference';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Plotting" href="plotting.html" />
+    <link rel="prev" title="Statistical model" href="model.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jul 29, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../_static/stratmc.png" class="logo__image only-light" alt="StratMC v1.0 Manual - Home"/>
+    <script>document.write(`<img src="../_static/stratmc.png" class="logo__image only-dark" alt="StratMC v1.0 Manual - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="data.html"> Data Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model.html"> Statistical model</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#"> Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html"> Plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synthetics.html"> Synthetic signals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html"> Tests and checks</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="userguide.html" class="nav-link">User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="api.html" class="nav-link">API Reference</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Inference</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="inference">
+<h1>Inference<a class="headerlink" href="#inference" title="Link to this heading">#</a></h1>
+<p>Functions for sampling the inference model, checking for convergence, and processing the results.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_trace</span></code></a></p></td>
+<td><p>Sample the prior and posterior distributions for a <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/model/generated/pymc.model.core.Model.html#pymc.model.core.Model" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.model.core.Model</span></code></a> returned by <a class="reference internal" href="model.html#stratmc.model.build_model" title="stratmc.model.build_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_model()</span></code></a> in <a class="reference internal" href="model.html#module-stratmc.model" title="stratmc.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.model</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.inference.extend_age_model" title="stratmc.inference.extend_age_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extend_age_model</span></code></a></p></td>
+<td><p>Extend age models to a different set of proxy observations using posterior sample ages from an existing inference.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.inference.interpolate_proxy" title="stratmc.inference.interpolate_proxy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate_proxy</span></code></a></p></td>
+<td><p>Use interpolated sample ages from <a class="reference internal" href="#stratmc.inference.extend_age_model" title="stratmc.inference.extend_age_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">extend_age_model()</span></code></a> to calculate proxy values at a given set of ages (e.g., to plot 68 and 95% confidence intervals over time for a new proxy using <a class="reference internal" href="plotting.html#stratmc.plotting.interpolated_proxy_inference" title="stratmc.plotting.interpolated_proxy_inference"><code class="xref py py-meth docutils literal notranslate"><span class="pre">interpolated_proxy_inference()</span></code></a> in <a class="reference internal" href="plotting.html#module-stratmc.plotting" title="stratmc.plotting"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.plotting</span></code></a>).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.inference.age_range_to_height" title="stratmc.inference.age_range_to_height"><code class="xref py py-obj docutils literal notranslate"><span class="pre">age_range_to_height</span></code></a></p></td>
+<td><p>Use the posterior age model for each section to find the stratigraphic interval (with uncertainty) corresponding to a given age range.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.inference.map_ages_to_section" title="stratmc.inference.map_ages_to_section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">map_ages_to_section</span></code></a></p></td>
+<td><p>Helper function for <a class="reference internal" href="plotting.html#stratmc.plotting.section_proxy_signal" title="stratmc.plotting.section_proxy_signal"><code class="xref py py-meth docutils literal notranslate"><span class="pre">section_proxy_signal()</span></code></a> in <a class="reference internal" href="plotting.html#module-stratmc.plotting" title="stratmc.plotting"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.plotting</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.inference.count_samples" title="stratmc.inference.count_samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_samples</span></code></a></p></td>
+<td><p>Helper function for  <a class="reference internal" href="plotting.html#stratmc.plotting.proxy_data_density" title="stratmc.plotting.proxy_data_density"><code class="xref py py-meth docutils literal notranslate"><span class="pre">proxy_data_density()</span></code></a> in <a class="reference internal" href="plotting.html#module-stratmc.plotting" title="stratmc.plotting"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.plotting</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.inference.find_gaps" title="stratmc.inference.find_gaps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_gaps</span></code></a></p></td>
+<td><p>Helper function for  <a class="reference internal" href="plotting.html#stratmc.plotting.proxy_data_gaps" title="stratmc.plotting.proxy_data_gaps"><code class="xref py py-meth docutils literal notranslate"><span class="pre">proxy_data_gaps()</span></code></a> in <a class="reference internal" href="plotting.html#module-stratmc.plotting" title="stratmc.plotting"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.plotting</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.inference.calculate_lengthscale_stability" title="stratmc.inference.calculate_lengthscale_stability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_lengthscale_stability</span></code></a></p></td>
+<td><p>Compute the posterior standard deviation of the <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a> covariance kernel lengthscale as additional chains are considered (i.e., for 1 to <cite>N</cite> chains).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.inference.calculate_proxy_signal_stability" title="stratmc.inference.calculate_proxy_signal_stability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_proxy_signal_stability</span></code></a></p></td>
+<td><p>Compute the residuals between the median inferred proxy signal when all <em>N</em> chains are considered compared to when 1 to <em>N-1</em> chains are considered.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="target" id="module-stratmc.inference"></span><dl class="py function">
+<dt class="sig sig-object py" id="stratmc.inference.age_range_to_height">
+<span class="sig-prename descclassname"><span class="pre">stratmc.inference.</span></span><span class="sig-name descname"><span class="pre">age_range_to_height</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_age</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_age</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/inference.html#age_range_to_height"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.inference.age_range_to_height" title="Link to this definition">#</a></dt>
+<dd><p>Use the posterior age model for each section to find the stratigraphic interval (with uncertainty) corresponding to a given age range. If <code class="docutils literal notranslate"><span class="pre">sections</span></code> is not provided, returns height estimates for every section that overlaps the target age range. To visualize the stratigraphic intervals, use <a class="reference internal" href="plotting.html#stratmc.plotting.section_age_range" title="stratmc.plotting.section_age_range"><code class="xref py py-meth docutils literal notranslate"><span class="pre">section_age_range()</span></code></a> in <a class="reference internal" href="plotting.html#module-stratmc.plotting" title="stratmc.plotting"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.plotting</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for all sections.</p>
+</dd>
+<dt><strong>ages_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for all sections.</p>
+</dd>
+<dt><strong>lower_age: float</strong></dt><dd><p>Lower bound (youngest age) of the target age interval.</p>
+</dd>
+<dt><strong>upper_age: float</strong></dt><dd><p>Upper bound (oldest age) of the target age interval.</p>
+</dd>
+<dt><strong>sections: list(str) or numpy.array(str), optional</strong></dt><dd><p>List of sections included in the original inference; only required if not all sections in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code> were included.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>height_range_df: pandas.DataFrame</dt><dd><p>Summary statistics for the base and top height of the target age interval (maximum likelihood estimate, median, and 68% and 95% confidence intervals) for each section.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.inference.calculate_lengthscale_stability">
+<span class="sig-prename descclassname"><span class="pre">stratmc.inference.</span></span><span class="sig-name descname"><span class="pre">calculate_lengthscale_stability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/inference.html#calculate_lengthscale_stability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.inference.calculate_lengthscale_stability" title="Link to this definition">#</a></dt>
+<dd><p>Compute the posterior standard deviation of the <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a> covariance kernel lengthscale as additional chains are considered (i.e., for 1 to <cite>N</cite> chains). When the posterior has been sufficiently explored, the standard deviation will stabilize; if it has not stabilized, then additional chains should be run. Helper function for <a class="reference internal" href="plotting.html#stratmc.plotting.lengthscale_stability" title="stratmc.plotting.lengthscale_stability"><code class="xref py py-meth docutils literal notranslate"><span class="pre">lengthscale_stability()</span></code></a> in <a class="reference internal" href="plotting.html#module-stratmc.plotting" title="stratmc.plotting"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.plotting</span></code></a>.</p>
+<p>To consider chains from multiple traces associated with the same inference model, first combine the traces (saved as NetCDF files) using <a class="reference internal" href="data.html#stratmc.data.combine_traces" title="stratmc.data.combine_traces"><code class="xref py py-meth docutils literal notranslate"><span class="pre">combine_traces()</span></code></a> in <a class="reference internal" href="data.html#module-stratmc.data" title="stratmc.data"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.data</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>proxy: str, optional</strong></dt><dd><p>Name of the proxy; only required if multiple proxies were included in the inference model.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>gp_ls_std: np.array of float</dt><dd><p>Posterior standard deviation of the covariance kernel lengthscale posterior; entries correspond to number of chains considered (first entry is 1 chain, last entry is all <cite>N</cite> chains).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.inference.calculate_proxy_signal_stability">
+<span class="sig-prename descclassname"><span class="pre">stratmc.inference.</span></span><span class="sig-name descname"><span class="pre">calculate_proxy_signal_stability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/inference.html#calculate_proxy_signal_stability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.inference.calculate_proxy_signal_stability" title="Link to this definition">#</a></dt>
+<dd><p>Compute the residuals between the median inferred proxy signal when all <em>N</em> chains are considered compared to when 1 to <em>N-1</em> chains are considered. When the posterior has been sufficiently explored, the residuals will stabilize and approach zero; if they have not stabilized, then additional chains should be run. Helper function for <a class="reference internal" href="plotting.html#module-stratmc.plotting" title="stratmc.plotting"><code class="xref py py-meth docutils literal notranslate"><span class="pre">proxy_signal_stability()</span></code></a> in <a class="reference internal" href="plotting.html#module-stratmc.plotting" title="stratmc.plotting"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.plotting</span></code></a>.</p>
+<p>To consider chains from multiple traces associated with the same inference model, first combine the traces (saved as NetCDF files) using <a class="reference internal" href="data.html#stratmc.data.combine_traces" title="stratmc.data.combine_traces"><code class="xref py py-meth docutils literal notranslate"><span class="pre">combine_traces()</span></code></a> in <a class="reference internal" href="data.html#module-stratmc.data" title="stratmc.data"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.data</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>proxy: str, optional</strong></dt><dd><p>Name of the proxy; only required if multiple proxies were included in the inference model.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>median_residuals: np.array of float</dt><dd><p>Residuals between the median inferred proxy value (at each time in <code class="docutils literal notranslate"><span class="pre">ages</span></code> passed to <a class="reference internal" href="#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a>) calculated using 1 to <cite>N-1</cite> chains versus all <cite>N</cite> chains. Shape is (chains x ages).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.inference.count_samples">
+<span class="sig-prename descclassname"><span class="pre">stratmc.inference.</span></span><span class="sig-name descname"><span class="pre">count_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/inference.html#count_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.inference.count_samples" title="Link to this definition">#</a></dt>
+<dd><p>Helper function for  <a class="reference internal" href="plotting.html#stratmc.plotting.proxy_data_density" title="stratmc.plotting.proxy_data_density"><code class="xref py py-meth docutils literal notranslate"><span class="pre">proxy_data_density()</span></code></a> in <a class="reference internal" href="plotting.html#module-stratmc.plotting" title="stratmc.plotting"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.plotting</span></code></a>. Counts the number of observations within discrete time bins (based on the posterior sample ages).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>time_grid: np.array, optional</strong></dt><dd><p>Time bin edges; if not provided, defaults to the <code class="docutils literal notranslate"><span class="pre">ages</span></code> array passed to <a class="reference internal" href="#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>sample_counts: np.array</dt><dd><p>Number of observations in each time bin, summed over all posterior draws such that the average number of observations is <code class="docutils literal notranslate"><span class="pre">sample_counts/n</span></code>.</p>
+</dd>
+<dt>grid_centers: np.array</dt><dd><p>Time bin centers.</p>
+</dd>
+<dt>grid_widths: np.array</dt><dd><p>Time bin widths.</p>
+</dd>
+<dt>n: int</dt><dd><p>Number of posterior draws in <code class="docutils literal notranslate"><span class="pre">full_trace</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.inference.extend_age_model">
+<span class="sig-prename descclassname"><span class="pre">stratmc.inference.</span></span><span class="sig-name descname"><span class="pre">extend_age_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_proxies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_proxy_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/inference.html#extend_age_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.inference.extend_age_model" title="Link to this definition">#</a></dt>
+<dd><p>Extend age models to a different set of proxy observations using posterior sample ages from an existing inference. For instance, extend an age model built using C isotope data to new S isotope data collected from different stratigraphic horizons in the same sections. Note that the age of stratigraphic horizons that were included in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code> (but marked <code class="docutils literal notranslate"><span class="pre">Exclude?</span> <span class="pre">=</span> <span class="pre">True</span></code>) is already passively tracked within the model; this function is only required to estimate the age of observations that were not in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code> when the inference was run. To estimate ages for new measurements of the same proxy, place the new data in a different column (e.g., ‘d13c_new`).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> with proxy data used during the inference step (as input to <a class="reference internal" href="model.html#stratmc.model.build_model" title="stratmc.model.build_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_model()</span></code></a> in <a class="reference internal" href="model.html#module-stratmc.model" title="stratmc.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.model</span></code></a>).</p>
+</dd>
+<dt><strong>ages_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints used during the inference step (as input to <a class="reference internal" href="model.html#stratmc.model.build_model" title="stratmc.model.build_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_model()</span></code></a> in <a class="reference internal" href="model.html#module-stratmc.model" title="stratmc.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.model</span></code></a>).</p>
+</dd>
+<dt><strong>new_proxies: str or list(str)</strong></dt><dd><p>New proxy(s) to construct age models for.</p>
+</dd>
+<dt><strong>new_proxy_df: pandas.DataFrame, optional</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing new proxy observations. Optional; if not provided, uses <code class="docutils literal notranslate"><span class="pre">sample_df</span></code> (assumes that observations for the new proxy are in the same DataFrame as the original proxy observations).</p>
+</dd>
+<dt><strong>sections: list(str) or numpy.array(str), optional</strong></dt><dd><p>List of sections included in the inference; only required if not all sections in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code> were included.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>interpolated_df: pandas.DataFrame</dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> with interpolated age draws and sample age summary statistics (maximum likelihood estimate, median, and 68% and 95% confidence intervals) for each new proxy observation.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.inference.find_gaps">
+<span class="sig-prename descclassname"><span class="pre">stratmc.inference.</span></span><span class="sig-name descname"><span class="pre">find_gaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/inference.html#find_gaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.inference.find_gaps" title="Link to this definition">#</a></dt>
+<dd><p>Helper function for  <a class="reference internal" href="plotting.html#stratmc.plotting.proxy_data_gaps" title="stratmc.plotting.proxy_data_gaps"><code class="xref py py-meth docutils literal notranslate"><span class="pre">proxy_data_gaps()</span></code></a> in <a class="reference internal" href="plotting.html#module-stratmc.plotting" title="stratmc.plotting"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.plotting</span></code></a>. Counts the number of draws from the posterior where there are no observations within discrete time bins (based on the posterior sample ages).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>time_grid: np.array, optional</strong></dt><dd><p>Time bin edges; if not provided, defaults to the <code class="docutils literal notranslate"><span class="pre">ages</span></code> array passed to <a class="reference internal" href="#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>age_gaps: np.array of int</dt><dd><p>Number of posterior draws where there are no observations; each entry corresponds to an age bin (corresponding to <code class="docutils literal notranslate"><span class="pre">grid_centers</span></code> and <code class="docutils literal notranslate"><span class="pre">grid_widths</span></code>).</p>
+</dd>
+<dt>grid_centers: np.array</dt><dd><p>Time bin centers.</p>
+</dd>
+<dt>grid_widths: np.array</dt><dd><p>Time bin widths.</p>
+</dd>
+<dt>n: int</dt><dd><p>Number of posterior draws in <code class="docutils literal notranslate"><span class="pre">full_trace</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.inference.get_trace">
+<span class="sig-prename descclassname"><span class="pre">stratmc.inference.</span></span><span class="sig-name descname"><span class="pre">get_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['d13c']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approximate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chains</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tune</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior_draws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_accept</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'numpyro'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuts_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postprocessing_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/inference.html#get_trace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.inference.get_trace" title="Link to this definition">#</a></dt>
+<dd><p>Sample the prior and posterior distributions for a <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/model/generated/pymc.model.core.Model.html#pymc.model.core.Model" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.model.core.Model</span></code></a> returned by <a class="reference internal" href="model.html#stratmc.model.build_model" title="stratmc.model.build_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_model()</span></code></a> in <a class="reference internal" href="model.html#module-stratmc.model" title="stratmc.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.model</span></code></a>. By default, uses <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/generated/pymc.sampling.jax.sample_numpyro_nuts.html#pymc.sampling.jax.sample_numpyro_nuts" title="(in PyMC v5.16.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">pymc.sampling.jax.sample_numpyro_nuts()</span></code></a> to sample the posterior; change <code class="docutils literal notranslate"><span class="pre">sampler</span></code> to ‘blackjax` to use <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/generated/pymc.sampling.jax.sample_blackjax_nuts.html#pymc.sampling.jax.sample_blackjax_nuts" title="(in PyMC v5.16.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">pymc.sampling.jax.sample_blackjax_nuts()</span></code></a>.</p>
+<p>After the posterior has been sampled, runs <a class="reference internal" href="tests.html#stratmc.tests.check_inference" title="stratmc.tests.check_inference"><code class="xref py py-meth docutils literal notranslate"><span class="pre">check_inference()</span></code></a> in <a class="reference internal" href="tests.html#module-stratmc.tests" title="stratmc.tests"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.tests</span></code></a> to check that superposition is never violated in the posterior. Any chains with superposition violations are removed from the trace with <a class="reference internal" href="data.html#stratmc.data.drop_chains" title="stratmc.data.drop_chains"><code class="xref py py-meth docutils literal notranslate"><span class="pre">drop_chains()</span></code></a> before it is returned (if <code class="docutils literal notranslate"><span class="pre">save</span> <span class="pre">=</span> <span class="pre">True</span></code>, both the original and ‘cleaned’ traces are saved to the <code class="docutils literal notranslate"><span class="pre">traces</span></code> subfolder), and a warning is issued. See <a class="reference internal" href="tests.html#stratmc.tests.check_inference" title="stratmc.tests.check_inference"><code class="xref py py-meth docutils literal notranslate"><span class="pre">check_inference()</span></code></a> for details; superposition issues are rare, and typically are related to minor violations of detrital or intrusive age constraints.</p>
+<p>Problems during sampling, including frequent divergences or minor violations of limiting age constraints, might be resolved by increasing the number of <code class="docutils literal notranslate"><span class="pre">tune</span></code> steps and/or increasing <code class="docutils literal notranslate"><span class="pre">target_accept</span></code> (which decreases the step size).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>model: PyMC model</strong></dt><dd><p><a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/model/generated/pymc.model.core.Model.html#pymc.model.core.Model" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.model.core.Model</span></code></a> object returned by <a class="reference internal" href="model.html#stratmc.model.build_model" title="stratmc.model.build_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_model()</span></code></a> in <a class="reference internal" href="model.html#module-stratmc.model" title="stratmc.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.model</span></code></a>.</p>
+</dd>
+<dt><strong>gp: pymc.gp.Latent</strong></dt><dd><p>Gaussian process prior (<a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.Latent.html#pymc.gp.Latent" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.Latent</span></code></a> or <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.HSGP.html#pymc.gp.HSGP" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.HSGP</span></code></a>) returned by <a class="reference internal" href="model.html#stratmc.model.build_model" title="stratmc.model.build_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_model()</span></code></a> in <a class="reference internal" href="model.html#module-stratmc.model" title="stratmc.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.model</span></code></a>.</p>
+</dd>
+<dt><strong>ages: numpy.array(float)</strong></dt><dd><p>array of ages at which to sample the posterior distribution of the proxy signal.</p>
+</dd>
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for all sections.</p>
+</dd>
+<dt><strong>ages_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for all sections.</p>
+</dd>
+<dt><strong>sections:: list(str) or numpy.array(str), optional</strong></dt><dd><p>List of sections to include in the inference model. Defaults to all sections in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>.</p>
+</dd>
+<dt><strong>proxies: str or list(str), optional</strong></dt><dd><p>List of proxies included in the model. Defaults to ‘d13c’.</p>
+</dd>
+<dt><strong>approximate: bool, optional</strong></dt><dd><p>Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> if the Hilbert space GP approximation (<a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.HSGP.html#pymc.gp.HSGP" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.HSGP</span></code></a>) was used in <a class="reference internal" href="model.html#stratmc.model.build_model" title="stratmc.model.build_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_model()</span></code></a>; defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>name: str, optional</strong></dt><dd><p>Prefix for the saved NetCDF file with the inference results (suffix is timestamp for function call).</p>
+</dd>
+<dt><strong>chains: int, optional</strong></dt><dd><p>Number of Markov chains to sample in parallel; defaults to 8.</p>
+</dd>
+<dt><strong>draws: int, optional</strong></dt><dd><p>Number of samples per chain to draw from the posterior; defaults to 1000.</p>
+</dd>
+<dt><strong>tune: int, optional</strong></dt><dd><p>Number of iterations to tune; defaults to 1000.</p>
+</dd>
+<dt><strong>prior_draws: int, optional</strong></dt><dd><p>Number of samples to draw from the prior; defaults to 1000.</p>
+</dd>
+<dt><strong>target_accept: float, optional</strong></dt><dd><p>Between 0 and 1 (exclusive). During tuning, the sampler adapts the proposals such that the average acceptance probability is equal to <code class="docutils literal notranslate"><span class="pre">target_accept</span></code>; higher values for <code class="docutils literal notranslate"><span class="pre">target_accept</span></code> typically lead to smaller step sizes. Defaults to 0.9.</p>
+</dd>
+<dt><strong>sampler: str, optional</strong></dt><dd><p>Which NUTS algorithm to use to sample the posterior (‘numpyro` or ‘blackjax`); defaults to ‘numpyro`.</p>
+</dd>
+<dt><strong>nuts_kwargs: dict, optional</strong></dt><dd><p>Dictionary of keyword arguments passed to NumPyro NUTS sampler (see <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/generated/pymc.sampling.jax.sample_numpyro_nuts.html#pymc.sampling.jax.sample_numpyro_nuts" title="(in PyMC v5.16.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">pymc.sampling.jax.sample_numpyro_nuts()</span></code></a> and <a class="reference external" href="https://num.pyro.ai/en/latest/mcmc.html#numpyro.infer.hmc.NUTS" title="(in NumPyro)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpyro.infer.hmc.NUTS</span></code></a>) or blackjax NUTS sampler (see <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/generated/pymc.sampling.jax.sample_blackjax_nuts.html#pymc.sampling.jax.sample_blackjax_nuts" title="(in PyMC v5.16.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">pymc.sampling.jax.sample_blackjax_nuts()</span></code></a>).</p>
+</dd>
+<dt><strong>jitter: float, optional</strong></dt><dd><p>Value of <code class="docutils literal notranslate"><span class="pre">jitter</span></code> passed to <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/classmethods/pymc.gp.Latent.conditional.html#pymc.gp.Latent.conditional" title="(in PyMC v5.16.2)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pymc.gp.Latent.conditional()</span></code></a>. Defaults to 0.001. Changing this value may help if a linear algebra error is encountered during posterior predictive sampling.</p>
+</dd>
+<dt><strong>postprocessing_backend: str, optional</strong></dt><dd><p>Use the <cite>cpu’ or `gpu’ for postprocessing. Defaults to ``None`</cite>.</p>
+</dd>
+<dt><strong>seed: int, optional</strong></dt><dd><p>Random seed for sampler.</p>
+</dd>
+<dt><strong>save: bool, optional</strong></dt><dd><p>Whether to save the trace (to ‘traces’ subfolder in the current directory); defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>full_trace: arviz.InferenceData</dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.inference.interpolate_proxy">
+<span class="sig-prename descclassname"><span class="pre">stratmc.inference.</span></span><span class="sig-name descname"><span class="pre">interpolate_proxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interp_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/inference.html#interpolate_proxy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.inference.interpolate_proxy" title="Link to this definition">#</a></dt>
+<dd><p>Use interpolated sample ages from <a class="reference internal" href="#stratmc.inference.extend_age_model" title="stratmc.inference.extend_age_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">extend_age_model()</span></code></a> to calculate proxy values at a given set of ages (e.g., to plot 68 and 95% confidence intervals over time for a new proxy using <a class="reference internal" href="plotting.html#stratmc.plotting.interpolated_proxy_inference" title="stratmc.plotting.interpolated_proxy_inference"><code class="xref py py-meth docutils literal notranslate"><span class="pre">interpolated_proxy_inference()</span></code></a> in <a class="reference internal" href="plotting.html#module-stratmc.plotting" title="stratmc.plotting"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.plotting</span></code></a>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>interp_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> with proxy data and interpolated ages from <a class="reference internal" href="#stratmc.inference.extend_age_model" title="stratmc.inference.extend_age_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">extend_age_model()</span></code></a>.</p>
+</dd>
+<dt><strong>proxy: str</strong></dt><dd><p>Tracer to interpolate.</p>
+</dd>
+<dt><strong>ages: list(float) or numpy.array(float)</strong></dt><dd><p>Target ages at which to interpolate proxy values.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>interpolated_proxy_df: pandas.DataFrame</dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> with interpolated proxy values and summary statistics (maximum likelihood estimate, median, and 68% and 95% confidence intervals) at each age in <code class="docutils literal notranslate"><span class="pre">ages</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.inference.map_ages_to_section">
+<span class="sig-prename descclassname"><span class="pre">stratmc.inference.</span></span><span class="sig-name descname"><span class="pre">map_ages_to_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_radiometric_ages</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/inference.html#map_ages_to_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.inference.map_ages_to_section" title="Link to this definition">#</a></dt>
+<dd><p>Helper function for <a class="reference internal" href="plotting.html#stratmc.plotting.section_proxy_signal" title="stratmc.plotting.section_proxy_signal"><code class="xref py py-meth docutils literal notranslate"><span class="pre">section_proxy_signal()</span></code></a> in <a class="reference internal" href="plotting.html#module-stratmc.plotting" title="stratmc.plotting"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.plotting</span></code></a>. Maps the <code class="docutils literal notranslate"><span class="pre">ages</span></code> array passed to  <a class="reference internal" href="#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> to height in each section using the most likely posterior age models.</p>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>reconsider how interpolation works – more computationally expensive, but should probably 1) calculate the interpolated age at each section height, then 2) calculate the interpolated proxy value at that age – all for each draw. then we have a distribution of proxy values for each height, which we can plot</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>full_trace: arviz.InferenceData</strong></dt><dd><p>An <a class="reference external" href="https://python.arviz.org/en/latest/api/generated/arviz.InferenceData.html#arviz.InferenceData" title="(in ArviZ vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arviz.InferenceData</span></code></a> object containing the full set of prior and posterior samples from <a class="reference internal" href="#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a> in <a class="reference internal" href="#module-stratmc.inference" title="stratmc.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.inference</span></code></a>.</p>
+</dd>
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for all sections.</p>
+</dd>
+<dt><strong>ages_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for all sections.</p>
+</dd>
+<dt><strong>include_radiometric_ages: bool, optional</strong></dt><dd><p>Whether to consider radiometric ages when calculating the most likely posterior age model for each section; defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>sections: list(str) or numpy.array(str), optional</strong></dt><dd><p>List of sections included in the inference; only required if not all sections in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code> were included.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>age_model_df: pandas.DataFrame</dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> with interpolated heights at each age in the <code class="docutils literal notranslate"><span class="pre">ages</span></code> vector that was passed to <a class="reference internal" href="#stratmc.inference.get_trace" title="stratmc.inference.get_trace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_trace()</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.inference.age_range_to_height"><code class="docutils literal notranslate"><span class="pre">age_range_to_height()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.inference.calculate_lengthscale_stability"><code class="docutils literal notranslate"><span class="pre">calculate_lengthscale_stability()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.inference.calculate_proxy_signal_stability"><code class="docutils literal notranslate"><span class="pre">calculate_proxy_signal_stability()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.inference.count_samples"><code class="docutils literal notranslate"><span class="pre">count_samples()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.inference.extend_age_model"><code class="docutils literal notranslate"><span class="pre">extend_age_model()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.inference.find_gaps"><code class="docutils literal notranslate"><span class="pre">find_gaps()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.inference.get_trace"><code class="docutils literal notranslate"><span class="pre">get_trace()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.inference.interpolate_proxy"><code class="docutils literal notranslate"><span class="pre">interpolate_proxy()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.inference.map_ages_to_section"><code class="docutils literal notranslate"><span class="pre">map_ages_to_section()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/docs/inference.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Stacey Edmonsond.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

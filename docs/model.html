@@ -1,0 +1,729 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Statistical model &#8212; StratMC v1.0 Manual</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/model';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Inference" href="inference.html" />
+    <link rel="prev" title="Loading and processing data" href="data.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jul 29, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../_static/stratmc.png" class="logo__image only-light" alt="StratMC v1.0 Manual - Home"/>
+    <script>document.write(`<img src="../_static/stratmc.png" class="logo__image only-dark" alt="StratMC v1.0 Manual - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="data.html"> Data Processing</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#"> Statistical model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inference.html"> Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html"> Plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synthetics.html"> Synthetic signals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html"> Tests and checks</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="userguide.html" class="nav-link">User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="api.html" class="nav-link">API Reference</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Statistical model</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="statistical-model">
+<h1>Statistical model<a class="headerlink" href="#statistical-model" title="Link to this heading">#</a></h1>
+<p>Functions for building a proxy signal inference model.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.model.build_model" title="stratmc.model.build_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_model</span></code></a></p></td>
+<td><p>Create a proxy signal (i.e., carbon isotope) <a class="reference internal" href="model_description.html#model-target"><span class="std std-ref">inference model</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.model.superposition" title="stratmc.model.superposition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">superposition</span></code></a></p></td>
+<td><p>Helper function for explicitly enforcing stratigraphic superposition (any given sample must be younger than the underlying sample) for a group of radiometric age constraints.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.model.intermediate_detrital_potential" title="stratmc.model.intermediate_detrital_potential"><code class="xref py py-obj docutils literal notranslate"><span class="pre">intermediate_detrital_potential</span></code></a></p></td>
+<td><p>Helper function for enforcing detrital age constraints (maximum age constraint for all overlying samples; no constraint on underlyig samples) in the middle of a section.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stratmc.model.intermediate_intrusive_potential" title="stratmc.model.intermediate_intrusive_potential"><code class="xref py py-obj docutils literal notranslate"><span class="pre">intermediate_intrusive_potential</span></code></a></p></td>
+<td><p>Helper function for enforcing intrusive age constraints (minimum age constraint for all underlying samples; no constraint on overlying samples) in the middle of a section.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stratmc.model.transformed_initval" title="stratmc.model.transformed_initval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transformed_initval</span></code></a></p></td>
+<td><p>Helper function to retrieve the transformed initial values for a random variable in a <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/model/generated/pymc.model.core.Model.html#pymc.model.core.Model" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.model.core.Model</span></code></a> object.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="target" id="module-stratmc.model"></span><dl class="py function">
+<dt class="sig sig-object py" id="stratmc.model.build_model">
+<span class="sig-prename descclassname"><span class="pre">stratmc.model.</span></span><span class="sig-name descname"><span class="pre">build_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['d13c']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxy_sigma_default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approximate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hsgp_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hsgp_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Wald'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls_mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls_lambda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">white_noise_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gp_mean_mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gp_mean_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'section'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_prior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Laplace'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'section'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_prior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HalfCauchy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxy_observed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/model.html#build_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.model.build_model" title="Link to this definition">#</a></dt>
+<dd><p>Create a proxy signal (i.e., carbon isotope) <a class="reference internal" href="model_description.html#model-target"><span class="std std-ref">inference model</span></a>.</p>
+<p>Note that while excluded samples (<code class="docutils literal notranslate"><span class="pre">Exclude?</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>) do not affect the proxy signal reconstruction, their ages are passively tracked within the inference model (if other samples from the same sections are included).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sample_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing proxy data for all sections. Load from .csv file using <a class="reference internal" href="data.html#stratmc.data.load_data" title="stratmc.data.load_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_data()</span></code></a> in <a class="reference internal" href="data.html#module-stratmc.data" title="stratmc.data"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.data</span></code></a>.</p>
+</dd>
+<dt><strong>ages_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for all sections. Load from .csv file using <a class="reference internal" href="data.html#stratmc.data.load_data" title="stratmc.data.load_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_data()</span></code></a> in <a class="reference internal" href="data.html#module-stratmc.data" title="stratmc.data"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.data</span></code></a>.</p>
+</dd>
+<dt><strong>sections:: list(str) or numpy.array(str), optional</strong></dt><dd><p>List of sections to include in the inference model. Defaults to all sections in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>.</p>
+</dd>
+<dt><strong>proxies: str or list(str), optional</strong></dt><dd><p>Column or columns containing proxy data in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>. Defaults to ‘d13c’.</p>
+</dd>
+<dt><strong>proxy_sigma_default: float or dict{float}, optional</strong></dt><dd><p>Measurement uncertainty (<span class="math notranslate nohighlight">\(1\sigma\)</span>) to use for proxy observations if not specified in <code class="docutils literal notranslate"><span class="pre">proxy_std</span></code> column of <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>. To set a different value for each proxy, pass a dictionary with proxy names as keys. Defaults to 0.1.</p>
+</dd>
+<dt><strong>approximate: bool, optional</strong></dt><dd><p>Build model with an unapproximated latent GP (<a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.Latent.html#pymc.gp.Latent" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.Latent</span></code></a>) if <code class="docutils literal notranslate"><span class="pre">False</span></code>, or a Hilbert space Gaussian process approximation (<a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.HSGP.html#pymc.gp.HSGP" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.HSGP</span></code></a>) if <code class="docutils literal notranslate"><span class="pre">True</span></code>; defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>. If using the HSGP approximation, also pass the <code class="docutils literal notranslate"><span class="pre">hsgp_m</span></code> and <code class="docutils literal notranslate"><span class="pre">hsgp_c</span></code> parameters (the defaults are unlikely to work well for all problems). Appropriate values for <code class="docutils literal notranslate"><span class="pre">m</span></code> and <code class="docutils literal notranslate"><span class="pre">c</span></code> can be estimated using <code class="xref py py-meth docutils literal notranslate"><span class="pre">approx_hsgp_hyperparams()</span></code>.</p>
+</dd>
+<dt><strong>hsgp_m: int or dict{int}, optional</strong></dt><dd><p>Number of basis vectors to use in the HSGP approximation (see <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.HSGP.html#pymc.gp.HSGP" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.HSGP</span></code></a>). Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 15.</p>
+</dd>
+<dt><strong>hsgp_c: float or dict{float}, optional</strong></dt><dd><p>Proportion extension factor for the HSGP approximation (see <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.HSGP.html#pymc.gp.HSGP" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.HSGP</span></code></a>). Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 1.3.</p>
+</dd>
+<dt><strong>ls_dist: str or dict{str}, optional</strong></dt><dd><p>Prior distribution for the lengthscale hyperparameter of the exponential quadratic covariance kernel (<a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a>); set to <code class="docutils literal notranslate"><span class="pre">Wald</span></code> (<a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/distributions/generated/pymc.Wald.html#pymc.Wald" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.Wald</span></code></a>) or <code class="docutils literal notranslate"><span class="pre">HalfNormal</span></code> (<a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/distributions/generated/pymc.HalfNormal.html#pymc.HalfNormal" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.HalfNormal</span></code></a>). Defaults to <code class="docutils literal notranslate"><span class="pre">Wald</span></code> with <code class="docutils literal notranslate"><span class="pre">mu</span> <span class="pre">=</span> <span class="pre">20</span></code> and <code class="docutils literal notranslate"><span class="pre">lambda</span> <span class="pre">=</span> <span class="pre">50</span></code>. To change <code class="docutils literal notranslate"><span class="pre">mu</span></code> and <code class="docutils literal notranslate"><span class="pre">lambda</span></code>, pass the <code class="docutils literal notranslate"><span class="pre">ls_mu</span></code> and <code class="docutils literal notranslate"><span class="pre">ls_lambda</span></code> parameters. For <code class="docutils literal notranslate"><span class="pre">HalfNormal</span></code>, the variance defaults to <code class="docutils literal notranslate"><span class="pre">sigma</span> <span class="pre">=</span> <span class="pre">50</span></code>; change by passing <code class="docutils literal notranslate"><span class="pre">ls_sigma</span></code>. Pass as a dictionary with proxy names as keys to specify a different prior distribution for each proxy.</p>
+</dd>
+<dt><strong>ls_min: float or dict{float}, optional</strong></dt><dd><p>Minimum value for the lengthscale hyperparameter of the <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a> covariance kernel; shifts the lengthscale prior by <code class="docutils literal notranslate"><span class="pre">ls_min</span></code>. Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 0.</p>
+</dd>
+<dt><strong>ls_mu: float or dict{float}, optional</strong></dt><dd><p>Mean (<cite>mu</cite>) of the <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a> lengthscale prior if <code class="docutils literal notranslate"><span class="pre">ls_dist</span> <span class="pre">=</span> <span class="pre">`Wald`</span></code>. Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 20.</p>
+</dd>
+<dt><strong>ls_lambda: float or dict{float}, optional</strong></dt><dd><p>Relative precision (<cite>lam</cite>) of the <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a> lengthscale hyperparameter prior if <code class="docutils literal notranslate"><span class="pre">ls_dist</span> <span class="pre">=</span> <span class="pre">`Wald`</span></code>. Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 50.</p>
+</dd>
+<dt><strong>ls_sigma: float or dict{float}, optional</strong></dt><dd><p>Scale parameter (<cite>sigma</cite>) of the <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.cov.ExpQuad.html#pymc.gp.cov.ExpQuad" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.cov.ExpQuad</span></code></a> lengthscale hyperparameter prior if <code class="docutils literal notranslate"><span class="pre">ls_dist</span> <span class="pre">=</span> <span class="pre">`HalfNormal`</span></code>. Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 50.</p>
+</dd>
+<dt><strong>var_sigma: float or dict{float}, optional</strong></dt><dd><p>Scale parameter (<cite>sigma</cite>) of the covariance kernel variance hyperparameter prior, which is a <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/distributions/generated/pymc.HalfNormal.html#pymc.HalfNormal" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.HalfNormal</span></code></a> distribution. Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 10.</p>
+</dd>
+<dt><strong>white_noise_sigma: float or dict{float}, optional</strong></dt><dd><p>Amplitude of white noise component of GP covariance function. Defaults to 0.1. Should be equal to or less than the proxy measurement uncertainty; use a smaller value for proxies with low-amplitude signals (e.g., Sr isotopes). Pass as a dictionary with proxy names as keys to specify a different value for each proxy.</p>
+</dd>
+<dt><strong>gp_mean_mu: float or dict{float}, optional</strong></dt><dd><p>Mean (<cite>mu</cite>) of the GP mean function prior, which is a <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/distributions/generated/pymc.Normal.html#pymc.Normal" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.Normal</span></code></a> distribution. Defaults to the mean of the observations for each proxy. Pass as a dictionary with proxy names as keys to specify a different value for each proxy.</p>
+</dd>
+<dt><strong>gp_mean_sigma: float or dict{float}, optional</strong></dt><dd><p>Standard deviation (<cite>sigma</cite>) of the GP mean function prior, which is a <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/distributions/generated/pymc.Normal.html#pymc.Normal" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.Normal</span></code></a> distribution. Defaults to twice the standard deviation of the observations for each proxy. Pass as a dictionary with proxy names as keys to specify a different value for each proxy.</p>
+</dd>
+<dt><strong>offset_type: str or dict{str}, optional</strong></dt><dd><p>Parameterize offset such that all samples from the same section have the same offset (set to <code class="docutils literal notranslate"><span class="pre">section</span></code>), or such that custom sample groups share an offset term (set to <code class="docutils literal notranslate"><span class="pre">groups</span></code>, and specify the group for each sample and proxy with a <code class="docutils literal notranslate"><span class="pre">offset_group_proxy</span></code> column in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>). To omit the offset term, set to <code class="docutils literal notranslate"><span class="pre">none</span></code>. Defaults to <code class="docutils literal notranslate"><span class="pre">section</span></code>. Pass as a dictionary with proxy names as keys to specify a different offset type for each proxy.</p>
+</dd>
+<dt><strong>offset_prior: str or dict{str}, optional</strong></dt><dd><p>Type of distribution to use for the offset prior. Pass as a <code class="docutils literal notranslate"><span class="pre">string</span></code> to use the same prior for all proxies, or as a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code> (with proxy names as keys) to specify a different prior distribution for each proxy. Defaults to <code class="docutils literal notranslate"><span class="pre">Laplace</span></code> (<a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/distributions/generated/pymc.Laplace.html#pymc.Laplace" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.Laplace</span></code></a>) with <code class="docutils literal notranslate"><span class="pre">mu</span> <span class="pre">=</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span> <span class="pre">=</span> <span class="pre">2</span></code>. <code class="docutils literal notranslate"><span class="pre">mu</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> can be changed by passing <code class="docutils literal notranslate"><span class="pre">offset_mu</span></code> and <code class="docutils literal notranslate"><span class="pre">offset_b</span></code>. To use other types of priors, pass the name of a distribution from <code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.distributions</span></code>, along with parameter values in <code class="docutils literal notranslate"><span class="pre">offset_params</span></code>. Pass as a dictionary with proxy names as keys to specify a different prior for each proxy.</p>
+</dd>
+<dt><strong>offset_params: dict{float} or dict{dict{float}}, optional</strong></dt><dd><p>Only required if using a custom <code class="docutils literal notranslate"><span class="pre">offset_prior</span></code>. Pass as a dictionary to use the same parameters for all proxies, or as a dictionary of dictionaries (with proxy names as keys) to specify different parameters for each proxy. Keys are <code class="docutils literal notranslate"><span class="pre">param_1_name</span></code>, <code class="docutils literal notranslate"><span class="pre">param_1</span></code>, <code class="docutils literal notranslate"><span class="pre">param_2_name</span></code>, and <code class="docutils literal notranslate"><span class="pre">param_2</span></code> (with parameter names corresponding to those required for the specified <code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.distributions</span></code> object). If only one parameter is required, use <code class="docutils literal notranslate"><span class="pre">np.nan</span></code> for <code class="docutils literal notranslate"><span class="pre">param_2_name</span></code> and <code class="docutils literal notranslate"><span class="pre">param_2</span></code>.</p>
+</dd>
+<dt><strong>noise_type: str or dict{str}, optional</strong></dt><dd><p>Parameterize noise as per-section (set to <code class="docutils literal notranslate"><span class="pre">section</span></code>) or per-group (set to <code class="docutils literal notranslate"><span class="pre">groups</span></code>, and specify the group for each sample and proxy with a <code class="docutils literal notranslate"><span class="pre">noise_group_proxy</span></code> column in <code class="docutils literal notranslate"><span class="pre">sample_df</span></code>). Defaults to <code class="docutils literal notranslate"><span class="pre">section</span></code>. Pass as a dictionary with proxy names as keys to specify a different noise type for each proxy.</p>
+</dd>
+<dt><strong>noise_prior: str or dict{str}, optional</strong></dt><dd><p>Type of distribution to use for the noise prior. Pass as a <code class="docutils literal notranslate"><span class="pre">string</span></code> to use the same prior for all proxies, or as a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code> (with proxy names as keys) to specify a different prior distribution for each proxy. Defaults to <code class="docutils literal notranslate"><span class="pre">HalfCauchy</span></code> (<a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/distributions/generated/pymc.HalfCauchy.html#pymc.HalfCauchy" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.HalfCauchy</span></code></a>) with <code class="docutils literal notranslate"><span class="pre">beta</span> <span class="pre">=</span> <span class="pre">1</span></code>. <code class="docutils literal notranslate"><span class="pre">beta</span></code> can be changed by passing <code class="docutils literal notranslate"><span class="pre">noise_beta</span></code>. Other implemented priors (note that noise must be positive-only) are <code class="docutils literal notranslate"><span class="pre">HalfNormal</span></code> (<a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/distributions/generated/pymc.HalfNormal.html#pymc.HalfNormal" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.HalfNormal</span></code></a>; defaults to <code class="docutils literal notranslate"><span class="pre">noise_sigma</span> <span class="pre">=</span> <span class="pre">1</span></code>) and <code class="docutils literal notranslate"><span class="pre">HalfStudentT</span></code> (<a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/distributions/generated/pymc.HalfStudentT.html#pymc.HalfStudentT" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.HalfStudentT</span></code></a>; defaults to <code class="docutils literal notranslate"><span class="pre">noise_nu</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">noise_sigma</span></code> = 1).</p>
+</dd>
+<dt><strong>superposition_dict: dict{list(str)}, optional</strong></dt><dd><p>Optional; dictionary specifying superposition relationships between different sections. Should only be used when superposition is not implicitly enforced by the age constraints; for example, when sections share the same minimum and maximum age constraints, but are from geological formations with a known stratigraphic relationship. Dictionary keys are section names, and the value for each key is a list of sections that must be older (stratigraphically lower).</p>
+</dd>
+<dt><strong>jitter: float, optional</strong></dt><dd><p>Value of <code class="docutils literal notranslate"><span class="pre">jitter</span></code> passed to <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/classmethods/pymc.gp.Latent.prior.html#pymc.gp.Latent.prior" title="(in PyMC v5.16.2)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pymc.gp.Latent.prior()</span></code></a>. Defaults to 0.001.</p>
+</dd>
+<dt><strong>proxy_observed: bool, optional</strong></dt><dd><p>Whether to pass observed values to the likelihood function; defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>. Only set to <code class="docutils literal notranslate"><span class="pre">False</span></code> to generate synthetic observations from the model prior in <a class="reference internal" href="synthetics.html#module-stratmc.synthetics" title="stratmc.synthetics"><code class="xref py py-meth docutils literal notranslate"><span class="pre">synthetic_observations_from_prior()</span></code></a> in <a class="reference internal" href="synthetics.html#module-stratmc.synthetics" title="stratmc.synthetics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stratmc.synthetics</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>model: PyMC model</dt><dd><p><a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/model/generated/pymc.model.core.Model.html#pymc.model.core.Model" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.model.core.Model</span></code></a> object.</p>
+</dd>
+<dt>gp: pymc.gp.Latent or pymc.gp.HSGP</dt><dd><p>Gaussian process prior for the model. <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.Latent.html#pymc.gp.Latent" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.Latent</span></code></a> if <code class="docutils literal notranslate"><span class="pre">approximate</span> <span class="pre">=</span> <span class="pre">True</span></code>, or <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/gp/generated/pymc.gp.HSGP.html#pymc.gp.HSGP" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.gp.HSGP</span></code></a> if <code class="docutils literal notranslate"><span class="pre">approximate</span> <span class="pre">=</span> <span class="pre">False</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.model.intermediate_detrital_potential">
+<span class="sig-prename descclassname"><span class="pre">stratmc.model.</span></span><span class="sig-name descname"><span class="pre">intermediate_detrital_potential</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detrital_age_dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detrital_age_dist_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum_age_dist_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum_age_dist_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_age_dist_sorted</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_age_dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_age_dist_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_heights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detrital_height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf1_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf2_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_radiometric_age_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/model.html#intermediate_detrital_potential"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.model.intermediate_detrital_potential" title="Link to this definition">#</a></dt>
+<dd><p>Helper function for enforcing detrital age constraints (maximum age constraint for all overlying samples; no constraint on underlyig samples) in the middle of a section.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>detrital_age_dist: pymc.distributions</strong></dt><dd><p>Detrital age distribution.</p>
+</dd>
+<dt><strong>detrital_age_dist_name: str</strong></dt><dd><p>Name of <code class="docutils literal notranslate"><span class="pre">detrital_age_dist</span></code> in <code class="docutils literal notranslate"><span class="pre">model</span></code>.</p>
+</dd>
+<dt><strong>maximum_age_dist_name: str</strong></dt><dd><p>Name of distribution for underlying maximum age constraint in <code class="docutils literal notranslate"><span class="pre">model</span></code>.</p>
+</dd>
+<dt><strong>minimum_age_dist_name: str</strong></dt><dd><p>Name of distribution for overlying minimum age constraint in <code class="docutils literal notranslate"><span class="pre">model</span></code>.</p>
+</dd>
+<dt><strong>sample_age_dist_sorted: pymc.distribtions</strong></dt><dd><p>Sorted and scaled sample age distribitions.</p>
+</dd>
+<dt><strong>sample_age_dist: pymc.distributions</strong></dt><dd><p>Unsorted and unscaled sample age distributions.</p>
+</dd>
+<dt><strong>sample_age_dist_name: str</strong></dt><dd><p>Name of <code class="docutils literal notranslate"><span class="pre">sample_age_dist</span></code> in the pymc.Model object.</p>
+</dd>
+<dt><strong>sample_heights: np.array</strong></dt><dd><p>Array of heights for samples in the current interval.</p>
+</dd>
+<dt><strong>detrital_height: float</strong></dt><dd><p>Height of detrital age constraint.</p>
+</dd>
+<dt><strong>model: pymc.Model</strong></dt><dd><p><a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/model/generated/pymc.model.core.Model.html#pymc.model.core.Model" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.model.core.Model</span></code></a> object associated with the input distributions.</p>
+</dd>
+<dt><strong>section: str</strong></dt><dd><p>Name of the current section.</p>
+</dd>
+<dt><strong>interval: int</strong></dt><dd><p>Current interval number.</p>
+</dd>
+<dt><strong>sf1_name: str</strong></dt><dd><p>Name of the distribution associated with scaling factor 1 in <code class="docutils literal notranslate"><span class="pre">model</span></code>.</p>
+</dd>
+<dt><strong>sf2_name: str</strong></dt><dd><p>Name of the distribution associated with scaling factor 2 in <code class="docutils literal notranslate"><span class="pre">model</span></code>.</p>
+</dd>
+<dt><strong>shared_radiometric_age_dist: bool, optional</strong></dt><dd><p>Whether the radiometric age distributions are part of a single object (versus initiated as separate distributions). Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.model.intermediate_intrusive_potential">
+<span class="sig-prename descclassname"><span class="pre">stratmc.model.</span></span><span class="sig-name descname"><span class="pre">intermediate_intrusive_potential</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intrusive_age_dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intrusive_age_dist_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum_age_dist_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum_age_dist_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_age_dist_sorted</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_age_dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_age_dist_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_heights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intrusive_height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf1_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf2_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_radiometric_age_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/model.html#intermediate_intrusive_potential"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.model.intermediate_intrusive_potential" title="Link to this definition">#</a></dt>
+<dd><p>Helper function for enforcing intrusive age constraints (minimum age constraint for all underlying samples; no constraint on overlying samples) in the middle of a section.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>intrusive_age_dist: pymc.distributions</strong></dt><dd><p>Intrusive age distribution.</p>
+</dd>
+<dt><strong>intrusive_age_dist_name: str</strong></dt><dd><p>Name of <code class="docutils literal notranslate"><span class="pre">intrusive_age_dist</span></code> in <code class="docutils literal notranslate"><span class="pre">model</span></code>.</p>
+</dd>
+<dt><strong>maximum_age_dist_name: str</strong></dt><dd><p>Name of distribution for underlying maximum age constraint in <code class="docutils literal notranslate"><span class="pre">model</span></code>.</p>
+</dd>
+<dt><strong>minimum_age_dist_name: str</strong></dt><dd><p>Name of distribution for overlying minimum age constraint in <code class="docutils literal notranslate"><span class="pre">model</span></code>.</p>
+</dd>
+<dt><strong>sample_age_dist_sorted: pymc.distribtions</strong></dt><dd><p>Sorted and scaled sample age distribitions.</p>
+</dd>
+<dt><strong>sample_age_dist: pymc.distributions</strong></dt><dd><p>Unsorted and unscaled sample age distributions.</p>
+</dd>
+<dt><strong>sample_age_dist_name: str</strong></dt><dd><p>Name of <code class="docutils literal notranslate"><span class="pre">sample_age_dist</span></code> in the pymc.Model object.</p>
+</dd>
+<dt><strong>sample_heights: np.array</strong></dt><dd><p>Array of heights for samples in the current interval.</p>
+</dd>
+<dt><strong>intrusive_height: float</strong></dt><dd><p>Height of intrusive age constraint.</p>
+</dd>
+<dt><strong>model: pymc.Model</strong></dt><dd><p><a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/model/generated/pymc.model.core.Model.html#pymc.model.core.Model" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.model.core.Model</span></code></a> object associated with the input distributions.</p>
+</dd>
+<dt><strong>section: str</strong></dt><dd><p>Name of the current section.</p>
+</dd>
+<dt><strong>interval: int</strong></dt><dd><p>Current interval number.</p>
+</dd>
+<dt><strong>sf1_name: str</strong></dt><dd><p>Name of the distribution associated with scaling factor 1 in <code class="docutils literal notranslate"><span class="pre">model</span></code>.</p>
+</dd>
+<dt><strong>sf2_name: str</strong></dt><dd><p>Name of the distribution associated with scaling factor 2 in <code class="docutils literal notranslate"><span class="pre">model</span></code>.</p>
+</dd>
+<dt><strong>shared_radiometric_age_dist: bool, optional</strong></dt><dd><p>Whether the radiometric age distributions are part of a single object (versus initiated as separate distributions). Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.model.superposition">
+<span class="sig-prename descclassname"><span class="pre">stratmc.model.</span></span><span class="sig-name descname"><span class="pre">superposition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">age_dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">age_dist_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_age_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/model.html#superposition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.model.superposition" title="Link to this definition">#</a></dt>
+<dd><p>Helper function for explicitly enforcing stratigraphic superposition (any given sample must be younger than the underlying sample) for a group of radiometric age constraints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>age_dist: pymc.distribtions</strong></dt><dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.distributions</span></code> object for the radiometric ages (must be in stratigraphic order).</p>
+</dd>
+<dt><strong>age_dist_name: str</strong></dt><dd><p>Name of <code class="docutils literal notranslate"><span class="pre">age_dist</span></code> in <code class="docutils literal notranslate"><span class="pre">model</span></code>.</p>
+</dd>
+<dt><strong>model: pymc.Model</strong></dt><dd><p><a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/model/generated/pymc.model.core.Model.html#pymc.model.core.Model" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.model.core.Model</span></code></a> object associated with the distributions in <code class="docutils literal notranslate"><span class="pre">age_dist</span></code>.</p>
+</dd>
+<dt><strong>section_age_df: pandas.DataFrame</strong></dt><dd><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> containing age constraints for <code class="docutils literal notranslate"><span class="pre">section</span></code>.</p>
+</dd>
+<dt><strong>section: str</strong></dt><dd><p>Name of the section containing the radiometric age constraints.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stratmc.model.transformed_initval">
+<span class="sig-prename descclassname"><span class="pre">stratmc.model.</span></span><span class="sig-name descname"><span class="pre">transformed_initval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stratmc/model.html#transformed_initval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stratmc.model.transformed_initval" title="Link to this definition">#</a></dt>
+<dd><p>Helper function to retrieve the transformed initial values for a random variable in a <a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/model/generated/pymc.model.core.Model.html#pymc.model.core.Model" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.model.core.Model</span></code></a> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>var_name: str</strong></dt><dd><p>Name of variable to be transformed (as specified in <code class="docutils literal notranslate"><span class="pre">model</span></code>).</p>
+</dd>
+<dt><strong>model: PyMC model</strong></dt><dd><p><a class="reference external" href="https://www.pymc.io/projects/docs/en/stable/api/model/generated/pymc.model.core.Model.html#pymc.model.core.Model" title="(in PyMC v5.16.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymc.model.core.Model</span></code></a> object that contains the target random variable.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.model.build_model"><code class="docutils literal notranslate"><span class="pre">build_model()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.model.intermediate_detrital_potential"><code class="docutils literal notranslate"><span class="pre">intermediate_detrital_potential()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.model.intermediate_intrusive_potential"><code class="docutils literal notranslate"><span class="pre">intermediate_intrusive_potential()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.model.superposition"><code class="docutils literal notranslate"><span class="pre">superposition()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratmc.model.transformed_initval"><code class="docutils literal notranslate"><span class="pre">transformed_initval()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/docs/model.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Stacey Edmonsond.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

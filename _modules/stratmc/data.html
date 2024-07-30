@@ -1,0 +1,1178 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>stratmc.data &#8212; StratMC v1.0 Manual</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css?v=7f9a90b1" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/stratmc/data';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jul 29, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../_static/stratmc.png" class="logo__image only-light" alt="StratMC v1.0 Manual - Home"/>
+    <script>document.write(`<img src="../../_static/stratmc.png" class="logo__image only-dark" alt="StratMC v1.0 Manual - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/userguide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../docs/installation.html">
+    Installation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/sedmonsond/stratmc" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/StaceyEdmonsond" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">stratmc.data</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for stratmc.data</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">arviz</span> <span class="k">as</span> <span class="nn">az</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">chained_assignment</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;X_new group is not defined in the InferenceData scheme&quot;</span><span class="p">)</span>
+
+
+<span class="n">pd</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">chained_assignment</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="load_data">
+<a class="viewcode-back" href="../../docs/data.html#stratmc.data.load_data">[docs]</a>
+<span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="n">sample_file</span><span class="p">,</span> <span class="n">ages_file</span><span class="p">,</span> <span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d13c&#39;</span><span class="p">],</span> <span class="n">proxy_sigma_default</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">drop_excluded_samples</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">drop_excluded_ages</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Import and pre-process proxy data and age constraints from .csv files formatted according to the :ref:`Data table formatting &lt;datatable_target&gt;` guidelines. To combine data from different .csv files, load each file separately and then combine the DataFrames with :py:meth:`combine_data() &lt;stratmc.data&gt;`.</span>
+
+<span class="sd">    If ``sample_file.csv`` includes multiple proxy observations from the same stratigraphic horizon (for a given proxy), then all measurements marked ``Exclude? = False`` will be combined using :py:meth:`combine_duplicates() &lt;stratmc.data&gt;`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sample_file: str</span>
+<span class="sd">        Path to .csv file containing proxy data for all sections (without &#39;.csv` extension).</span>
+
+<span class="sd">    ages_file: str</span>
+<span class="sd">        Path to .csv file containing age constraints for all sections (without &#39;.csv` extension).</span>
+
+<span class="sd">    proxies: str or list(str), optional</span>
+<span class="sd">        Tracer names (must match column headers in ``sample_file.csv``); defaults to &#39;d13c`.</span>
+
+<span class="sd">    proxy_sigma_default: float or dict{float}, optional</span>
+<span class="sd">        Measurement uncertainty (:math:`1\\sigma`) to use for proxy observations if not specified in ``proxy_std`` column of ``sample_df``. To set a different value for each proxy, pass a dictionary with proxy names as keys. Defaults to 0.1.</span>
+
+<span class="sd">    drop_excluded_samples: bool, optional</span>
+<span class="sd">        Whether to remove samples with ``Exclude? = True`` from the ``sample_df``; defaults to ``False``. If excluded samples are not dropped, their ages will be passively tracked within the inference model (but they will not be considered during the proxy signal reconstruction).</span>
+
+<span class="sd">    drop_excluded_ages: bool, optional</span>
+<span class="sd">        Whether to remove ages with ``Exclude? = True`` from the ``ages_df``; defaults to ``True``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sample_df: pandas.DataFrame</span>
+<span class="sd">        :class:`pandas.DataFrame` containing proxy data for all sections.</span>
+
+<span class="sd">    ages_df: pandas.DataFrame</span>
+<span class="sd">        :class:`pandas.DataFrame` containing age constraints for all sections.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">proxies</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">proxies</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">proxies</span><span class="p">])</span>
+
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">sample_file</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">)</span>
+    <span class="n">ages</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">ages_file</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">)</span>
+
+    <span class="n">samples</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">samples</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">ages</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">ages</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s1">&#39;shared?&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">ages</span><span class="p">[</span><span class="s1">&#39;shared?&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="s1">&#39;name&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">ages</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="k">if</span> <span class="s1">&#39;distribution_type&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">ages</span><span class="p">[</span><span class="s1">&#39;distribution_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Normal&#39;</span>
+
+    <span class="k">if</span> <span class="s1">&#39;param_1&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">ages</span><span class="p">[</span><span class="s1">&#39;param_1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="k">if</span> <span class="s1">&#39;param_1_name&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">ages</span><span class="p">[</span><span class="s1">&#39;param_1_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="k">if</span> <span class="s1">&#39;param_2&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">ages</span><span class="p">[</span><span class="s1">&#39;param_2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="k">if</span> <span class="s1">&#39;param_2_name&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">ages</span><span class="p">[</span><span class="s1">&#39;param_2_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="k">if</span> <span class="s1">&#39;intermediate detrital?&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">ages</span><span class="p">[</span><span class="s1">&#39;intermediate detrital?&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="s1">&#39;intermediate intrusive?&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">ages</span><span class="p">[</span><span class="s1">&#39;intermediate intrusive?&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="s1">&#39;Exclude?&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">ages</span><span class="p">[</span><span class="s1">&#39;Exclude?&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="s1">&#39;Exclude?&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">samples</span><span class="p">[</span><span class="s1">&#39;Exclude?&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;depth&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;depth&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
+        <span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span> <span class="o">=</span> <span class="n">depth_to_height</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">ages</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sample_df</span> <span class="o">=</span> <span class="n">samples</span>
+        <span class="n">ages_df</span> <span class="o">=</span> <span class="n">ages</span>
+
+    <span class="k">if</span> <span class="n">drop_excluded_samples</span><span class="p">:</span>
+        <span class="n">sample_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="o">~</span><span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;Exclude?&#39;</span><span class="p">]]</span>
+
+    <span class="k">if</span> <span class="n">drop_excluded_ages</span><span class="p">:</span>
+        <span class="n">ages_df</span> <span class="o">=</span> <span class="n">ages_df</span><span class="p">[</span><span class="o">~</span><span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;Exclude?&#39;</span><span class="p">]]</span>
+
+    <span class="c1"># where there&#39;s more than 1 measurement for a proxy, combine</span>
+    <span class="n">sample_df</span> <span class="o">=</span> <span class="n">combine_duplicates</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">proxies</span><span class="p">,</span> <span class="n">proxy_sigma_default</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span></div>
+
+
+<div class="viewcode-block" id="depth_to_height">
+<a class="viewcode-back" href="../../docs/data.html#stratmc.data.depth_to_height">[docs]</a>
+<span class="k">def</span> <span class="nf">depth_to_height</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function for converting depth in core to height in section.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sample_df: pandas.DataFrame</span>
+<span class="sd">        :class:`pandas.DataFrame` containing proxy data for all sections.</span>
+
+<span class="sd">    ages_df: pandas.DataFrame</span>
+<span class="sd">        :class:`pandas.DataFrame` containing age constraints for all sections.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sample_df: pandas.DataFrame</span>
+<span class="sd">        :class:`pandas.DataFrame` containing proxy data for all sections, with depth in core converted to height in section.</span>
+
+<span class="sd">    ages_df: pandas.DataFrame</span>
+<span class="sd">        :class:`pandas.DataFrame` containing age constraints for all sections, with depth in core converted to height in section.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">height</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">age_height</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">sections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">sections</span><span class="p">:</span>
+        <span class="c1"># if there are depth values, convert to height in section</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s1">&#39;depth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">depth_vec</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s1">&#39;depth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">age_depth_vec</span> <span class="o">=</span> <span class="n">ages_df</span><span class="p">[</span><span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s1">&#39;depth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">all_depths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s1">&#39;depth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                                        <span class="n">ages_df</span><span class="p">[</span><span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">][</span><span class="s1">&#39;depth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+            <span class="n">max_depth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">all_depths</span><span class="p">)</span>
+            <span class="n">height</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">depth_vec</span> <span class="o">-</span> <span class="n">max_depth</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">age_height</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">age_depth_vec</span> <span class="o">-</span> <span class="n">max_depth</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">sample_ind</span> <span class="o">=</span> <span class="n">sample_df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">]</span>
+            <span class="n">age_ind</span> <span class="o">=</span> <span class="n">ages_df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">section</span><span class="p">]</span>
+            <span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sample_ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">height</span><span class="p">[</span><span class="n">section</span><span class="p">]</span>
+            <span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">age_ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">age_height</span><span class="p">[</span><span class="n">section</span><span class="p">]</span>
+
+    <span class="n">ages_df</span> <span class="o">=</span> <span class="n">ages_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">])</span>
+    <span class="n">sample_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span></div>
+
+
+<div class="viewcode-block" id="clean_data">
+<a class="viewcode-back" href="../../docs/data.html#stratmc.data.clean_data">[docs]</a>
+<span class="k">def</span> <span class="nf">clean_data</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="n">proxies</span><span class="p">,</span> <span class="n">sections</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function for cleaning sample data before running an inversion. Sets ``Exclude?`` to ``True`` for samples with no relevant proxy observations, removes sections where all samples have been excluded, and drops excluded age constraints.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sample_df: pandas.DataFrame</span>
+<span class="sd">        :class:`pandas.DataFrame` containing proxy data for all sections.</span>
+
+<span class="sd">    ages_df: pandas.DataFrame</span>
+<span class="sd">        :class:`pandas.DataFrame` containing age constraints for all sections.</span>
+
+<span class="sd">    proxies: str or list(str)</span>
+<span class="sd">        Tracers to include in the inference.</span>
+
+<span class="sd">    sections: list(str) or numpy.array(str)</span>
+<span class="sd">        List of sections to include in the inference (as named in ``sample_df`` and ``ages_df``).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sample_df: pandas.DataFrame</span>
+<span class="sd">        :class:`pandas.DataFrame` containing cleaned proxy data for all sections.</span>
+
+<span class="sd">    ages_df: pandas.DataFrame</span>
+<span class="sd">        :class:`pandas.DataFrame` containing cleaned age constraint data for all sections.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">proxies</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">proxies</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">proxies</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">sample_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="c1"># create a copy so it doesn&#39;t  modify the original DataFrame</span>
+        <span class="n">sample_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">keep_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">sample_df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">sample_df</span><span class="p">[</span><span class="n">proxy</span><span class="p">])]</span> <span class="k">for</span> <span class="n">proxy</span> <span class="ow">in</span> <span class="n">proxies</span><span class="p">]))))</span>
+
+        <span class="n">exclude_idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sample_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">keep_idx</span><span class="p">:</span>
+            <span class="n">exclude_idx</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+        <span class="c1"># if sample has no relevant proxy observations, exclude from inference</span>
+        <span class="n">sample_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">exclude_idx</span><span class="p">,</span> <span class="s1">&#39;Exclude?&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">sample_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">sections</span><span class="p">)]</span>
+
+        <span class="n">sample_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">])</span>
+
+        <span class="n">sample_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">drop</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="n">ages_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">ages_df</span> <span class="o">=</span> <span class="n">ages_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">ages_df</span> <span class="o">=</span> <span class="n">ages_df</span><span class="p">[</span><span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">sections</span><span class="p">)]</span>
+
+        <span class="n">ages_df</span> <span class="o">=</span> <span class="n">ages_df</span><span class="p">[</span><span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;Exclude?&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span>
+
+        <span class="n">ages_df</span> <span class="o">=</span> <span class="n">ages_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">])</span>
+
+        <span class="n">ages_df</span> <span class="o">=</span> <span class="n">ages_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">drop</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span></div>
+
+
+<div class="viewcode-block" id="combine_duplicates">
+<a class="viewcode-back" href="../../docs/data.html#stratmc.data.combine_duplicates">[docs]</a>
+<span class="k">def</span> <span class="nf">combine_duplicates</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">proxies</span><span class="p">,</span> <span class="n">proxy_sigma_default</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function for combining multiple proxy measurements from the same stratigraphic horizon. For each horizon with multiple proxy values, replaces the proxy value with the mean, and replaces the standard deviation with the combined uncertainty (``proxy_std`` values summed in quadrature) for all measurements. The standard deviation of the population of proxy values for each horizon is stored in the ``proxy_population_std`` column of ``sample_df`` (in :py:meth:`build_model() &lt;stratmc.model.build_model&gt;`, the uncertainty of each proxy observation is modeled as the ``proxy_std`` and ``proxy_population_std`` values summed in quadrature).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sample_df: pandas.DataFrame</span>
+<span class="sd">        :class:`pandas.DataFrame` containing proxy data for all sections.</span>
+
+<span class="sd">    proxies: list(str)</span>
+<span class="sd">        List of proxies to include in the inference.</span>
+
+<span class="sd">    proxy_sigma_default: float or dict{float}, optional</span>
+<span class="sd">        Measurement uncertainty (:math:`1\\sigma`) to use for proxy observations if not specified in ``proxy_std`` column of ``sample_df``. To set a different value for each proxy, pass a dictionary with proxy names as keys. Defaults to 0.1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sample_df: pandas.DataFrame</span>
+<span class="sd">        :class:`pandas.DataFrame` containing proxy data with duplicates combined.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">sample_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">proxies</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">proxies</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">proxies</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="p">((</span><span class="nb">type</span><span class="p">(</span><span class="n">proxy_sigma_default</span><span class="p">)</span> <span class="o">==</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">proxy_sigma_default</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">)):</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">proxy_sigma_default</span>
+        <span class="n">proxy_sigma_default</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">proxy</span> <span class="ow">in</span> <span class="n">proxies</span><span class="p">:</span>
+            <span class="n">proxy_sigma_default</span><span class="p">[</span><span class="n">proxy</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span>
+
+    <span class="k">for</span> <span class="n">proxy</span> <span class="ow">in</span> <span class="n">proxies</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">proxy</span> <span class="o">+</span> <span class="s1">&#39;_std&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">sample_df</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="n">sample_df</span><span class="p">[</span><span class="n">proxy</span> <span class="o">+</span> <span class="s1">&#39;_std&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">sample_df</span><span class="p">[</span><span class="n">proxy</span> <span class="o">+</span> <span class="s1">&#39;_std&#39;</span><span class="p">])</span>
+        <span class="n">sample_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">proxy</span> <span class="o">+</span> <span class="s1">&#39;_std&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">proxy_sigma_default</span><span class="p">[</span><span class="n">proxy</span><span class="p">]</span>
+
+    <span class="c1"># don&#39;t consider excluded samples when averaging observations from same height -- remove from dataframe and add back later</span>
+    <span class="n">excluded_sample_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;Exclude?&#39;</span><span class="p">]]</span>
+    <span class="n">sample_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="o">~</span><span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;Exclude?&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)]</span>
+
+    <span class="n">excluded_sample_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">drop</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">sample_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">drop</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">dup_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sample_df</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">subset</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">],</span> <span class="n">keep</span> <span class="o">=</span> <span class="s1">&#39;first&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dup_idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sample_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">dup_idx</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="n">duplicate_dicts</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">dup_idx</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">sample_df</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
+            <span class="n">duplicate_rows</span> <span class="o">=</span> <span class="p">(</span><span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">][</span><span class="n">idx</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">][</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">duplicate_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="n">duplicate_rows</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">duplicate_sub_idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">duplicate_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+            <span class="n">duplicate_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="n">proxy_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">proxy</span> <span class="k">for</span> <span class="n">proxy</span> <span class="ow">in</span> <span class="n">proxies</span><span class="p">]</span>
+            <span class="n">proxy_std_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">proxy</span> <span class="o">+</span> <span class="s1">&#39;_std&#39;</span> <span class="k">for</span> <span class="n">proxy</span> <span class="ow">in</span> <span class="n">proxies</span><span class="p">]</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sample_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">proxy_columns</span><span class="p">:</span>
+                <span class="n">columns</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+                <span class="c1"># replace proxy value with the mean</span>
+                <span class="n">duplicate_dict</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">duplicate_df</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+                <span class="c1"># standard deviation of the population of proxy values</span>
+                <span class="n">duplicate_dict</span><span class="p">[</span><span class="n">c</span> <span class="o">+</span> <span class="s1">&#39;_population_std&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="n">duplicate_df</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">proxy_std_columns</span><span class="p">:</span>
+                <span class="n">columns</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+                <span class="c1"># replace the measurement uncertainty with the quadrature uncertainty (of the measurement uncertainties; this does not include the population standard deviation)</span>
+                <span class="n">duplicate_dict</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">duplicate_df</span><span class="p">[</span><span class="n">c</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+                <span class="n">duplicate_dict</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">duplicate_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">c</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">duplicate_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">duplicate_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">duplicate_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
+
+            <span class="c1"># removes the duplicate samples from sample_df</span>
+            <span class="n">sample_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">index</span> <span class="o">=</span> <span class="n">duplicate_sub_idx</span><span class="p">,</span> <span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">duplicate_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">duplicate_dict</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">duplicate</span> <span class="ow">in</span> <span class="n">duplicate_dicts</span><span class="p">:</span>
+        <span class="n">sample_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">duplicate</span><span class="p">)],</span> <span class="n">ignore_index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># put the excluded samples back</span>
+    <span class="k">if</span> <span class="n">excluded_sample_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">sample_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">excluded_sample_df</span><span class="p">],</span> <span class="n">ignore_index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># sort and reset indexing</span>
+    <span class="n">sample_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">],</span> <span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">sample_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">drop</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sample_df</span></div>
+
+
+
+<div class="viewcode-block" id="combine_data">
+<a class="viewcode-back" href="../../docs/data.html#stratmc.data.combine_data">[docs]</a>
+<span class="k">def</span> <span class="nf">combine_data</span><span class="p">(</span><span class="n">dataframes</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function for merging :class:`pandas.DataFrame` objects containing proxy observations or age constraints. Data are merged using the ``section`` and ``height`` columns.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataframes: list(pandas.DataFrame)</span>
+<span class="sd">        List of :class:`pandas.DataFrame` objects to merge.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    merged_data: pandas.DataFrame</span>
+<span class="sd">        :class:`pandas.DataFrame` containing merged data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">dataframes</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df</span><span class="p">,</span>
+                          <span class="n">how</span> <span class="o">=</span> <span class="s1">&#39;outer&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="combine_traces">
+<a class="viewcode-back" href="../../docs/data.html#stratmc.data.combine_traces">[docs]</a>
+<span class="k">def</span> <span class="nf">combine_traces</span><span class="p">(</span><span class="n">trace_list</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function for combining multiple :class:`arviz.InferenceData` objects (saved as NetCDF files) that contain prior and posterior samples for the same inference model (sampled with :py:meth:`get_trace() &lt;stratmc.inference.get_trace&gt;` in :py:mod:`stratmc.inference`). The :class:`arviz.InferenceData` objects are concatenated along the ``chain`` dimension such that if two traces with 8 chains each are concatenated, the new combined trace will have 16 chains.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    trace_list: list(str)</span>
+<span class="sd">       List of paths to :class:`arviz.InferenceData` objects (saved as NetCDF files) to be merged.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    combined_trace: arviz.InferenceData</span>
+<span class="sd">        New :class:`arviz.InferenceData` object containing the prior and posterior draws for all traces in ``trace_list``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">combined_trace</span> <span class="o">=</span> <span class="n">load_trace</span><span class="p">(</span><span class="n">trace_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">combined_trace</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">X_new</span> <span class="o">=</span> <span class="n">combined_trace</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="k">del</span> <span class="n">combined_trace</span><span class="o">.</span><span class="n">X_new</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">trace_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">trace</span> <span class="o">=</span> <span class="n">load_trace</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">X_new</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">X_new</span><span class="o">.</span><span class="n">ravel</span><span class="p">()):</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;Traces have different X_new - check that all inferences were run with the same data and parameters&quot;</span><span class="p">)</span>
+
+        <span class="k">del</span> <span class="n">trace</span><span class="o">.</span><span class="n">X_new</span>
+
+        <span class="n">az</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">combined_trace</span><span class="p">,</span> <span class="n">trace</span><span class="p">],</span> <span class="n">dim</span> <span class="o">=</span> <span class="s1">&#39;chain&#39;</span><span class="p">,</span> <span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">combined_trace</span><span class="o">.</span><span class="n">add_groups</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">combined_trace</span></div>
+
+
+<div class="viewcode-block" id="drop_chains">
+<a class="viewcode-back" href="../../docs/data.html#stratmc.data.drop_chains">[docs]</a>
+<span class="k">def</span> <span class="nf">drop_chains</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">chains</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove a subset of chains from a :class:`arviz.InferenceData` object.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    full_trace: arviz.InferenceData</span>
+<span class="sd">        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() &lt;stratmc.inference.get_trace&gt;` in :py:mod:`stratmc.inference`.</span>
+
+<span class="sd">    chains: list or np.array of int</span>
+<span class="sd">        Indices of chains to remove from ``full_trace``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    full_trace_clean: arviz.InferenceData</span>
+<span class="sd">        Copy of ``full_trace`` without the chains specified in ``chains``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">all_chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">full_trace</span><span class="o">.</span><span class="n">posterior</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">chain</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">:</span>
+        <span class="n">all_chains</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">chain</span><span class="p">)</span>
+
+    <span class="n">full_trace_clean</span> <span class="o">=</span> <span class="n">full_trace</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">chain</span> <span class="o">=</span> <span class="n">all_chains</span><span class="p">,</span> <span class="n">inplace</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">full_trace_clean</span></div>
+
+
+
+<div class="viewcode-block" id="save_trace">
+<a class="viewcode-back" href="../../docs/data.html#stratmc.data.save_trace">[docs]</a>
+<span class="k">def</span> <span class="nf">save_trace</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save trace (:class:`arviz.InferenceData` object) as a NetCDF file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    trace: arviz.InferenceData</span>
+<span class="sd">        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`build_model() &lt;stratmc.model&gt;` in :py:mod:`stratmc.model` (the output of :py:meth:`get_trace() &lt;stratmc.inference.get_trace&gt;` in :py:mod:`stratmc.inference`).</span>
+
+<span class="sd">    path: str</span>
+<span class="sd">        Location (including the file name, without &#39;.nc` extension) to save ``trace``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">trace</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;.nc&#39;</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;posterior&#39;</span><span class="p">,</span> <span class="s1">&#39;log_likelihood&#39;</span><span class="p">,</span> <span class="s1">&#39;prior&#39;</span><span class="p">,</span> <span class="s1">&#39;prior_predictive&#39;</span><span class="p">,</span> <span class="s1">&#39;posterior_predictive&#39;</span><span class="p">,</span> <span class="s1">&#39;observed_data&#39;</span><span class="p">,</span> <span class="s1">&#39;sample_stats&#39;</span><span class="p">,</span> <span class="s1">&#39;X_new&#39;</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="save_object">
+<a class="viewcode-back" href="../../docs/data.html#stratmc.data.save_object">[docs]</a>
+<span class="k">def</span> <span class="nf">save_object</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save variable as a pickle (.pkl) object.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    var:</span>
+<span class="sd">        Variable to be saved.</span>
+
+<span class="sd">    path: str</span>
+<span class="sd">        Location (including the file name, without &#39;.pkl` extension) to save ``var``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;.pkl&#39;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">buff</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">buff</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="load_trace">
+<a class="viewcode-back" href="../../docs/data.html#stratmc.data.load_trace">[docs]</a>
+<span class="k">def</span> <span class="nf">load_trace</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom load command for NetCDF file containing a trace (:class:`arviz.InferenceData` object saved with :py:meth:`save_trace() &lt;stratmc.data.save_trace&gt;`).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path: str</span>
+<span class="sd">        Path to saved NetCDF file (without the &#39;.nc` extension).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    trace: arviz.InferenceData</span>
+<span class="sd">        Trace saved as NetCDF file.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">trace</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">from_netcdf</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;.nc&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">trace</span></div>
+
+
+<div class="viewcode-block" id="load_object">
+<a class="viewcode-back" href="../../docs/data.html#stratmc.data.load_object">[docs]</a>
+<span class="k">def</span> <span class="nf">load_object</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom load command for pickle (.pkl) object (variables can be saved as .pkl files with :py:meth:`save_object() &lt;stratmc.data.save_object&gt;`).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path: str</span>
+<span class="sd">        Path to saved .pkl file (without the &#39;.pkl` extension).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    var:</span>
+<span class="sd">       Variable saved in ``path``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="accumulation_rate">
+<a class="viewcode-back" href="../../docs/data.html#stratmc.data.accumulation_rate">[docs]</a>
+<span class="k">def</span> <span class="nf">accumulation_rate</span><span class="p">(</span><span class="n">full_trace</span><span class="p">,</span> <span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">age_model</span> <span class="o">=</span> <span class="s1">&#39;posterior&#39;</span><span class="p">,</span> <span class="n">include_age_constraints</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate apparent sediment accumulation rate between successive samples (if ``method = &#39;successive&#39;``) or every possible sample pairing (``method = &#39;all&#39;``).</span>
+
+<span class="sd">    Note that if ``method = &#39;all&#39;``, rate is returned in mm/year, and duration is returned in years. If ``method = &#39;successive&#39;``, rate is returned in m/Myr, and duration is returned in Myr. Input data are assumed to have units of meters and millions of years. Used as input to :py:meth:`sadler_plot() &lt;stratmc.plotting&gt;` and :py:meth:`accumulation_rate_stratigraphy() &lt;stratmc.plotting&gt;` in :py:mod:`stratmc.plotting`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    full_trace: arviz.InferenceData</span>
+<span class="sd">        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() &lt;stratmc.inference.get_trace&gt;` in :py:mod:`stratmc.inference`.</span>
+
+<span class="sd">    sample_df: pandas.DataFrame</span>
+<span class="sd">        :class:`pandas.DataFrame` containing all proxy data.</span>
+
+<span class="sd">    ages_df: pandas.DataFrame</span>
+<span class="sd">        :class:`pandas.DataFrame` containing age constraints from all sections.</span>
+
+<span class="sd">    method: str, optional</span>
+<span class="sd">        Whether to calculate accumulation rates between every possible sample pairing (&#39;all`), or between successive samples (&#39;successive`); defaults to &#39;all`.</span>
+
+<span class="sd">    age_model: str, optional</span>
+<span class="sd">        Whether to calculate accumulation rates using the the posterior or prior age model for each section; defaults to &#39;posterior`.</span>
+
+<span class="sd">    include_age_constraints: bool, optional</span>
+<span class="sd">        Whether to include radiometric age constraints in accumulation rate calculations; defaults to ``True``.</span>
+
+<span class="sd">    sections: list(str) or numpy.array(str), optional</span>
+<span class="sd">        List of sections to include. Defaults to all sections in ``sample_df``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rate_df: pandas.DataFrame</span>
+<span class="sd">        :class:`pandas.DataFrame` containing sediment accumulation rates and associated durations.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="c1"># get list of proxies included in model from full_trace</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">l</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">full_trace</span><span class="p">[</span><span class="s2">&quot;prior&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data_vars</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="c1"># posterior</span>
+            <span class="k">if</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;gp_ls_&#39;</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">l</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;unshifted&#39;</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">l</span><span class="p">)</span>
+            <span class="p">]</span>
+
+    <span class="n">proxies</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+        <span class="n">proxies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">[</span><span class="mi">6</span><span class="p">:])</span>
+
+    <span class="k">if</span> <span class="s1">&#39;sections&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">sections</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;sections&#39;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sample_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span> <span class="o">=</span> <span class="n">proxies</span><span class="p">,</span> <span class="n">how</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)[</span><span class="s1">&#39;section&#39;</span><span class="p">])</span>
+
+    <span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span> <span class="o">=</span> <span class="n">clean_data</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">ages_df</span><span class="p">,</span> <span class="n">proxies</span><span class="p">,</span> <span class="n">sections</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span> <span class="c1"># in mm/yr</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">rate_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;rate&#39;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">sections</span><span class="p">:</span>
+            <span class="n">section_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">section</span><span class="p">]</span>
+            <span class="n">sample_heights</span> <span class="o">=</span> <span class="n">section_df</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">*</span> <span class="mi">1000</span> <span class="c1"># convert meters to mm</span>
+            <span class="n">age_heights</span> <span class="o">=</span> <span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">][(</span><span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">section</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;Exclude?&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;intermediate detrital?&#39;</span><span class="p">])</span>  <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;intermediate intrusive?&#39;</span><span class="p">])]</span> <span class="o">*</span> <span class="mi">1000</span> <span class="c1"># convert meters to mm</span>
+
+            <span class="n">duration</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">rate</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># shape (samples x draws)</span>
+            <span class="k">if</span> <span class="n">age_model</span> <span class="o">==</span> <span class="s1">&#39;posterior&#39;</span><span class="p">:</span>
+                <span class="n">sample_age_post</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace</span><span class="o">.</span><span class="n">posterior</span><span class="p">)[</span><span class="nb">str</span><span class="p">(</span><span class="n">section</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_ages&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                <span class="n">age_constraint_post</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace</span><span class="o">.</span><span class="n">posterior</span><span class="p">)[</span><span class="nb">str</span><span class="p">(</span><span class="n">section</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_radiometric_age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+            <span class="k">elif</span> <span class="n">age_model</span> <span class="o">==</span> <span class="s1">&#39;prior&#39;</span><span class="p">:</span>
+                <span class="n">sample_age_post</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace</span><span class="o">.</span><span class="n">prior</span><span class="p">)[</span><span class="nb">str</span><span class="p">(</span><span class="n">section</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_ages&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                <span class="n">age_constraint_post</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace</span><span class="o">.</span><span class="n">prior</span><span class="p">)[</span><span class="nb">str</span><span class="p">(</span><span class="n">section</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_radiometric_age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+            <span class="k">if</span> <span class="n">sample_age_post</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_heights</span><span class="p">):</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of data points for </span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2"> does not match the number of data points in the trace.&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">include_age_constraints</span><span class="p">:</span>
+                <span class="n">comb_heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">sample_heights</span><span class="p">,</span> <span class="n">age_heights</span><span class="p">])</span>
+
+                <span class="n">sort_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">comb_heights</span><span class="p">)</span>
+
+                <span class="n">posterior_ages_stacked</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">sample_age_post</span><span class="p">,</span> <span class="n">age_constraint_post</span><span class="p">])</span>
+
+                <span class="n">draws</span> <span class="o">=</span> <span class="n">posterior_ages_stacked</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">posterior_ages_stacked</span> <span class="o">=</span> <span class="n">sample_age_post</span>
+
+                <span class="n">comb_heights</span> <span class="o">=</span> <span class="n">sample_heights</span>
+
+                <span class="n">sort_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">comb_heights</span><span class="p">)</span>
+
+                <span class="n">draws</span> <span class="o">=</span> <span class="n">posterior_ages_stacked</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">sorted_heights</span> <span class="o">=</span> <span class="n">comb_heights</span><span class="p">[</span><span class="n">sort_idx</span><span class="p">]</span>
+
+            <span class="n">max_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_heights</span><span class="p">)</span>
+
+            <span class="c1"># for each draw</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">draws</span><span class="p">):</span>
+                <span class="n">ages</span> <span class="o">=</span> <span class="n">posterior_ages_stacked</span><span class="p">[</span><span class="n">sort_idx</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e6</span> <span class="c1"># put in order, and convert Myr to years</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_heights</span><span class="p">)):</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_idx</span><span class="p">):</span> <span class="c1"># if at the top sample, returns empty array</span>
+                        <span class="n">height_diff</span> <span class="o">=</span> <span class="n">sorted_heights</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">sorted_heights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                        <span class="n">age_diff</span> <span class="o">=</span> <span class="n">ages</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">ages</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                        <span class="n">duration</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">age_diff</span><span class="p">)</span>
+                        <span class="n">rate</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">height_diff</span><span class="o">/</span><span class="n">age_diff</span><span class="p">)</span>
+
+            <span class="n">section_rate_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;section&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">duration</span><span class="p">[</span><span class="n">section</span><span class="p">]),</span> <span class="s1">&#39;duration&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="p">[</span><span class="n">section</span><span class="p">],</span> <span class="s1">&#39;rate&#39;</span><span class="p">:</span> <span class="n">rate</span><span class="p">[</span><span class="n">section</span><span class="p">]})</span>
+
+            <span class="n">rate_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">rate_df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">section_rate_df</span><span class="o">.</span><span class="n">dtypes</span><span class="p">),</span> <span class="n">section_rate_df</span><span class="p">],</span> <span class="n">ignore_index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;successive&#39;</span><span class="p">:</span> <span class="c1"># in meters/Myr</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">base_height</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">top_height</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">base_age</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">top_age</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">rate_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">,</span>  <span class="s1">&#39;base_height&#39;</span><span class="p">,</span> <span class="s1">&#39;top_height&#39;</span><span class="p">,</span> <span class="s1">&#39;base_age&#39;</span><span class="p">,</span> <span class="s1">&#39;top_age&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;rate&#39;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">sections</span><span class="p">:</span>
+            <span class="n">base_height</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">base_age</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">top_height</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">top_age</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">duration</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">rate</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">section_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">section</span><span class="p">]</span>
+            <span class="n">sample_heights</span> <span class="o">=</span> <span class="n">section_df</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">age_heights</span> <span class="o">=</span> <span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">][(</span><span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">section</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;Exclude?&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;intermediate detrital?&#39;</span><span class="p">])</span>  <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">ages_df</span><span class="p">[</span><span class="s1">&#39;intermediate intrusive?&#39;</span><span class="p">])]</span>
+
+            <span class="c1"># shape (samples x draws)</span>
+            <span class="k">if</span> <span class="n">age_model</span> <span class="o">==</span> <span class="s1">&#39;posterior&#39;</span><span class="p">:</span>
+                <span class="n">sample_age_post</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace</span><span class="o">.</span><span class="n">posterior</span><span class="p">)[</span><span class="nb">str</span><span class="p">(</span><span class="n">section</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_ages&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                <span class="n">age_constraint_post</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace</span><span class="o">.</span><span class="n">posterior</span><span class="p">)[</span><span class="nb">str</span><span class="p">(</span><span class="n">section</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_radiometric_age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+            <span class="k">elif</span> <span class="n">age_model</span> <span class="o">==</span> <span class="s1">&#39;prior&#39;</span><span class="p">:</span>
+                <span class="n">sample_age_post</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace</span><span class="o">.</span><span class="n">prior</span><span class="p">)[</span><span class="nb">str</span><span class="p">(</span><span class="n">section</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_ages&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                <span class="n">age_constraint_post</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">full_trace</span><span class="o">.</span><span class="n">prior</span><span class="p">)[</span><span class="nb">str</span><span class="p">(</span><span class="n">section</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_radiometric_age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+
+            <span class="k">if</span> <span class="n">sample_age_post</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_heights</span><span class="p">):</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of data points for </span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2"> does not match the number of data points in the trace.&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">include_age_constraints</span><span class="p">:</span>
+                <span class="n">comb_heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">sample_heights</span><span class="p">,</span> <span class="n">age_heights</span><span class="p">])</span>
+
+                <span class="n">sort_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">comb_heights</span><span class="p">)</span>
+
+                <span class="n">posterior_ages_stacked</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">sample_age_post</span><span class="p">,</span> <span class="n">age_constraint_post</span><span class="p">])</span>
+
+                <span class="n">draws</span> <span class="o">=</span> <span class="n">posterior_ages_stacked</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">posterior_ages_stacked</span> <span class="o">=</span> <span class="n">sample_age_post</span>
+
+                <span class="n">comb_heights</span> <span class="o">=</span> <span class="n">sample_heights</span>
+
+                <span class="n">sort_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">comb_heights</span><span class="p">)</span>
+
+                <span class="n">draws</span> <span class="o">=</span> <span class="n">posterior_ages_stacked</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">sorted_heights</span> <span class="o">=</span> <span class="n">comb_heights</span><span class="p">[</span><span class="n">sort_idx</span><span class="p">]</span>
+
+            <span class="n">max_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_heights</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+            <span class="c1"># for each draw</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">draws</span><span class="p">):</span>
+                <span class="n">ages</span> <span class="o">=</span> <span class="n">posterior_ages_stacked</span><span class="p">[</span><span class="n">sort_idx</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span> <span class="c1"># keep in Myr</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_heights</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">height_diff</span> <span class="o">=</span> <span class="n">sorted_heights</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">sorted_heights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">age_diff</span> <span class="o">=</span> <span class="n">ages</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">ages</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">base_age</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ages</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">base_height</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sorted_heights</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">top_age</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ages</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">top_height</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sorted_heights</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">duration</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">age_diff</span><span class="p">)</span>
+                    <span class="n">rate</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">height_diff</span><span class="o">/</span><span class="n">age_diff</span><span class="p">)</span>
+
+            <span class="n">section_rate_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;section&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">duration</span><span class="p">[</span><span class="n">section</span><span class="p">]),</span>
+                                            <span class="s1">&#39;base_height&#39;</span><span class="p">:</span> <span class="n">base_height</span><span class="p">[</span><span class="n">section</span><span class="p">],</span>
+                                            <span class="s1">&#39;top_height&#39;</span><span class="p">:</span> <span class="n">top_height</span><span class="p">[</span><span class="n">section</span><span class="p">],</span>
+                                            <span class="s1">&#39;base_age&#39;</span><span class="p">:</span> <span class="n">base_age</span><span class="p">[</span><span class="n">section</span><span class="p">],</span>
+                                            <span class="s1">&#39;top_age&#39;</span><span class="p">:</span> <span class="n">top_age</span><span class="p">[</span><span class="n">section</span><span class="p">],</span>
+                                            <span class="s1">&#39;duration&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="p">[</span><span class="n">section</span><span class="p">],</span>
+                                            <span class="s1">&#39;rate&#39;</span><span class="p">:</span> <span class="n">rate</span><span class="p">[</span><span class="n">section</span><span class="p">]})</span>
+
+            <span class="n">rate_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">rate_df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">section_rate_df</span><span class="o">.</span><span class="n">dtypes</span><span class="p">),</span> <span class="n">section_rate_df</span><span class="p">],</span> <span class="n">ignore_index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rate_df</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Stacey Edmonsond.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
