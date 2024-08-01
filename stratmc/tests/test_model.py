@@ -7,8 +7,6 @@ from stratmc.data import load_data
 from stratmc.inference import get_trace
 from stratmc.model import build_model
 
-warnings.filterwarnings("ignore", ".*X_new group is not defined in the InferenceData scheme.*")
-
 
 def test_custom_priors():
     # load data

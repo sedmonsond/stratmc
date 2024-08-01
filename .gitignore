@@ -5,7 +5,7 @@ push_docs.sh
 stratmc/notebooks/*
 notebooks/GMD_paper/data/*
 notebooks/GMD_paper/traces/*
-notebooks/GMD_paper/Fig11_white_noise_trials_1_and_2/*
+notebooks/GMD_paper/traces_original/*
 
 .DS_Store
 _build/*

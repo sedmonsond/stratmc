@@ -11,6 +11,8 @@ AUTHOR_EMAIL = "staceyedmonsond777@gmail.com"
 URL = "http://github.com/sedmonsond/stratmc"
 LICENSE = "GNU General Public License v3.0"
 
+
+
 classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python",
@@ -32,7 +34,6 @@ with open(REQUIREMENTS_FILE) as f:
     install_reqs = f.read().splitlines()
 
 test_reqs = ["pytest", "pytest-cov"]
-
 
 def get_version():
     VERSIONFILE = join("stratmc", "__init__.py")
@@ -59,7 +60,7 @@ if __name__ == "__main__":
         packages=find_packages(),
         include_package_data=False,
         classifiers=classifiers,
-        python_requires=">=3.8",
+        python_requires=">=3.9",
         install_requires=install_reqs,
         tests_require=test_reqs,
     )

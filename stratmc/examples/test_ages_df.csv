@@ -1,11 +1,16 @@
-section,height,age,age_std,shared?,name,intermediate detrital?,intermediate intrusive?,Exclude?,distribution_type,param_1_name,param_2_name,param_1,param_2
-0,0.0,150.0,2.0,False,,False,False,False,Normal,,,,
-0,7.145955976753866,100.0,1.0,False,,False,False,False,Normal,,,,
-1,0.0,150.0,2.0,False,,False,False,False,Normal,,,,
-1,1.5,120.0,1.0,False,INTRUSIVE_1,False,True,False,Normal,,,,
-1,2.3,130.0,2.0,False,DETRITRAL_1,True,False,False,Normal,,,,
-1,3.553567769542806,100.0,1.0,True,S1_S2_min_age,False,False,False,Normal,,,,
-2,0.0,,,False,,False,False,False,Uniform,lower,upper,147.0,152.0
-2,4.0,,,False,INTRUSIVE_2,False,True,False,Cauchy,alpha,beta,125.0,1.0
-2,5.0,,,False,DETRITAL_2,True,False,False,Uniform,lower,upper,138.0,142.0
-2,7.58221631027516,100.0,1.0,True,S1_S2_min_age,False,False,False,Normal,,,,
+section,height,age,age_std,shared?,name,intermediate detrital?,intermediate intrusive?,Exclude?,distribution_type,param_1_name,param_2_name,param_1,param_2,depth
+0,0.0,150.0,2.0,False,,False,False,False,Normal,,,,,
+0,7.145955976753866,100.0,1.0,False,,False,False,False,Normal,,,,,
+1,0.0,150.0,2.0,False,,False,False,False,Normal,,,,,
+1,1.5,120.0,1.0,False,INTRUSIVE_1,False,True,False,Normal,,,,,
+1,2.3,130.0,2.0,False,DETRITRAL_1,True,False,False,Normal,,,,,
+1,3.553567769542806,100.0,1.0,True,S1_S2_min_age,False,False,False,Normal,,,,,
+2,0.0,,,False,,False,False,False,Uniform,lower,upper,147.0,152.0,
+2,4.0,,,True,INTRUSIVE_2,False,True,False,Cauchy,alpha,beta,125.0,1.0,
+2,5.0,,,True,DETRITAL_2,True,False,False,Uniform,lower,upper,138.0,142.0,
+2,7.58221631027516,100.0,1.0,True,S1_S2_min_age,False,False,False,Normal,,,,,
+3,,150.0,2.0,False,,False,False,False,Normal,,,,,3.52
+3,,100.0,1.0,False,,False,False,False,Normal,,,,,0.0
+3,,123.0,0.5,False,,False,False,False,Normal,,,,,0.8
+3,,,,True,INTRUSIVE_2,False,True,False,Cauchy,alpha,beta,125.0,1.0,2.0
+3,,,,True,DETRITAL_2,True,False,False,Uniform,lower,upper,138.0,142.0,1.0

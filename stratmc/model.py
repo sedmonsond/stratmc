@@ -223,7 +223,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
             noise_type[proxy] = temp
 
     for proxy in proxies:
-        if noise_type[proxy] not in ['section', 'groups', 'global', 'none']:
+        if noise_type[proxy] not in ['section', 'groups', 'global']:
             sys.exit(f"noise type {noise_type[proxy]} not implemented. Choose from 'section', 'groups', or 'global'.")
 
     # also convert noise prior parameters to dictionaries
@@ -1085,50 +1085,28 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
 
             if proxy_observed:
                 if offset_type[proxy] != 'none':
-                    if noise_type[proxy] != 'none':
-                        proxy_pred = pm.Normal(proxy + '_pred', mu=f.flatten() + offset[proxy],
+                    proxy_pred = pm.Normal(proxy + '_pred', mu=f.flatten() + offset[proxy],
                                         sigma = proxy_quadrature_uncertainty[proxy] + noise[proxy],
                                         shape = proxy_all[proxy][proxy_idx[proxy]].shape,
                                         observed=proxy_all[proxy][proxy_idx[proxy]])
 
-                    elif noise_type[proxy] == 'none':
-                        proxy_pred = pm.Normal(proxy + '_pred',mu=f.flatten() + offset[proxy],
-                                        sigma = proxy_quadrature_uncertainty[proxy],
-                                        shape = proxy_all[proxy][proxy_idx[proxy]].shape,
-                                        observed=proxy_all[proxy][proxy_idx[proxy]])
 
                 else:
-                    if noise_type[proxy] != 'none':
-                        proxy_pred = pm.Normal(proxy + '_pred', mu=f.flatten(),
+                    proxy_pred = pm.Normal(proxy + '_pred', mu=f.flatten(),
                                     sigma = proxy_quadrature_uncertainty[proxy] + noise[proxy],
-                                    shape = proxy_all[proxy][proxy_idx[proxy]].shape,
-                                    observed=proxy_all[proxy][proxy_idx[proxy]])
-                    elif noise_type[proxy] == 'none':
-                        proxy_pred = pm.Normal(proxy + '_pred', mu=f.flatten(),
-                                    sigma = proxy_quadrature_uncertainty[proxy],
                                     shape = proxy_all[proxy][proxy_idx[proxy]].shape,
                                     observed=proxy_all[proxy][proxy_idx[proxy]])
 
             else:
                 if offset_type[proxy] != 'none':
-                    if noise_type[proxy] != 'none':
-                        proxy_pred = pm.Normal(proxy + '_pred', mu=f.flatten() + offset[proxy],
-                                        sigma = proxy_quadrature_uncertainty[proxy] + noise[proxy],
-                                        shape = proxy_all[proxy][proxy_idx[proxy]].shape)
-
-                    elif noise_type[proxy] == 'none':
-                        proxy_pred = pm.Normal(proxy + '_pred',mu=f.flatten() + offset[proxy],
-                                        sigma = proxy_quadrature_uncertainty[proxy],
-                                        shape = proxy_all[proxy][proxy_idx[proxy]].shape)
-
-                else:
-                    if noise_type[proxy] != 'none':
-                        proxy_pred = pm.Normal(proxy + '_pred', mu=f.flatten(),
+                    proxy_pred = pm.Normal(proxy + '_pred', mu=f.flatten() + offset[proxy],
                                     sigma = proxy_quadrature_uncertainty[proxy] + noise[proxy],
                                     shape = proxy_all[proxy][proxy_idx[proxy]].shape)
-                    elif noise_type[proxy] == 'none':
-                        proxy_pred = pm.Normal(proxy + '_pred', mu=f.flatten(),
-                                    sigma = proxy_quadrature_uncertainty[proxy],
+
+
+                else:
+                    proxy_pred = pm.Normal(proxy + '_pred', mu=f.flatten(),
+                                    sigma = proxy_quadrature_uncertainty[proxy] + noise[proxy],
                                     shape = proxy_all[proxy][proxy_idx[proxy]].shape)
 
     return model, gp

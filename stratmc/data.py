@@ -7,9 +7,9 @@ import numpy as np
 import pandas as pd
 
 pd.options.mode.chained_assignment = None
-warnings.filterwarnings("ignore", ".*X_new group is not defined in the InferenceData scheme.*")
 
-pd.options.mode.chained_assignment = None
+warnings.filterwarnings("ignore", ".*The group X_new is not defined in the InferenceData scheme.*")
+warnings.filterwarnings("ignore", ".*X_new group is not defined in the InferenceData scheme.*")
 
 def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 0.1, drop_excluded_samples = False, drop_excluded_ages = True):
     """
@@ -144,8 +144,8 @@ def depth_to_height(sample_df, ages_df):
             age_height[section] = (age_depth_vec - max_depth) * -1
             sample_ind = sample_df.index[sample_df['section'] == section]
             age_ind = ages_df.index[ages_df['section'] == section]
-            sample_df['height'].loc[sample_ind] = height[section]
-            ages_df['height'].loc[age_ind] = age_height[section]
+            sample_df.loc[sample_ind, 'height'] = height[section]
+            ages_df.loc[age_ind, 'height'] = age_height[section]
 
     ages_df = ages_df.sort_values(by = ['section', 'height'])
     sample_df = sample_df.sort_values(by = ['section', 'height'])

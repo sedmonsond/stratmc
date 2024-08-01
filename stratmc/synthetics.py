@@ -9,6 +9,7 @@ import pymc as pm
 from scipy.interpolate import UnivariateSpline, interp1d
 from scipy.stats import gaussian_kde
 
+warnings.filterwarnings("ignore", ".*The group X_new is not defined in the InferenceData scheme.*")
 warnings.filterwarnings("ignore", ".*X_new group is not defined in the InferenceData scheme.*")
 
 pd.options.mode.chained_assignment = None

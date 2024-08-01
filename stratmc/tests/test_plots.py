@@ -6,8 +6,8 @@ from stratmc.data import load_data, load_trace
 from stratmc.inference import extend_age_model, interpolate_proxy
 from stratmc.plotting import *
 
+warnings.filterwarnings("ignore", ".*The group X_new is not defined in the InferenceData scheme.*")
 warnings.filterwarnings("ignore", ".*X_new group is not defined in the InferenceData scheme.*")
-
 
 @patch("matplotlib.pyplot.show")
 def test_proxy_strat(a):
@@ -23,7 +23,10 @@ def test_proxy_inference(a):
 
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    _ = proxy_inference(sample_df, ages_df, full_trace, plot_data = True, plot_excluded_samples = True, plot_mean = True, plot_mle = True)
+    _ = proxy_inference(sample_df, ages_df, full_trace, plot_constraints = True, plot_data = True, plot_excluded_samples = True, plot_mean = True, plot_mle = True)
+    _ = proxy_inference(sample_df, ages_df, full_trace, sections = ['1', '2'], plot_constraints = True, plot_data = True, section_legend = True, plot_excluded_samples = True, plot_mean = True, plot_mle = True, proxy = 'd18o', orientation = 'vertical', fontsize = 10, figsize = (4, 7))
+
+
 
 @patch("matplotlib.pyplot.show")
 def test_interpolated_proxy_inference(a):
@@ -55,14 +58,16 @@ def test_section_proxy_signal(a):
     sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    _ = section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_ages = True)
+    _ = section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_ages = True, plot_constraints = True)
+    _ = section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_ages = False, plot_constraints = True, yax = 'age')
+
 
 @patch("matplotlib.pyplot.show")
 def test_covariance_hyperparameters(a):
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    _ = covariance_hyperparameters(full_trace, proxy = 'd13c')
-    _ = covariance_hyperparameters(full_trace, proxy = 'd18o')
+    _ = covariance_hyperparameters(full_trace)
+    _ = covariance_hyperparameters(full_trace, proxy = 'd18o', fontsize = 10)
 
 @patch("matplotlib.pyplot.show")
 def test_section_summary(a):
@@ -71,11 +76,14 @@ def test_section_summary(a):
 
     _ = section_summary(sample_df, ages_df, full_trace, '0', plot_excluded_samples = True, plot_noise_prior = True, plot_offset_prior = True)
 
+    full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_custom_priors')
+    _ = section_summary(sample_df, ages_df, full_trace, '0', plot_excluded_samples = True, plot_noise_prior = True, plot_offset_prior = True)
+
 @patch("matplotlib.pyplot.show")
 def test_noise_summary(a):
     # d13C has group noise, d18O has per-section noise
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_custom_priors')
-    _ = noise_summary(full_trace, proxy  = 'd13c')
+    _ = noise_summary(full_trace, fontsize = 10)
     _ = noise_summary(full_trace, proxy  = 'd18o')
 
 @patch("matplotlib.pyplot.show")
@@ -83,7 +91,7 @@ def test_offset_summary(a):
     # trace w/ per-section offsets (for both d13c and d18o)
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    _ = offset_summary(full_trace, proxy  = 'd13c')
+    _ = offset_summary(full_trace, fontsize = 10)
 
     # trace w/ group offsets (for both d13c and d18o)
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_custom_priors')
@@ -105,6 +113,7 @@ def test_sample_ages(a):
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
     _ = sample_ages(full_trace, sample_df, '0', plot_excluded_samples = True)
+    _ = sample_ages(full_trace, sample_df, '0', plot_excluded_samples = False)
 
 @patch("matplotlib.pyplot.show")
 def test_sample_ages_per_chain(a):
@@ -112,6 +121,7 @@ def test_sample_ages_per_chain(a):
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
     _ = sample_ages_per_chain(full_trace, sample_df, '0', plot_excluded_samples = True)
+    _ = sample_ages_per_chain(full_trace, sample_df, '0', plot_excluded_samples = False, plot_prior = True)
 
 @patch("matplotlib.pyplot.show")
 def test_age_constraints(a):
@@ -135,6 +145,8 @@ def test_sadler_plot(a):
 
     _ = sadler_plot(full_trace, sample_df, ages_df, include_age_constraints = False, scale = 'linear')
     _ = sadler_plot(full_trace, sample_df, ages_df, include_age_constraints = True)
+    _ = sadler_plot(full_trace, sample_df, ages_df, include_age_constraints = False, method = 'scatter')
+    _ = sadler_plot(full_trace, sample_df, ages_df, include_age_constraints = False, scale = 'linear', method = 'scatter')
 
 @patch("matplotlib.pyplot.show")
 def test_accumulation_rate_stratigraphy(a):

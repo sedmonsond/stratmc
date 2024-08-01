@@ -22,7 +22,7 @@ from stratmc.inference import (
 
 pd.options.mode.chained_assignment = None
 
-def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plot_excluded_samples = False, cmap = 'Spectral', **kwargs):
+def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plot_excluded_samples = False, cmap = 'Spectral', legend = False, **kwargs):
     """
 
     Plot stratigraphic data (proxy observations and age constraints) for each section.
@@ -66,6 +66,9 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
     cmap: str, optional
         Name of seaborn color palette to use for sections. Defaults to 'Spectral'.
 
+    legend: bool, optional
+        Generate a legend. Defaults to ``False``.
+
     Returns
     -------
     fig: matplotlib.pyplot.figure
@@ -108,13 +111,15 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
                 ax.scatter(sample_df[proxy][(sample_df['section'] == section) & (sample_df['Exclude?'] == True)],
                         sample_df['height'][(sample_df['section'] == section) & (sample_df['Exclude?'] == True)],
                         color = 'red',
-                        edgecolors = 'k')
+                        edgecolors = 'k',
+                        label = 'Excluded sample')
 
 
         ax.scatter(sample_df[proxy][(sample_df['section'] == section) & (sample_df['Exclude?'] != True)],
                    sample_df['height'][(sample_df['section'] == section) & (sample_df['Exclude?'] != True)],
                    color = cs[section],
-                   edgecolors = 'k')
+                   edgecolors = 'k',
+                   label = 'Sample')
 
 
         xl = ax.get_xlim()
@@ -127,6 +132,7 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
                       xl[1],
                       color = cs[section],
                       linestyle = 'dashed',
+                      label = 'Depositional age',
                       zorder = 2)
 
             detrital_age_heights = ages_df['height'][(ages_df['section']==section) & (ages_df['Exclude?'] == False) & (ages_df['intermediate detrital?'] == True)]
@@ -135,6 +141,7 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
                       xl[1],
                       color = cs[section],
                       linestyle = 'dotted',
+                      label = 'Detrital age',
                       zorder = 2)
 
             intrusive_age_heights = ages_df['height'][(ages_df['section']==section) & (ages_df['Exclude?'] == False) & (ages_df['intermediate intrusive?'] == True)]
@@ -143,7 +150,11 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
                       xl[1],
                       color = cs[section],
                       linestyle = 'dashdot',
+                      label = 'Intrusive age',
                       zorder = 2)
+
+            if legend:
+                ax.legend()
 
 
         x_range = xl[1] - xl[0]
@@ -174,7 +185,7 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
         ax.set_ylabel('Height (m)', fontsize = fs)
 
         if proxy == 'd13c':
-            ax.set_xlabel(r'$\delta^{13}$C$_{\mathrm{carb}} (‰)$', fontsize = 12)
+            ax.set_xlabel(r'$\delta^{13}$C$_{\mathrm{carb}} (‰)$', fontsize = fs)
         else:
             ax.set_xlabel(proxy, fontsize = fs)
 
@@ -373,22 +384,6 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
 
                     plotted_excluded = True
 
-                if 'interp_sample_df' in kwargs:
-                    interp_sample_df = kwargs['interp_sample_df']
-                    if section == sections[0]:
-                        interp_label = 'Interpolated'
-                    else:
-                        interp_label = '_nolegend'
-                    interp_sample_df = interp_sample_df[interp_sample_df['interp']=='y']
-                    interp_section_df = interp_sample_df[interp_sample_df['section']==section]
-                    ax.scatter(interp_section_df[proxy],
-                           interp_section_df['mle'],
-                           s = marker_size,
-                           color = cs[section],
-                           label = interp_label,
-                           marker = 'x',
-                           zorder = 5)
-
             if horizontal:
                 ax.scatter(max_like[proxy_idx],
                            section_df[proxy][proxy_idx],
@@ -417,22 +412,6 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                            zorder = 4)
 
                     plotted_excluded = True
-
-                if 'interp_sample_df' in kwargs:
-                    interp_sample_df = kwargs['interp_sample_df']
-                    if section == sections[0]:
-                        interp_label = 'Interpolated'
-                    else:
-                        interp_label = '_nolegend'
-                    interp_sample_df = interp_sample_df[interp_sample_df['interp']=='y']
-                    interp_section_df = interp_sample_df[interp_sample_df['section']==section]
-                    ax.scatter(interp_section_df['mle'],
-                           interp_section_df[proxy],
-                           s = marker_size,
-                           color = cs[section],
-                           label = interp_label,
-                           marker = 'x',
-                           zorder = 5)
 
         min_ages = np.append(min_ages, np.min(np.mean(sec_ages,axis = 1)))
 
@@ -573,7 +552,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
         else:
             ax.set_xlabel(proxy, fontsize = fs)
 
-        ax.set_ylim([np.min(min_ages), np.max(max_ages)])
+        ax.set_ylim([np.min(min_ages) - 1, np.max(max_ages) + 1])
         ax.invert_yaxis()
 
     if horizontal:
@@ -794,14 +773,14 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
         ax.set_ylabel('Age (Ma)', fontsize = fs)
         ax.set_xlabel(proxy, fontsize = fs)
 
-        ax.set_ylim([np.min(min_ages), np.max(max_ages)])
+        ax.set_ylim([np.min(min_ages) - 1, np.max(max_ages) + 1])
         ax.invert_yaxis()
 
     if horizontal:
         ax.set_xlabel('Age (Ma)', fontsize = fs)
         ax.set_ylabel(proxy, fontsize = fs)
 
-        ax.set_xlim([np.min(min_ages), np.max(max_ages)])
+        ax.set_xlim([np.min(min_ages) - 1, np.max(max_ages) + 1])
         ax.invert_xaxis()
 
     ax.tick_params(bottom = True, top = True, left = True, right = True, direction = 'in', labelsize = fs, width = 1.5)
@@ -1184,7 +1163,7 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
 
             if plot_constraints:
                 section_ages_df = ages_df[(ages_df['section']==section) & (~ages_df['Exclude?'])]
-                for h in section_ages_df['height'].ravel():
+                for h in section_ages_df['height']:
                     ax.axhline(h, color = cs[section], linestyle = 'dashed', zorder = -1)
 
             if proxy == 'd13c':
@@ -1196,27 +1175,7 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
 
         elif yax == 'age':
 
-            sec_ages = az.extract(full_trace.posterior)[str(section)+'_ages'].values
-
-            max_like = np.zeros(sec_ages.shape[0])
-            for i in np.arange(sec_ages.shape[0]):
-                sample_ages = sec_ages[i,:]
-                dx = np.linspace(np.min(sample_ages), np.max(sample_ages), 1000)
-                max_like[i] = dx[np.argmax(gaussian_kde(sample_ages, bw_method = 1)(dx))]
-
-            ax.scatter(section_df[proxy].values[proxy_idx],
-                        max_like[proxy_idx],
-                        color = cs[section],
-                        edgecolor = 'k',
-                       zorder = 3)
-
-            ax.scatter(section_df[proxy].values[excluded_idx],
-                        max_like[excluded_idx],
-                        color = 'none',
-                        edgecolor = cs[section],
-                       zorder = 4)
-
-            # plot posterior d13C signal
+            # plot posterior proxy signal
             hi = np.percentile(proxy_pred, 97.5, axis=1).flatten()
             lo = np.percentile(proxy_pred, 2.5, axis=1).flatten()
 
@@ -1250,9 +1209,30 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
                     label = 'Most likely',
                     zorder = 2)
 
+            sec_ages = az.extract(full_trace.posterior)[str(section)+'_ages'].values
+
+            max_like_samples = np.zeros(sec_ages.shape[0])
+            for i in np.arange(sec_ages.shape[0]):
+                sample_ages = sec_ages[i,:]
+                dx = np.linspace(np.min(sample_ages), np.max(sample_ages), 1000)
+                max_like_samples[i] = dx[np.argmax(gaussian_kde(sample_ages, bw_method = 1)(dx))]
+
+            ax.scatter(section_df[proxy].values[proxy_idx],
+                        max_like_samples[proxy_idx],
+                        color = cs[section],
+                        edgecolor = 'k',
+                       zorder = 3)
+
+            ax.scatter(section_df[proxy].values[excluded_idx],
+                        max_like_samples[excluded_idx],
+                        color = 'none',
+                        edgecolor = cs[section],
+                       zorder = 4)
+
+
             if plot_constraints:
                 section_ages_df = ages_df[(ages_df['section']==section)  & (~ages_df['Exclude?'])]
-                for age in section_ages_df['age'].ravel():
+                for age in section_ages_df['age']:
                     ax.axhline(age, color = cs[section], linestyle = 'dashed', zorder = -1)
 
             ax.invert_yaxis()
@@ -1752,7 +1732,6 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
                         sns.kdeplot(prior_offset_dist,
                                 fill = False,
                                 ax = ax[n_rows - 1],
-                                edgecolor='none',
                                 color = pal[j],
                                 alpha = 0.3,
                                 label = var + ' prior',
@@ -2486,6 +2465,7 @@ def age_constraints(full_trace, section, cmap = 'viridis', **kwargs):
     prior_vals = az.extract(full_trace.prior)[str(section)+'_radiometric_age'].values
 
     # if only 1 age constraint (should only occur if one the min or max age is shared), reshape for plotting
+    # (this should actually never happen -- even if shared, the age constraints end up in the section_radiometric_age RV in the model)
     if vals.ndim == 1:
             vals = np.reshape(vals, (1, len(vals)))
 
