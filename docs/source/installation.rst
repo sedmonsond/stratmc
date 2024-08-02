@@ -24,7 +24,7 @@ PIP
 
 .. code-block:: bash
 
-  pip install stratmc
+  pip install stratmc --pre
 
 Latest (*unstable*)
 ####################
