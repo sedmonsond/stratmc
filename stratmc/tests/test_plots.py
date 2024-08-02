@@ -1,6 +1,8 @@
 import warnings
 from unittest.mock import patch
 
+import numpy as np
+
 from stratmc.config import PROJECT_ROOT
 from stratmc.data import load_data, load_trace
 from stratmc.inference import extend_age_model, interpolate_proxy
