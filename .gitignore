@@ -17,10 +17,7 @@ docs/source/make.bat
 *.zip
 stratmc/examples/example_ages_df.pkl
 stratmc/examples/example_ages_df_limiting_ages.pkl
-stratmc/examples/example_docs_limiting_ages_trace.nc
-stratmc/examples/example_docs_trace.nc
+stratmc/examples/example_docs_limiting_ages_trace_full.nc
+stratmc/examples/example_docs_trace_full.nc
 stratmc/examples/example_docs_trace_convergence.nc
 stratmc/examples/example_docs_trace_data_density.nc
-stratmc/examples/example_sample_df.pkl
-stratmc/examples/example_sample_df_d18o.pkl
-stratmc/examples/example_sample_df_limiting_ages.pkl
