@@ -583,9 +583,6 @@ def map_ages_to_section(full_trace, sample_df, ages_df, include_radiometric_ages
     """
     Helper function for :py:meth:`section_proxy_signal() <stratmc.plotting.section_proxy_signal>` in :py:mod:`stratmc.plotting`. Maps the ``ages`` array passed to  :py:meth:`get_trace() <stratmc.inference.get_trace>` to height in each section using the most likely posterior age models.
 
-    .. todo::
-        reconsider how interpolation works -- more computationally expensive, but should probably 1) calculate the interpolated age at each section height, then 2) calculate the interpolated proxy value at that age -- all for each draw. then we have a distribution of proxy values for each height, which we can plot
-
     Parameters
     ----------
     full_trace: arviz.InferenceData

@@ -29,7 +29,6 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
 
     .. plot::
 
-       from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object
        from stratmc.plotting import proxy_strat
 
@@ -206,7 +205,6 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
 
     .. plot::
 
-       from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import proxy_inference
 
@@ -582,7 +580,6 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
 
     .. plot::
 
-        from stratmc.config import PROJECT_ROOT
         from stratmc.data import load_object, load_trace
         from stratmc.inference import extend_age_model, interpolate_proxy
         from stratmc.plotting import interpolated_proxy_inference
@@ -797,7 +794,6 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
 
     .. plot::
 
-       from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import age_height_model
 
@@ -979,12 +975,8 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
     """
     Map the posterior proxy signal back to height in each section (using its most likely posterior age model), and plot alongside the proxy observations (plotted by most likely posterior age).
 
-    .. todo::
-        update how interpolation works (see note on map_ages_to_section)
-
     .. plot::
 
-       from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import section_proxy_signal
 
@@ -1270,7 +1262,6 @@ def covariance_hyperparameters(full_trace, figsize = (4, 3.5), **kwargs):
 
     .. plot::
 
-       from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_trace
        from stratmc.plotting import covariance_hyperparameters
 
@@ -1375,7 +1366,6 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
 
     .. plot::
 
-       from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import section_summary
 
@@ -1761,7 +1751,6 @@ def noise_summary(full_trace, **kwargs):
 
     .. plot::
 
-       from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import noise_summary
 
@@ -1880,7 +1869,6 @@ def offset_summary(full_trace, **kwargs):
 
     .. plot::
 
-       from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import offset_summary
 
@@ -1996,12 +1984,8 @@ def section_proxy_residuals(full_trace, sample_df, legend = True, cmap = 'Spectr
 
     Plot the residuals between the observed proxy values for each section and the inferred proxy signal (using the posterior section age models to map the signal back to height in section). Use to check for stratigraphic trends in the residuals, which may give insight to the processes that cause noisy sections to deviate from the inferred common signal. If multiple proxies were included in the inference, pass a ``proxy`` argument.
 
-    .. todo::
-        should this function (optionally) correct for the inferred offset before calulating the residuals? so that residuals just represent noise that cannot be explained as a constant offset
-
     .. plot::
 
-       from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import section_proxy_residuals
 
@@ -2166,7 +2150,6 @@ def sample_ages(full_trace, sample_df, section, plot_excluded_samples = False, c
 
     .. plot::
 
-       from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import sample_ages
 
@@ -2284,7 +2267,6 @@ def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_pr
 
     .. plot::
 
-       from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import sample_ages_per_chain
 
@@ -2428,7 +2410,6 @@ def age_constraints(full_trace, section, cmap = 'viridis', **kwargs):
 
     .. plot::
 
-       from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_trace
        from stratmc.plotting import age_constraints
 
@@ -2512,7 +2493,6 @@ def limiting_age_constraints(full_trace, sample_df, ages_df, section, cmap = 'vi
 
     .. plot::
 
-        from stratmc.config import PROJECT_ROOT
         from stratmc.data import load_object, load_trace
         from stratmc.plotting import limiting_age_constraints
 
@@ -2672,7 +2652,6 @@ def sadler_plot(full_trace, sample_df, ages_df, method = 'density', duration_bin
 
     .. plot::
 
-       from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import sadler_plot
 
@@ -2816,7 +2795,6 @@ def accumulation_rate_stratigraphy(full_trace, sample_df, ages_df, age_bins = 50
 
     .. plot::
 
-       from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import accumulation_rate_stratigraphy
 
@@ -2953,7 +2931,6 @@ def section_age_range(full_trace, sample_df, ages_df, lower_age, upper_age, lege
 
     .. plot::
 
-       from stratmc.config import PROJECT_ROOT
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import section_age_range
 
@@ -3082,13 +3059,12 @@ def proxy_data_gaps(full_trace, time_grid = None, yaxis = 'percentage', figsize 
 
     .. plot::
 
-        from stratmc.config import PROJECT_ROOT
         from stratmc.data import load_trace
         from stratmc.plotting import proxy_data_gaps
 
-        full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace_data_density')
+        full_trace = load_trace('examples/example_docs_trace')
 
-        proxy_data_gaps(full_trace)
+        proxy_data_gaps(full_trace, time_grid = full_trace.X_new.X_new.values[::2])
 
         plt.show()
 
@@ -3147,13 +3123,12 @@ def proxy_data_density(full_trace, time_grid = None, figsize = (6, 3.5), **kwarg
 
     .. plot::
 
-        from stratmc.config import PROJECT_ROOT
         from stratmc.data import load_trace
         from stratmc.plotting import proxy_data_density
 
-        full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace_data_density')
+        full_trace = load_trace('examples/example_docs_trace_data')
 
-        proxy_data_density(full_trace)
+        proxy_data_density(full_trace, time_grid = full_trace.X_new.X_new.values[::2])
 
         plt.show()
 
@@ -3203,11 +3178,10 @@ def lengthscale_traceplot(full_trace, chains = None, legend = True, figsize = (5
 
     .. plot::
 
-        from stratmc.config import PROJECT_ROOT
         from stratmc.data import load_trace
         from stratmc.plotting import lengthscale_traceplot
 
-        full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace_convergence')
+        full_trace = load_trace('examples/example_docs_trace')
 
         lengthscale_traceplot(full_trace, chains = [0, 1, 2, 3])
 
@@ -3295,11 +3269,10 @@ def lengthscale_stability(full_trace, figsize = (5, 3.5), **kwargs):
 
     .. plot::
 
-        from stratmc.config import PROJECT_ROOT
         from stratmc.data import load_trace
         from stratmc.plotting import lengthscale_stability
 
-        full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace_convergence')
+        full_trace = load_trace('examples/example_docs_trace')
 
         lengthscale_stability(full_trace)
 
@@ -3365,13 +3338,12 @@ def proxy_signal_stability(full_trace, figsize = (5, 3.5), **kwargs):
 
     .. plot::
 
-        from stratmc.config import PROJECT_ROOT
         from stratmc.data import load_trace
         from stratmc.plotting import proxy_signal_stability
 
-        full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace_convergence')
+        full_trace = load_trace('examples/example_docs_trace')
 
-        proxy_signal_stability(full_trace, proxy = 'd13c')
+        proxy_signal_stability(full_trace)
 
         plt.show()
 
