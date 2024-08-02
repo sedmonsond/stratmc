@@ -33,8 +33,8 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
        from stratmc.data import load_object
        from stratmc.plotting import proxy_strat
 
-       example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
+       example_sample_path = 'examples/example_sample_df'
+       example_ages_path = 'examples/example_ages_df'
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
@@ -210,9 +210,9 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import proxy_inference
 
-       full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
-       example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
+       full_trace = load_trace('examples/example_docs_trace')
+       example_sample_path = 'examples/example_sample_df'
+       example_ages_path = 'examples/example_ages_df'
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
@@ -587,10 +587,10 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
         from stratmc.inference import extend_age_model, interpolate_proxy
         from stratmc.plotting import interpolated_proxy_inference
 
-        full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
-        example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-        example_sample_path_d18o = str(PROJECT_ROOT) + '/examples/example_sample_df_d18o'
-        example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
+        full_trace = load_trace('examples/example_docs_trace')
+        example_sample_path = 'examples/example_sample_df'
+        example_sample_path_d18o = 'examples/example_sample_df_d18o'
+        example_ages_path = 'examples/example_ages_df'
         sample_df = load_object(example_sample_path)
         sample_df_d18o = load_object(example_sample_path_d18o)
         ages_df = load_object(example_ages_path)
@@ -801,9 +801,9 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import age_height_model
 
-       full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
-       example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
+       full_trace = load_trace('examples/example_docs_trace')
+       example_sample_path = 'examples/example_sample_df'
+       example_ages_path = 'examples/example_ages_df'
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
@@ -988,9 +988,9 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import section_proxy_signal
 
-       full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
-       example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
+       full_trace = load_trace('examples/example_docs_trace')
+       example_sample_path = 'examples/example_sample_df'
+       example_ages_path = 'examples/example_ages_df'
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
@@ -1274,7 +1274,7 @@ def covariance_hyperparameters(full_trace, figsize = (4, 3.5), **kwargs):
        from stratmc.data import load_trace
        from stratmc.plotting import covariance_hyperparameters
 
-       full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
+       full_trace = load_trace('examples/example_docs_trace')
 
        covariance_hyperparameters(full_trace)
 
@@ -1379,9 +1379,9 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import section_summary
 
-       full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
-       example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
+       full_trace = load_trace('examples/example_docs_trace')
+       example_sample_path = 'examples/example_sample_df'
+       example_ages_path = 'examples/example_ages_df'
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
@@ -1765,8 +1765,8 @@ def noise_summary(full_trace, **kwargs):
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import noise_summary
 
-       full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
-       example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
+       full_trace = load_trace('examples/example_docs_trace')
+       example_sample_path = 'examples/example_sample_df'
        sample_df = load_object(example_sample_path)
        sections = np.unique(sample_df['section'].values)
 
@@ -1884,8 +1884,8 @@ def offset_summary(full_trace, **kwargs):
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import offset_summary
 
-       full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
-       example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
+       full_trace = load_trace('examples/example_docs_trace')
+       example_sample_path = 'examples/example_sample_df'
        sample_df = load_object(example_sample_path)
 
        offset_summary(full_trace)
@@ -2005,8 +2005,8 @@ def section_proxy_residuals(full_trace, sample_df, legend = True, cmap = 'Spectr
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import section_proxy_residuals
 
-       full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
-       example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
+       full_trace = load_trace('examples/example_docs_trace')
+       example_sample_path = 'examples/example_sample_df'
        sample_df = load_object(example_sample_path)
 
        section_proxy_residuals(full_trace, sample_df)
@@ -2170,8 +2170,8 @@ def sample_ages(full_trace, sample_df, section, plot_excluded_samples = False, c
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import sample_ages
 
-       full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
-       example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
+       full_trace = load_trace('examples/example_docs_trace')
+       example_sample_path = 'examples/example_sample_df'
        sample_df = load_object(example_sample_path)
        section = '1'
 
@@ -2288,8 +2288,8 @@ def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_pr
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import sample_ages_per_chain
 
-       full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
-       example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
+       full_trace = load_trace('examples/example_docs_trace')
+       example_sample_path = 'examples/example_sample_df'
        sample_df = load_object(example_sample_path)
        section = '1'
 
@@ -2432,7 +2432,7 @@ def age_constraints(full_trace, section, cmap = 'viridis', **kwargs):
        from stratmc.data import load_trace
        from stratmc.plotting import age_constraints
 
-       full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
+       full_trace = load_trace('examples/example_docs_trace')
        section = '1'
 
        age_constraints(full_trace, section)
@@ -2516,9 +2516,9 @@ def limiting_age_constraints(full_trace, sample_df, ages_df, section, cmap = 'vi
         from stratmc.data import load_object, load_trace
         from stratmc.plotting import limiting_age_constraints
 
-        full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_limiting_ages_trace')
-        example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df_limiting_ages'
-        example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df_limiting_ages'
+        full_trace = load_trace('examples/example_docs_limiting_ages_trace')
+        example_sample_path = 'examples/example_sample_df_limiting_ages'
+        example_ages_path = 'examples/example_ages_df_limiting_ages'
         sample_df = load_object(example_sample_path)
         ages_df = load_object(example_ages_path)
         section = '1'
@@ -2676,9 +2676,9 @@ def sadler_plot(full_trace, sample_df, ages_df, method = 'density', duration_bin
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import sadler_plot
 
-       full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
-       example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
+       full_trace = load_trace('examples/example_docs_trace')
+       example_sample_path = 'examples/example_sample_df'
+       example_ages_path = 'examples/example_ages_df'
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
@@ -2820,9 +2820,9 @@ def accumulation_rate_stratigraphy(full_trace, sample_df, ages_df, age_bins = 50
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import accumulation_rate_stratigraphy
 
-       full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
-       example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
+       full_trace = load_trace('examples/example_docs_trace')
+       example_sample_path = 'examples/example_sample_df'
+       example_ages_path = 'examples/example_ages_df'
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
@@ -2957,9 +2957,9 @@ def section_age_range(full_trace, sample_df, ages_df, lower_age, upper_age, lege
        from stratmc.data import load_object, load_trace
        from stratmc.plotting import section_age_range
 
-       full_trace = load_trace(str(PROJECT_ROOT) + '/examples/example_docs_trace')
-       example_sample_path = str(PROJECT_ROOT) + '/examples/example_sample_df'
-       example_ages_path = str(PROJECT_ROOT) + '/examples/example_ages_df'
+       full_trace = load_trace('examples/example_docs_trace')
+       example_sample_path = 'examples/example_sample_df'
+       example_ages_path = 'examples/example_ages_df'
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
