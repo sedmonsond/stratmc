@@ -11,9 +11,9 @@ notebooks/GMD_paper/traces_thinned_no_ll/*
 
 
 .DS_Store
-_build/*
-Makefile
-make.bat
+docs/source/_build/*
+docs/source/Makefile
+docs/source/make.bat
 *.zip
 stratmc/examples/example_ages_df.pkl
 stratmc/examples/example_ages_df_limiting_ages.pkl

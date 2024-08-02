@@ -3,7 +3,7 @@
 Package Overview
 ----------------
 
-.. figure:: stratmc.png
+.. figure:: logos/stratmc.png
    :width: 60 %
    :alt: StratMC logo
    :align: center
@@ -12,14 +12,14 @@ StratMC is a statistical framework for reconstructing past Earth system change u
 
 Using geochemical proxy observations and geological age constraints from multiple stratigraphic sections, StratMC simultaneously infers the global proxy signal recorded by all sections and builds an age model for each section. For a complete description of the model, see Edmonsond & Dyer (submitted to *Geoscientific Model Development*).
 
-The StratMC Python package can be :doc:`installed <docs/installation>` from `PyPI <https://pypi.org>`_ using the `pip package installer <https://packaging.python.org/en/latest/guides/tool-recommendations/>`_. The :doc:`API Reference <docs/api>` catalogs built-in functions for processing data, running the inference model, and plotting the results. For example notebooks, refer to the online `package documentation <https://sedmonsond.github.io/stratmc/>`_ (https://sedmonsond.github.io/stratmc/).
+The StratMC Python package can be :doc:`installed <installation>` from `PyPI <https://pypi.org>`_ using the `pip package installer <https://packaging.python.org/en/latest/guides/tool-recommendations/>`_. The :doc:`API Reference <api>` catalogs built-in functions for processing data, running the inference model, and plotting the results. For example notebooks, refer to the online `package documentation <https://sedmonsond.github.io/stratmc/>`_ (https://sedmonsond.github.io/stratmc/).
 
 
 .. toctree::
    :maxdepth: 2
    :hidden:
 
-   Installation <docs/installation>
-   Quick start guide <docs/quickstart>
-   Data table format <docs/datatable>
-   API Reference<docs/api>
+   Installation <installation>
+   Quick start guide <quickstart>
+   Data table format <datatable>
+   API Reference<api>

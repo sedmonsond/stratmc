@@ -1,6 +1,6 @@
 .. title:: StratMC Documentation
 
-.. figure:: stratmc.png
+.. figure:: logos/stratmc.png
    :width: 60 %
    :alt: StratMC logo
    :align: center
@@ -13,22 +13,22 @@ StratMC is a statistical framework for reconstructing past Earth system change u
 
 Using geochemical proxy observations and geological age constraints from multiple stratigraphic sections, StratMC simultaneously infers the global proxy signal recorded by all sections and builds an age model for each section. For a complete description of the model, see Edmonsond & Dyer (submitted to *Geoscientific Model Development*).
 
-The StratMC Python package can be :doc:`installed <docs/installation>` from `PyPI <https://pypi.org>`_ using the `pip package installer <https://packaging.python.org/en/latest/guides/tool-recommendations/>`_. The :doc:`API reference <docs/api>` catalogs built-in functions for processing data, running the inference model, and plotting the results. For a full list of resources, visit the :doc:`User Guide <docs/userguide>`.
+The StratMC Python package can be :doc:`installed <installation>` from `PyPI <https://pypi.org>`_ using the `pip package installer <https://packaging.python.org/en/latest/guides/tool-recommendations/>`_. The :doc:`API reference <api>` catalogs built-in functions for processing data, running the inference model, and plotting the results. For a full list of resources, visit the :doc:`User Guide <userguide>`.
 
 Getting Started
 ----------------
-* :doc:`Installation <docs/installation>`
-* :doc:`Quick start guide <docs/quickstart>`
-* :doc:`Example notebooks <docs/examples>`
-* :doc:`API reference <docs/api>`
-* :doc:`Data table formatting <docs/datatable>`
+* :doc:`Installation <installation>`
+* :doc:`Quick start guide <quickstart>`
+* :doc:`Example notebooks <examples>`
+* :doc:`API reference <api>`
+* :doc:`Data table formatting <datatable>`
 
 
 .. toctree::
     :maxdepth: 1
     :hidden:
 
-    User Guide <docs/userguide>
-    API Reference<docs/api>
-    Examples<docs/examples>
-    Installation<docs/installation>
+    User Guide <userguide>
+    API Reference<api>
+    Examples<examples>
+    Installation<installation>

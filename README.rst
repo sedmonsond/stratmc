@@ -1,5 +1,5 @@
 
-.. image:: stratmc.svg
+.. image:: docs/source/logos/stratmc.png
     :height: 100px
     :alt: StratMC logo
     :align: center
