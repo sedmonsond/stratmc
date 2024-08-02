@@ -73,7 +73,7 @@ jobs:
       - name: Install stratmc
         run: |
           conda activate stratmc-dev
-          python setup.py install
+          pip install -e stratmc
 
       - name: Run pytest
         shell: bash -l {0}
