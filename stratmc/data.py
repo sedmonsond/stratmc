@@ -408,6 +408,35 @@ def drop_chains(full_trace, chains):
 
     return full_trace_clean
 
+def thin_trace(full_trace, drop_freq = 2):
+    """
+    Remove a subset of draws from a :class:`arviz.InferenceData` object. Only applies to groups associated with the posterior (the prior draws will not be affected).
+
+    Parameters
+    ----------
+    full_trace: arviz.InferenceData
+        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
+
+    drop_freq: int
+        Frequency of draw removal. For example, 2 will remove every other draw, while 4 will remove every fourth draw.
+
+    Returns
+    -------
+    thinned_trace: arviz.InferenceData
+        Thinned version of ``full_trace``.
+
+    """
+    all_draws = list(full_trace.posterior.draw.values)
+
+    drop_draws = list(full_trace.posterior.draw.values)[::drop_freq]
+
+    for draw in drop_draws:
+        all_draws.remove(draw)
+
+    thinned_trace = full_trace.sel(groups = ["posterior", "posterior_predictive", "sample_stats", "log_likelihood"], draw = all_draws, inplace = False)
+
+    return thinned_trace
+
 
 def save_trace(trace, path):
     """

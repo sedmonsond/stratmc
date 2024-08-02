@@ -4,7 +4,30 @@ from unittest.mock import patch
 from stratmc.config import PROJECT_ROOT
 from stratmc.data import load_data, load_trace
 from stratmc.inference import extend_age_model, interpolate_proxy
-from stratmc.plotting import *
+from stratmc.plotting import (
+    accumulation_rate_stratigraphy,
+    age_constraints,
+    age_height_model,
+    covariance_hyperparameters,
+    interpolated_proxy_inference,
+    lengthscale_stability,
+    lengthscale_traceplot,
+    limiting_age_constraints,
+    noise_summary,
+    offset_summary,
+    proxy_data_density,
+    proxy_data_gaps,
+    proxy_inference,
+    proxy_signal_stability,
+    proxy_strat,
+    sadler_plot,
+    sample_ages,
+    sample_ages_per_chain,
+    section_age_range,
+    section_proxy_residuals,
+    section_proxy_signal,
+    section_summary,
+)
 
 warnings.filterwarnings("ignore", ".*The group X_new is not defined in the InferenceData scheme.*")
 warnings.filterwarnings("ignore", ".*X_new group is not defined in the InferenceData scheme.*")

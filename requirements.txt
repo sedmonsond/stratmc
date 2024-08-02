@@ -6,8 +6,6 @@ matplotlib
 netCDF4
 numpyro
 pymc >= 5.16.2
-pytest
-pytest-cov
 scikit-learn
 scipy
 seaborn

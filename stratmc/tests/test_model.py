@@ -1,5 +1,3 @@
-import warnings
-
 import numpy as np
 
 from stratmc.config import PROJECT_ROOT

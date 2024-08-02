@@ -223,8 +223,8 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
             noise_type[proxy] = temp
 
     for proxy in proxies:
-        if noise_type[proxy] not in ['section', 'groups', 'global']:
-            sys.exit(f"noise type {noise_type[proxy]} not implemented. Choose from 'section', 'groups', or 'global'.")
+        if noise_type[proxy] not in ['section', 'groups']:
+            sys.exit(f"noise type {noise_type[proxy]} not implemented. Choose from 'section' or 'groups'.")
 
     # also convert noise prior parameters to dictionaries
     if type(noise_beta) != dict:
@@ -1007,7 +1007,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
             offset = {}
             offset_tensor = {}
 
-        if ('section' in noise_types) or ('global' in noise_types) or  ('groups' in noise_types):
+        if ('section' in noise_types) or  ('groups' in noise_types):
             noise = {}
             noise_tensor = {}
 
@@ -1061,19 +1061,6 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                             noise_tensor[proxy] = at.set_subtensor(noise_tensor[proxy][count], noise_all[proxy][sub][i])
                             count +=1
                     noise[proxy] = pm.Deterministic('noise_' + proxy, noise_tensor[proxy])
-
-                # global noise
-                elif noise_type[proxy] == 'global':
-                    if noise_prior[proxy] == 'HalfCauchy':
-                        global_noise = pm.HalfCauchy('noise_' + proxy, beta = noise_beta[proxy], shape = 1)
-
-                    elif noise_prior[proxy] == 'HalfNormal':
-                        global_noise = pm.HalfNormal('noise_' + proxy, sigma = noise_sigma[proxy], shape = 1)
-
-                    elif noise_prior[proxy] == 'HalfStudentT':
-                        global_noise = pm.HalfStudentT('noise_' + proxy, nu = noise_nu[proxy], sigma = noise_sigma[proxy], shape = 1)
-
-                    noise[proxy] = ([1] * len(proxy_all[proxy][proxy_idx[proxy]])) * global_noise
 
             if not approximate:
                 f = gp[proxy].prior('f_' + proxy, X=ages[proxy_idx[proxy],None],
@@ -1137,9 +1124,9 @@ def superposition(age_dist, age_dist_names, model, section_age_df, section):
     """
 
     for i in np.arange(1, age_dist.shape.eval()[0]):
-        slope = 10
+        slope = 100
         pm.Potential("superposition_"+str(section)+'_'+str(i),
-        shared(-100) * pm.math.invlogit(slope * ((age_dist[i]) - age_dist[i-1])))
+        shared(-10000) * pm.math.invlogit(slope * ((age_dist[i]) - age_dist[i-1])))
 
     for i in np.arange(0, len(section_age_df['height'])-1).tolist():
         lower_label = age_dist_names[i]
@@ -1163,7 +1150,7 @@ def superposition(age_dist, age_dist_names, model, section_age_df, section):
             model.set_initval(rv_var_upper, upper_age_initval)
         else:
             model.set_initval(rv_var_base, base_age_initval)
-            model.set_initval(rv_var_upper, base_age_initval - shared(1)) # was 0.1 - might help to start more in order?
+            model.set_initval(rv_var_upper, base_age_initval - shared(0.2))
 
 def intermediate_detrital_potential(detrital_age_dist, detrital_age_dist_name, maximum_age_dist_name, minimum_age_dist_name, sample_age_dist_sorted, sample_age_dist, sample_age_dist_name, sample_heights, detrital_height, model, section, interval, sf1_name, sf2_name, shared_radiometric_age_dist = True):
     """
@@ -1220,8 +1207,8 @@ def intermediate_detrital_potential(detrital_age_dist, detrital_age_dist_name, m
 
     overlying_sample_idx = np.where(sample_heights >= detrital_height)[0]
 
-    slope = 10
-    pm.Potential('detrital_max_'  + str(section) + '_' + str(detrital_age_dist_name), shared(-100) * pm.math.invlogit(slope * ((sample_age_dist_sorted[overlying_sample_idx]) - detrital_age_dist)))
+    slope = 100
+    pm.Potential('detrital_max_'  + str(section) + '_' + str(detrital_age_dist_name), shared(-10000) * pm.math.invlogit(slope * ((sample_age_dist_sorted[overlying_sample_idx]) - detrital_age_dist)))
 
     # get initial values for sample ages
     rv_var_samples = model[sample_age_dist_name]
@@ -1350,8 +1337,8 @@ def intermediate_intrusive_potential(intrusive_age_dist, intrusive_age_dist_name
 
     underlying_sample_idx = np.where(sample_heights <= intrusive_height)[0]
 
-    slope = 10
-    pm.Potential('intrusive_min_'  + str(section) + '_' + str(intrusive_age_dist_name), shared(-100) * pm.math.invlogit(slope * ((intrusive_age_dist) - sample_age_dist_sorted[underlying_sample_idx])))
+    slope = 100
+    pm.Potential('intrusive_min_'  + str(section) + '_' + str(intrusive_age_dist_name), shared(-10000) * pm.math.invlogit(slope * ((intrusive_age_dist) - sample_age_dist_sorted[underlying_sample_idx])))
 
     # get initial values for sample ages
     rv_var_samples = model[sample_age_dist_name]

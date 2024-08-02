@@ -33,6 +33,7 @@ dependencies:
 # - sphinx>=4.5
 # - sphinx-copybutton
 # - sphinx-design
+# - sphinx_inline_tabs
 # - sphinx-notfound-page
 # - sphinxext-rediraffe
 # - sphinx-remove-toctrees
