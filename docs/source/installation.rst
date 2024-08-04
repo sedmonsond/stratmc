@@ -17,7 +17,7 @@ Before installing StratMC, activate the new environment and install ``pip``:
   conda activate stratmc_env
   conda install pip
 
-You can then install StratMC and its dependencies using ``pip``, or by compiling directly from the GitHub repository:
+You can then install StratMC and its dependencies using ``pip`` (note that the ``--pre`` flag is required to install the current version, which is a pre-release), or by compiling directly from the GitHub repository:
 
 PIP
 #####

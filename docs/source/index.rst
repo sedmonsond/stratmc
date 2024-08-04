@@ -1,6 +1,6 @@
 .. title:: StratMC Documentation
 
-.. figure:: logos/stratmc.png
+.. figure:: logos/stratmc.svg
    :width: 60 %
    :alt: StratMC logo
    :align: center
