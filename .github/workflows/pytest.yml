@@ -41,19 +41,27 @@ jobs:
         shell: bash -l {0}
     steps:
       - uses: actions/checkout@v4
+      - name: Cache conda
+        uses: actions/cache@v4
+        env:
+          # Increase this value to reset cache if environment-dev.yml has not changed
+          CACHE_NUMBER: 0
+        with:
+          path: ~/conda_pkgs_dir
+          key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
+            hashFiles('conda-envs/environment-dev.yml') }}
+
       - uses: conda-incubator/setup-miniconda@v3
         with:
           miniforge-version: "latest"
           activate-environment: stratmc-dev
-          channels: conda-forge,defaults
           channel-priority: strict
+          environment-file: conda-envs/environment-dev.yml
           use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
-           # environment-file: conda-envs/environment-dev.yml
 
       - name: Install stratmc
         run: |
           conda activate stratmc-dev
-          conda install pip
           python -m pip install -e .[test]
 
       - name: Run pytest
