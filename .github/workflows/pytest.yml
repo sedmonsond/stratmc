@@ -34,8 +34,8 @@ jobs:
         # python-version: ["3.12"]
       fail-fast: false
     runs-on: ${{ matrix.os }}
-    env:
-      PYTENSOR_FLAGS: floatX=${{ matrix.floatx }},gcc__cxxflags='-march=native'
+    # env:
+    #   PYTENSOR_FLAGS: floatX=${{ matrix.floatx }},gcc__cxxflags='-march=native'
     defaults:
       run:
         shell: bash -l {0}
