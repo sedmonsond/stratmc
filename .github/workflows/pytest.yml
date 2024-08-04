@@ -55,7 +55,6 @@ jobs:
           conda activate stratmc-dev
           conda install pip
           python -m pip install -e .[test]
-
           if [ "$RUNNER_OS" == "Windows" ]; then
              python -m pip install msvc-runtime
 
