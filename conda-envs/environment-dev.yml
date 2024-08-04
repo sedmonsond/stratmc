@@ -7,22 +7,22 @@ dependencies:
 - python>3.9
 # - "libblas=*=*accelerate"
 - pip
-# - pip:
-#   - blackjax
-#   - fastprogress
-#   - ipywidgets
-#   - jax
-#   - matplotlib
-#   - netCDF4
-#   - numpyro
-#   - pymc>=5.16.2
-#   - pytest
-#   - pytest-cov
-#   - scikit-learn
-#   - scipy
-#   - seaborn
-#   - tqdm
-#   - xarray
+- pip:
+  - blackjax
+  - fastprogress
+  - ipywidgets
+  - jax
+  - matplotlib
+  - netCDF4
+  - numpyro
+  - pymc>=5.16.2
+  - pytest
+  - pytest-cov
+  - scikit-learn
+  - scipy
+  - seaborn
+  - tqdm
+  - xarray
 # # extra packages for development
 # - ipykernel
 # - jupyter-sphinx
