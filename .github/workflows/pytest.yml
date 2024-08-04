@@ -32,7 +32,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest] # macos-latest
         floatx: [float64]
-        python-version: ["3.11.0"]
+        # python-version: ["3.11.0"]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     # env:
@@ -46,11 +46,11 @@ jobs:
         with:
           miniforge-version: "latest"
           activate-environment: stratmc-dev
-          channels: conda-forge,defaults
+          channels: conda-forge
           channel-priority: strict
-          python-version: ${{matrix.python-version}}
+          # python-version: ${{matrix.python-version}}
           # environment-file: conda-envs/environment-dev.yml
-          # use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
+          use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
 
       - name: Install stratmc
         run: |
@@ -59,7 +59,6 @@ jobs:
           python -m pip install -e .[test]
 
       - name: Run pytest
-        shell: bash -l {0}
         run: |
           conda activate stratmc-dev
           python -m pytest --cov=stratmc --cov-report=xml --cov-report term stratmc/tests/
