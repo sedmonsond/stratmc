@@ -35,8 +35,8 @@ jobs:
         python-version: ["3.11"]
       fail-fast: false
     runs-on: ${{ matrix.os }}
-    env:
-      PYTENSOR_FLAGS: floatX=${{ matrix.floatx }},gcc__cxxflags='-march=native'
+    # env:
+    #   PYTENSOR_FLAGS: floatX=${{ matrix.floatx }},gcc__cxxflags='-march=native'
     defaults:
       run:
         shell: bash -l {0}
@@ -45,10 +45,13 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v3
         with:
           miniforge-version: "latest"
+          miniforge-variant: Mambaforge
           activate-environment: stratmc-dev
           channels: conda-forge,defaults
           channel-priority: strict
           python-version: ${{matrix.python-version}}
+          use-mamba: true
+          mamba-version: "*"
           # environment-file: conda-envs/environment-dev.yml
           # use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
 
