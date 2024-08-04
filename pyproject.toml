@@ -28,7 +28,7 @@ dependencies = [
     "fastprogress",
     "ipywidgets",
     "jax",
-    "matplotlib",
+    "matplotlib<=3.9.0",
     "netCDF4",
     "numpyro",
     "pymc>=5.16.2",
