@@ -1,5 +1,5 @@
 
-.. image:: docs/source/logos/stratmc.svg
+.. image:: https://raw.githubusercontent.com/sedmonsond/stratmc/main/docs/source/logos/stratmc.svg
     :height: 100px
     :alt: StratMC logo
     :align: center
@@ -16,4 +16,4 @@ StratMC is a statistical framework for reconstructing past Earth system change u
 
 Using geochemical proxy observations and geological age constraints from multiple stratigraphic sections, StratMC simultaneously infers the global proxy signal recorded by all sections and builds an age model for each section. For a complete description of the model, see Edmonsond & Dyer (submitted to *Geoscientific Model Development*).
 
-To get started with StratMC, check out the `package documentation <https://sedmonsond.github.io/stratmc/>`_.
+To get started with StratMC, check out the `package documentation <https://stratmc.readthedocs.io/>`_.
