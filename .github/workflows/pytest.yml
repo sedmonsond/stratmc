@@ -56,6 +56,9 @@ jobs:
           conda install pip
           python -m pip install -e .[test]
 
+          if [ "$RUNNER_OS" == "Windows" ]; then
+             python -m pip install msvc-runtime
+
       - name: Run pytest
         shell: bash -l {0}
         run: |
