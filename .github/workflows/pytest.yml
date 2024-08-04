@@ -32,7 +32,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest] # macos-latest
         floatx: [float64]
-        python-version: ["3.12"]
+        python-version: ["3.11.0"]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     # env:
@@ -51,12 +51,6 @@ jobs:
           python-version: ${{matrix.python-version}}
           # environment-file: conda-envs/environment-dev.yml
           # use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
-
-      - name: Install libffi for Windows
-        if: runner.os == 'Windows'
-        run: |
-          conda activate stratmc-dev
-          conda install libffi
 
       - name: Install stratmc
         run: |
