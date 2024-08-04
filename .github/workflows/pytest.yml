@@ -58,6 +58,13 @@ jobs:
           conda install pip
           python -m pip install -e .[test]
 
+      - name: Install libpython and mkl-service for Windows
+        if: runner.os == 'Windows'
+        run: |
+          conda activate stratmc-dev
+          conda install libpython
+          conda install mkl-service>=2.3.0
+
       - name: Run pytest
         run: |
           conda activate stratmc-dev
