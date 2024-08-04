@@ -736,6 +736,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
 
                         intervals.append(interval)
 
+
                         # if there are intermediate detrital ages in the section, check if they're inside the current interval (iterate over constraints)
                         if detrital_interval_df.shape[0] > 0:
                             for i in np.arange(detrital_interval_df.shape[0]):

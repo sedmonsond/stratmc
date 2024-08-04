@@ -17,7 +17,7 @@ from tqdm.notebook import tqdm
 
 numpyro.enable_x64()
 
-os.environ["AESARA_FLAGS"] = "mode=FAST_RUN,device=cpu,floatX=float64"
+os.environ["PYTENSOR_FLAGS"] = "mode=FAST_RUN,device=cpu,floatX=float64"
 
 warnings.filterwarnings("ignore", ".*The group X_new is not defined in the InferenceData scheme.*")
 warnings.filterwarnings("ignore", ".*X_new group is not defined in the InferenceData scheme.*")
