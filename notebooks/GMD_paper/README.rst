@@ -1,1 +1,0 @@
-To run these notebooks, download ``data.zip`` and ``traces.zip`` from  `Zenodo (https://zenodo.org/doi/10.5281/zenodo.13119724) <https://zenodo.org/doi/10.5281/zenodo.13119724`_ , and extract the contents of both archives into this folder. StratMC also must be `installed <https://sedmonsond.github.io/stratmc/docs/installation.html>`_.

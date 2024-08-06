@@ -8,6 +8,7 @@ notebooks/GMD_paper/traces/*
 notebooks/GMD_paper/traces_original/*
 notebooks/GMD_paper/traces_thinned/*
 notebooks/GMD_paper/traces_thinned_no_ll/*
+notebooks_temp/*
 
 
 .DS_Store
