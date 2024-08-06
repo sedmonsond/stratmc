@@ -3,12 +3,13 @@
 .ipynb_checkpoints*
 push_docs.sh
 stratmc/notebooks/*
+deprecated/*
 notebooks/GMD_paper/data/*
 notebooks/GMD_paper/traces/*
 notebooks/GMD_paper/traces_original/*
 notebooks/GMD_paper/traces_thinned/*
 notebooks/GMD_paper/traces_thinned_no_ll/*
-notebooks_temp/*
+notebooks/*
 
 
 .DS_Store
