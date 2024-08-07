@@ -549,7 +549,6 @@ def synthetic_observations_from_prior(age_vector, ages_df, sample_heights = None
     else:
         sections = list(np.unique(ages_df['section']))
 
-
     np.random.seed(seed)
 
     if (len(proxies) == 1) & (type(proxy_std) != dict):
@@ -663,7 +662,7 @@ def synthetic_observations_from_prior(age_vector, ages_df, sample_heights = None
         for proxy in proxies:
             f_pred = gp[proxy].conditional('f_pred_' + proxy, Xnew = age_vector, jitter = jitter)
 
-        prior = pm.sample_prior_predictive(samples = 1, random_seed = seed)
+        prior = pm.sample_prior_predictive(draws = 1, random_seed = seed)
 
     signals = {}
     for proxy in proxies:
@@ -673,7 +672,7 @@ def synthetic_observations_from_prior(age_vector, ages_df, sample_heights = None
 
     sample_df['age'] = 0.0
     for section in sections:
-        sample_df['age'][sample_df['section']==section] = az.extract(prior.prior)[section + '_ages'].values.ravel()
+        sample_df.loc[sample_df['section']==section, 'age'] = az.extract(prior.prior)[section + '_ages'].values.ravel()
 
     return signals, sample_df, prior, model
 
@@ -748,7 +747,7 @@ def synthetic_signal_from_prior(ages, num_signals = 100, ls_dist = 'Wald', ls_mi
         f = gp.prior('f', X=ages[:,None],
                          reparameterize=True)
 
-        prior = pm.sample_prior_predictive(samples = num_signals, random_seed = seed)
+        prior = pm.sample_prior_predictive(draws = num_signals, random_seed = seed)
 
     signals = az.extract(prior.prior)['f'].values
 
