@@ -32,7 +32,7 @@ def make_excursion(time, amplitude, baseline = 0, rising_time = None, rate_offse
         Amplitude of excursion; pass a list or array to generate multiple excursions.
 
     baseline: float, optional
-        Baseline proxy value; defaults to 0.
+        Baseline proxy value. Defaults to 0.
 
     rising_time: float, list(float), or numpy.array(float), optional
         Fraction of excursion duration spent on the rising limb (linear increase/decrease toward peak).
@@ -48,7 +48,7 @@ def make_excursion(time, amplitude, baseline = 0, rising_time = None, rate_offse
         Minimum excursion duration if ``excursion_duration`` is not provided. Defaults to 1.
 
     smooth: bool, optional
-        Smooth excursion peaks; defaults to ``False``.
+        Whether to smooth excursion peaks. Defaults to ``False``.
 
     smoothing_factor: float, optional
         Smoothing factor if ``smooth`` is ``True``; higher values produce smoother signals. Defaults to 10.
@@ -66,11 +66,15 @@ def make_excursion(time, amplitude, baseline = 0, rising_time = None, rate_offse
         random.seed(a = seed)
         np.random.seed(seed)
 
-    amplitude = np.array(list(amplitude))
+    if (type(amplitude) == float) or (type(amplitude) == int):
+        amplitude = np.array([amplitude])
+
+    else:
+        amplitude = np.array(amplitude)
 
     # if excursion duration not in inputs
     if excursion_duration == None:
-        if (type(amplitude) == float) or (type(amplitude) == int):
+        if len(amplitude) == 1:
             excursion_duration = random.uniform(np.min(time), np.max(time)-np.min(time))
             excursion_duration = np.asarray([excursion_duration])
             n = 1
@@ -87,14 +91,15 @@ def make_excursion(time, amplitude, baseline = 0, rising_time = None, rate_offse
                 excursion_duration.append(random.uniform(min_duration, max_duration))
                 duration_sum = np.sum(excursion_duration)
 
+        excursion_duration = np.array(list(excursion_duration))
+
     # if excursion duration in inputs
     else:
-        if (type(amplitude) == float) or (type(amplitude) == int):
-            n = 1
-        else:
-            n = len(amplitude)
+        excursion_duration = np.array(list(excursion_duration))
+        n = len(amplitude)
+        if len(amplitude) != len(excursion_duration):
+            sys.exit('Duration and amplitude lists are not the same length')
 
-    excursion_duration = np.array(list(excursion_duration))
 
     # fraction of excursion duration spent on rising vs. falling limb of excursion
     if (rising_time == None) and (rate_offset):
@@ -231,8 +236,8 @@ def synthetic_sections(true_time, true_proxy, num_sections, num_samples, max_sec
     true_time: numpy.array(float)
         True time vector for input signal.
 
-    true_proxy: numpy.array(float)
-        True proxy vector for input signal.
+    true_proxy: numpy.array(float) or dict{numpy.array(float)}
+        True proxy vector for input signal. If generating synthetic data for multiple proxies, pass as a dictionary with proxy names as keys.
 
     num_sections: int
         Number of synthetic sections to generate.
@@ -244,19 +249,19 @@ def synthetic_sections(true_time, true_proxy, num_sections, num_samples, max_sec
         Maximum thickness of synthetic sections.
 
     proxies: str or list(str), optional
-        Column name(s) for synthetic proxy observations in ``sample_df``; defaults to 'd13c'.
+        Column name(s) for synthetic proxy observations in ``sample_df``. Defaults to 'd13c'.
 
     noise: bool, optional
-        Whether to add white noise to proxy observations; defaults to ``False``.
+        Whether to add white noise to proxy observations. Defaults to ``False``.
 
-    noise_amp: float, optional
-        Amplitude of white noise added to proxy observations (if ``noise`` is ``True``); defaults to 0.1.
+    noise_amp: float or dict{float}, optional
+        Amplitude of white noise added to proxy observations (if ``noise`` is ``True``). To specify a different noise amplitude for each proxy, pass as a dictionary with proxy names as keys. Defaults to 0.1.
 
     min_constraints: int, optional
-        Minimum number of age constraints per synthetic section (must be at least 2); defaults to 2.
+        Minimum number of age constraints per synthetic section (must be at least 2). Defaults to 2.
 
     max_constraints: int, optional
-        Maximum number of age constraints per synthetic section; defaults to 3.
+        Maximum number of age constraints per synthetic section. Defaults to 3.
 
     seed: int, optional
         Random seed used to generate synthetic sections.
@@ -276,7 +281,8 @@ def synthetic_sections(true_time, true_proxy, num_sections, num_samples, max_sec
     if type(true_proxy) != dict:
         temp = true_proxy
         true_proxy = {}
-        true_proxy[proxies[0]] = temp
+        for proxy in proxies:
+            true_proxy[proxy] = temp
 
     section_ages = []
 
@@ -418,32 +424,32 @@ def synthetic_signal_to_df(proxy_vec, heights, section_ages, section_names, ages
 
     Parameters
     ----------
-    proxy_vec: np.array of float
+    proxy_vec: np.array(float) or dict{np.array(float)}
         Array of proxy observations. Pass as a dictionary if more than one proxy.
 
-    heights: np.array of float
+    heights: np.array(float)
         Array of heights corresponding to proxy observations in ``proxy_vec``.
 
-    section_ages: np.array of float
+    section_ages: np.array(float)
         Array of ages corresponding to proxy observations in ``proxy_vec``.
 
-    section_names: np.array of str
+    section_names: np.array(str)
         Array of section names corresponding to proxy observations in ``proxy_vec``.
 
-    ages: np.array of float
+    ages: np.array(float)
         Array of age constraints.
 
-    age_std: np.array of float
+    age_std: np.array(float)
         Array of uncertainties for each age constraint in ``ages``.
 
-    age_heights: np.array of float
+    age_heights: np.array(float)
         Array of heights for each age constraint in ``ages``.
 
-    age_section_names: np.array of str
+    age_section_names: np.array(str)
         Array of section names corresponding to age constraints in ``ages``.
 
     proxies: str or list(str), optional
-        Name(s) of proxies; defaults to `d13c`.
+        Name(s) of proxies. Defaults to `d13c`.
 
     Returns
     -------
@@ -513,13 +519,13 @@ def synthetic_observations_from_prior(age_vector, ages_df, sample_heights = None
         Sample heights for each stratigraphic section in ``ages_df``; must be a dictionary with section names as keys. Defaults to ``None``, which results in either uniformly spaced or randomly spaced sample heights (depending on the ``uniform_heights`` argument).
 
     uniform_heights: bool, optional
-        Whether to generate uniformly spaced (set to ``True``) or randomly spaced (set to ``False``) sample heights if dictionary of ``sample_heights`` not provided; defaults to ``False`` (randomly spaced samples).
+        Whether to generate uniformly spaced (set to ``True``) or randomly spaced (set to ``False``) sample heights if dictionary of ``sample_heights`` not provided. Defaults to ``False`` (randomly spaced samples).
 
     samples_per_section: int or dict(int), optional
         Number of samples per section to generate if ``sample_heights`` not provided; either an integer (if the same for all sections) or a dictionary with section names as keys. Defaults to 20.
 
     proxies: list(str), optional
-        List of proxies to generate synthetic observations for; defaults to `d13c`.
+        List of proxies to generate synthetic observations for. Defaults to `d13c`.
 
     proxy_std: float or dict(float), optional
         Measurement uncertainty for each proxy; pass a dictionary of floats with the elements of ``proxies`` as keys to use a different value for each proxy, or an integer to use the same value for all proxies. Defaults to 0.1.
@@ -688,7 +694,7 @@ def synthetic_signal_from_prior(ages, num_signals = 100, ls_dist = 'Wald', ls_mi
         Array of ages over which to condition the signal.
 
     num_signals: int, optional
-        Number of signals to draw from prior; defaults to 100.
+        Number of signals to draw from prior. Defaults to 100.
 
     ls_dist: str, optional
         Prior distribution for the lengthscale hyperparameter of the exponential quadratic covariance kernel (:class:`pymc.gp.cov.ExpQuad <pymc.gp.cov.ExpQuad>`); set to ``Wald`` (:class:`pymc.Wald`) or ``HalfNormal`` (:class:`pymc.HalfNormal`). Defaults to ``Wald`` with ``mu = 20`` and ``lambda = 50``; to change ``mu`` and ``lambda``, pass the ``ls_mu`` and ``ls_lambda`` parameters. For ``HalfNormal``, the variance defaults to ``sigma = 50``; change by passing ``ls_sigma``.
@@ -697,22 +703,22 @@ def synthetic_signal_from_prior(ages, num_signals = 100, ls_dist = 'Wald', ls_mi
         Minimum value for the lengthscale hyperparameter of the :class:`pymc.gp.cov.ExpQuad` covariance kernel; shifts the lengthscale prior by ``ls_min``. Defaults to 0.
 
     ls_mu: float, optional
-        Mean (`mu`) of the :class:`pymc.gp.cov.ExpQuad` lengthscale prior if ``ls_dist = `Wald```; defaults to 20.
+        Mean (`mu`) of the :class:`pymc.gp.cov.ExpQuad` lengthscale prior if ``ls_dist = `Wald```. Defaults to 20.
 
     ls_lambda: float, optional
-        Relative precision (`lam`) of the :class:`pymc.gp.cov.ExpQuad` lengthscale hyperparameter prior if ``ls_dist = `Wald```; defaults to 50.
+        Relative precision (`lam`) of the :class:`pymc.gp.cov.ExpQuad` lengthscale hyperparameter prior if ``ls_dist = `Wald```. Defaults to 50.
 
     ls_sigma: float, optional
-        Scale parameter (`sigma`) of the :class:`pymc.gp.cov.ExpQuad` lengthscale hyperparameter prior if ``ls_dist = `HalfNormal```; defaults to 50.
+        Scale parameter (`sigma`) of the :class:`pymc.gp.cov.ExpQuad` lengthscale hyperparameter prior if ``ls_dist = `HalfNormal```. Defaults to 50.
 
     var_sigma: float, optional
-        Scale parameter (`sigma') of the covariance kernel variance hyperparameter prior, which is a :class:`pymc.HalfNormal` distribution; defaults to 10.
+        Scale parameter (`sigma') of the covariance kernel variance hyperparameter prior, which is a :class:`pymc.HalfNormal` distribution. Defaults to 10.
 
     gp_mean_mu: float, optional
-        Mean (`mu`) of the GP mean function prior, which is a :class:`pymc.Normal` distribution; defaults to 0.
+        Mean (`mu`) of the GP mean function prior, which is a :class:`pymc.Normal` distribution. Defaults to 0.
 
     gp_mean_sigma: float, optional
-        Standard deviation (`sigma`) of the GP mean function prior, which is a :class:`pymc.Normal` distribution; defaults to 5.
+        Standard deviation (`sigma`) of the GP mean function prior, which is a :class:`pymc.Normal` distribution. Defaults to 5.
 
     seed: int, optional
         Random seed used to generate signals.
@@ -768,10 +774,10 @@ def quantify_signal_recovery(full_trace, true_signal, proxy = 'd13c', mode = 'po
         True values for the proxy signal, evaluated at the same ages as the posterior signal in ``full_trace``.
 
     proxy: str, optional
-        Tracer signal to evaluate; defaults to `d13c'.
+        Tracer signal to evaluate. Defaults to `d13c'.
 
     mode: str, optional
-        Whether to use the posterior or prior to calculate signal recovery; defaults to `posterior`.
+        Whether to use the posterior or prior to calculate signal recovery. Defaults to `posterior`.
 
     Returns
     -------
@@ -827,10 +833,10 @@ def sample_age_recovery(full_trace, sample_df, sections = None, mode = 'posterio
         :class:`pandas.DataFrame` containing proxy data for synthetic sections.
 
     sections: list(str) or numpy.array(str), optional
-        List of sections to evaluate; defaults to all sections in sample_df.
+        List of sections to evaluate. Defaults to all sections in sample_df.
 
     mode: str, optional
-         Whether to use the posterior or prior age models; defaults to `posterior`.
+         Whether to use the posterior or prior age models. Defaults to `posterior`.
 
     Returns
     -------
@@ -855,7 +861,6 @@ def sample_age_recovery(full_trace, sample_df, sections = None, mode = 'posterio
 
     if len(sections) > 1:
         posterior_likelihood = {}
-
 
     for section in sections:
         section_df = sample_df[sample_df['section'] == section]
@@ -921,14 +926,14 @@ def sample_age_residuals(full_trace, sample_df, sections = None, mode = 'posteri
         :class:`pandas.DataFrame` containing proxy data for synthetic sections.
 
     sections: list(str) or numpy.array(str), optional
-        List of sections to evaluate; defaults to all sections in sample_df.
+        List of sections to evaluate. Defaults to all sections in sample_df.
 
     mode: str, optional
-         Whether to use the posterior or prior age models; defaults to `posterior`.
+         Whether to use the posterior or prior age models. Defaults to `posterior`.
 
     Returns
     -------
-    age_residuals: np.array
+    age_residuals: np.array or dict{np.array}
         Sample age residuals; shape is (number of samples, number of posterior draws). Returned as an array if only one section is evaluated, or a dictionary of arrays if multiple sections are evaluated.
 
     """

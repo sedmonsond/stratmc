@@ -61,7 +61,7 @@ jobs:
       - name: Run pytest
         run: |
           conda activate stratmc-dev
-          python -m pytest --cov=stratmc --cov-report=xml --cov-report term stratmc/tests/
+          python -m pytest --cov=stratmc --junitxml=junit.xml --cov-report=xml --cov-report term stratmc/tests/
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -74,3 +74,9 @@ jobs:
           name: codecov-umbrella
           path_to_write_report: ./coverage/codecov_report.txt
           verbose: true
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

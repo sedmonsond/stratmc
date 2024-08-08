@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
 
-from stratmc.data import load_object, load_trace
+from stratmc.config import PROJECT_ROOT
+from stratmc.data import load_data, load_object, load_trace
 from stratmc.synthetics import (
     make_excursion,
     quantify_signal_recovery,
@@ -21,6 +22,20 @@ def test_make_excursion():
         age_vector,
         amplitude,
         rising_time=[0.3, 0.7, 0.9, 0.3],
+        smooth=True,
+        smoothing_factor=2,
+        rate_offset=True,
+        seed=7,
+    )
+
+    assert len(d13c_signal) == len(age_vector)
+
+    age_vector = np.arange(400, 450, 0.25)
+    amplitude = 3
+
+    d13c_signal = make_excursion(
+        age_vector,
+        amplitude,
         smooth=True,
         smoothing_factor=2,
         rate_offset=True,
@@ -67,10 +82,6 @@ def test_synthetic_sections():
     section_thickness = 30
     section_seed = 25
     section_noise = False
-    section_noise_amp = {}
-    section_noise_amp['d13c'] = 0.75
-    section_noise_amp['d34s'] = 2
-
 
     sections = []
     age_constraints = {}
@@ -82,7 +93,16 @@ def test_synthetic_sections():
         age_constraints[str(i)] = np.array([400, 450])
         age_constraints_std[str(i)] = np.random.uniform(0.5, 1.5, size = len(age_constraints[str(i)]))
 
-    ages_df, sample_df = synthetic_sections(age_vector, signal_dict, num_sections, num_samples, section_thickness, noise = section_noise, noise_amp = section_noise_amp, seed = section_seed, age_constraints = age_constraints, age_constraints_std = age_constraints_std, proxies = proxies)
+    # test with age constraints and no noise
+    ages_df, sample_df = synthetic_sections(age_vector, signal_dict, num_sections, num_samples, section_thickness, noise = section_noise, seed = section_seed, age_constraints = age_constraints, age_constraints_std = age_constraints_std, proxies = proxies)
+
+    section_noise = True
+    section_noise_amp = {}
+    section_noise_amp['d13c'] = 0.75
+    section_noise_amp['d34s'] = 2
+
+    # test without age constraints and with noise added to observations
+    synthetic_sections(age_vector, signal_dict, num_sections, num_samples, section_thickness, noise = section_noise, noise_amp = section_noise_amp, seed = section_seed, proxies = proxies)
 
 
 def test_synthetic_observations_from_prior():
@@ -100,7 +120,6 @@ def test_synthetic_observations_from_prior():
     seeds['1'] = 1
     seeds['2'] = 210
     seeds['3'] = 302
-
 
     ages_df = pd.DataFrame(columns = ['section', 'age', 'age_std', 'height'])
     for section in sections:
@@ -145,8 +164,46 @@ def test_synthetic_signal_from_prior():
     assert signals.shape == (len(ages), num_signals)
 
 
-# def test_quantify_signal_recovery():
+def test_quantify_signal_recovery():
+    signal_dict = load_object(str(PROJECT_ROOT) + '/examples/test_true_signals')
+    full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-# def test_sample_age_recovery():
+    predict_ages = full_trace.X_new.X_new.values
+    d13c_signal_interp = np.interp(predict_ages, signal_dict['ages'], signal_dict['d13c'])
 
-# def test_sample_age_residuals():
+    d13c_signal_recovery = quantify_signal_recovery(full_trace, d13c_signal_interp, proxy="d13c")
+
+    assert len(d13c_signal_recovery) == len(predict_ages)
+    assert all(~np.isnan(d13c_signal_recovery))
+
+def test_sample_age_recovery():
+    sample_df, _ = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
+
+    age_likelihoods = sample_age_recovery(full_trace, sample_df, mode = 'posterior')
+
+    prior_age_likelihoods = sample_age_recovery(full_trace, sample_df, mode = 'prior', sections = ['0'])
+
+    for section in np.unique(sample_df['section']):
+        assert len(age_likelihoods[section])  == len(sample_df[sample_df['section'] == section]['age'].values)
+        assert all(~np.isnan(age_likelihoods[section]))
+
+    assert len(prior_age_likelihoods) == len(sample_df[sample_df['section'] == '0']['age'].values)
+    assert all(~np.isnan(prior_age_likelihoods))
+
+def test_sample_age_residuals():
+    sample_df, _ = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
+
+    age_residuals = sample_age_residuals(full_trace, sample_df, mode = 'posterior')
+
+    prior_age_residuals = sample_age_residuals(full_trace, sample_df, mode = 'prior', sections = ['0'])
+
+    for section in np.unique(sample_df['section']):
+        assert age_residuals[section].shape[0]  == len(sample_df[sample_df['section'] == section]['age'].values)
+        assert age_residuals[section].shape[1]  == len(list(full_trace.posterior.draw.values)) * len(list(full_trace.posterior.chain.values))
+        assert all(~np.isnan(age_residuals[section].ravel()))
+
+    assert prior_age_residuals.shape[0] == len(sample_df[sample_df['section'] == '0']['age'].values)
+    assert all(~np.isnan(prior_age_residuals.ravel()))
+    assert prior_age_residuals.shape[1]  == len(list(full_trace.prior.draw.values)) * len(list(full_trace.prior.chain.values))

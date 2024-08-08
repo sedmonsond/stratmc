@@ -40,11 +40,10 @@ On Apple Silicon machines (M1 chip or later), sampling is significantly faster w
 
 .. code-block:: bash
 
-  conda install -c conda-forge "libblas=*=*accelerate"
+  conda install -c conda-forge numpy">=1.17.0,<2" "libblas=*=*accelerate"
 
-If you're managing your packages with pip in a virtual environment, instead of with conda, activate the environment and run:
-
-.. code-block:: bash
-
+..
+  If you're managing your packages with pip in a virtual environment, instead of with conda, activate the environment and run:
+  .. code-block:: bash
   pip install cython pybind11
   pip install --no-binary :all: --no-use-pep517 numpy
