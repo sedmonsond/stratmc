@@ -14,7 +14,7 @@ authors:
     affiliation: University of Victoria
     orcid: 'https://orcid.org/0000-0002-5069-7702'
 repository-code: 'https://github.com/sedmonsond/stratmc'
-url: 'https://sedmonsond.github.io/stratmc/'
+url: 'https://stratmc.readthedocs.io/'
 abstract: >-
   StratMC is a statistical framework for reconstructing past
   Earth system change using sediment-hosted proxy data. It
@@ -23,11 +23,11 @@ abstract: >-
   Bayesian models and sampling their posteriors using Markov
   chain Monte Carlo (MCMC) methods.
 keywords:
+  - Bayesian inference
   - stratigraphy
   - geochemistry
-  - earth history
+  - Earth history
   - stratigraphic correlation
   - chemostratigraphy
-  - bayesian
 license: GPL-3.0
 version: 0.1.0b
