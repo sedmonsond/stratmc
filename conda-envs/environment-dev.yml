@@ -1,0 +1,41 @@
+name: stratmc-dev
+channels:
+- conda-forge
+- defaults
+dependencies:
+# Base dependencies
+# - python>3.9
+# - "libblas=*=*accelerate"
+- pip
+- pip:
+  # - blackjax
+  # - fastprogress
+  # - ipywidgets
+  # - jax
+  # - matplotlib
+  # - netCDF4
+  # - numpyro
+  # - pymc>=5.16.2
+  # - pytest
+  # - pytest-cov
+  # - scikit-learn
+  # - scipy
+  # - seaborn
+  # - tqdm
+  # - xarray
+# # extra packages for development
+# - ipykernel
+# - jupyter-sphinx
+# - myst-nb
+# - numpydoc
+# - pre-commit
+# - pydata-sphinx-theme
+# - sphinx>=4.5
+# - sphinx-copybutton
+# - sphinx-design
+# - sphinx-inline-tabs
+# - sphinx-notfound-page
+# - sphinxext-rediraffe
+# - sphinx-remove-toctrees
+# - sphinx-togglebutton
+# - watermark
