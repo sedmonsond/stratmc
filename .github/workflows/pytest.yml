@@ -9,6 +9,7 @@ on:
       - "**.md" # wildcards prevent file in any repo dir from trigering workflow
       - "**.rst"
       - "**.txt"
+      - "**.pdf"
       - "**.ya?ml" # captures both .yml and .yaml
       - "LICENSE"
       - ".gitignore"
@@ -18,6 +19,7 @@ on:
       - "**.md" # wildcards prevent file in any repo dir from trigering workflow
       - "**.rst"
       - "**.txt"
+      - "**.pdf"
       - "**.ya?ml" # captures both .yml and .yaml
       - "LICENSE"
       - ".gitignore"

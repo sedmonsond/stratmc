@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "stratmc"
 dynamic = ["version"]
-description = "Bayesian statistical framework for reconstructing proxy signals from the stratigraphic record"
+description = "Bayesian statistical framework for reconstructing past Earth system change from the stratigraphic record"
 authors = [
     {name = "Stacey Edmonsond", email = "staceyedmonsond777@gmail.com"}
 ]
