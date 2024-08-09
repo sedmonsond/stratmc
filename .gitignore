@@ -3,6 +3,8 @@
 .ipynb_checkpoints*
 push_docs.sh
 stratmc/notebooks/*
+dist/*
+build/*
 deprecated/*
 notebooks/GMD_paper/data/*
 notebooks/GMD_paper/traces/*
