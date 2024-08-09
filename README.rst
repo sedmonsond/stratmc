@@ -9,8 +9,7 @@
 .. |Build Status| image:: https://github.com/sedmonsond/stratmc/workflows/pytest/badge.svg
    :target: https://github.com/sedmonsond/stratmc/actions
 .. |Coverage| image:: https://codecov.io/gh/sedmonsond/stratmc/graph/badge.svg?token=P0ANAUP3BX
-:target: https://codecov.io/gh/sedmonsond/stratmc
-
+    :target: https://codecov.io/gh/sedmonsond/stratmc
 .. |DOI| image:: https://zenodo.org/badge/831552526.svg
   :target: https://zenodo.org/doi/10.5281/zenodo.13281935
 
