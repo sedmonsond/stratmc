@@ -198,7 +198,7 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
 
     return fig
 
-def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constraints = False, plot_data = False, plot_excluded_samples = False, plot_mean = False, plot_mle = True, orientation = 'horizontal', marker_size = 20, section_legend = False, section_cmap = 'Spectral', **kwargs):
+def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constraints = False, plot_samples = False, plot_excluded_samples = False, plot_mean = False, plot_mle = False, orientation = 'horizontal', marker_size = 20, section_legend = False, section_cmap = 'Spectral', **kwargs):
 
     """
     Plot the inferred proxy signal over time.
@@ -214,7 +214,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
-       proxy_inference(sample_df, ages_df, full_trace, proxy = 'd13c', plot_constraints = True, plot_data = True, plot_excluded_samples = False, section_legend = False, plot_mle = True)
+       proxy_inference(sample_df, ages_df, full_trace, proxy = 'd13c', plot_constraints = True, plot_samples = True, plot_excluded_samples = False, section_legend = False)
 
        plt.show()
 
@@ -240,7 +240,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
     plot_constraints: bool, optional
         Plot age constraints for each section as dashed lines. Defaults to ``False``.
 
-    plot_data: bool, optional
+    plot_samples: bool, optional
         Plot proxy observations by most likely posterior age. Defaults to ``False``.
 
     plot_excluded_samples: bool, optional
@@ -250,19 +250,19 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
         Plot the mean as a dashed line. Defaults to ``False``.
 
     plot_mle: bool, optional
-        Plot the maximum likelihood estimate. Defaults to ``True``.
+        Plot the maximum likelihood estimate. Defaults to ``False``.
 
     orientation: str, optional
         Orientation of figure ('horizontal' with age on the x-axis, or 'vertical' with age on the y-axis). Defaults to 'horizontal'.
 
     marker_size: int, optional
-        Size of markers if ``plot_data`` is ``True``. Defaults to 20.
+        Size of markers if ``plot_samples`` is ``True``. Defaults to 20.
 
     section_legend: bool, optional
-        Include section names in the legend (if ``plot_data`` is ``True``). Defaults to ``False``.
+        Include section names in the legend (if ``plot_samples`` is ``True``). Defaults to ``False``.
 
     section_cmap: str, optional
-        Name of seaborn color palette to use for sections (if ``plot_data`` is ``True``). Defaults to 'Spectral'.
+        Name of seaborn color palette to use for sections (if ``plot_samples`` is ``True``). Defaults to 'Spectral'.
 
     Returns
     -------
@@ -328,7 +328,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
     min_ages = []
     max_ages = []
 
-    if plot_data: # by max likelihood
+    if plot_samples: # by max likelihood
         plotted_excluded = False
         plotted_data = False
 
@@ -361,7 +361,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                            label = label,
                            edgecolors = 'k',
                            lw = 0.5,
-                           zorder = 3)
+                           zorder = 5)
 
                 plotted_data = True
 
@@ -378,7 +378,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                            label = excluded_label,
                            edgecolors = cs[section],
                            lw = 0.5,
-                           zorder = 4)
+                           zorder = 5)
 
                     plotted_excluded = True
 
@@ -390,7 +390,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                            label = label,
                            lw = 0.5,
                            edgecolors = 'k',
-                           zorder = 3)
+                           zorder = 5)
 
                 plotted_data = True
 
@@ -407,7 +407,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                            label = excluded_label,
                            edgecolors = cs[section],
                            lw = 0.5,
-                           zorder = 4)
+                           zorder = 5)
 
                     plotted_excluded = True
 
@@ -426,7 +426,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                          lo,
                          color=(.95,.95,.95),
                          label='95% envelope',
-                         linestyle = '--',
+                         linestyle = 'dotted',
                          lw = 1.5,
                          edgecolor = 'k',
                          zorder = 0)
@@ -437,20 +437,21 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                         lo,
                         color=(.95,.95,.95),
                         label='95% envelope',
-                        linestyle = '--',
+                        linestyle = 'dotted',
                         edgecolor = 'k',
                         lw = 1.5,
                         zorder = 0)
 
-    lo = np.percentile(proxy_pred, 16, axis=1).flatten()
-    hi = np.percentile(proxy_pred, 100-16, axis=1).flatten()
+    lo = np.percentile(proxy_pred, 17, axis=1).flatten()
+    hi = np.percentile(proxy_pred, 100-17, axis=1).flatten()
 
     if vertical:
         ax.fill_betweenx(ages.ravel(),
                          hi,
                          lo,
                          color=(.8,.8,.8),
-                         label='68% envelope',
+                         linestyle = 'dashed',
+                         label='66% envelope',
                          edgecolor = 'k',
                          lw = 1.5,
                          zorder = 1)
@@ -459,10 +460,33 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                         hi,
                         lo,
                         color=(.8,.8,.8),
-                        label='68% envelope',
+                        linestyle = 'dashed',
+                        label='66% envelope',
                         edgecolor = 'k',
                         lw = 1.5,
                         zorder = 1)
+
+    lo = np.percentile(proxy_pred, 33.5, axis=1).flatten()
+    hi = np.percentile(proxy_pred, 100-33.5, axis=1).flatten()
+
+    if vertical:
+        ax.fill_betweenx(ages.ravel(),
+                         hi,
+                         lo,
+                         color=(.65,.65,.65),
+                         label='33% envelope',
+                         edgecolor = 'k',
+                         lw = 1.5,
+                         zorder = 2)
+    if horizontal:
+        ax.fill_between(ages.ravel(),
+                        hi,
+                        lo,
+                        color=(.65,.65,.65),
+                        label='33% envelope',
+                        edgecolor = 'k',
+                        lw = 1.5,
+                        zorder = 2)
 
     if plot_mean:
         if horizontal:
@@ -471,7 +495,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                     color = 'k',
                     linestyle = 'solid',
                     lw = 2,
-                    zorder = 2,
+                    zorder = 3,
                    label = 'Mean ' + str(proxy))
 
         if vertical:
@@ -480,7 +504,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                     color = 'k',
                     linestyle = 'solid',
                     lw = 2,
-                    zorder = 2,
+                    zorder = 3,
                    label = 'Mean ' + str(proxy))
 
     if plot_mle:
@@ -494,7 +518,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
         if horizontal:
             ax.plot(ages.ravel(),
                     max_like,
-                    zorder = 2,
+                    zorder = 4,
                     color = 'k',
                     linestyle = 'solid',
                     lw = 2,
@@ -503,7 +527,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
         if vertical:
             ax.plot(max_like,
                     ages.ravel(),
-                    zorder = 2,
+                    zorder = 4,
                     color = 'k',
                     linestyle = 'solid',
                     lw = 2,
@@ -573,7 +597,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
 
     return fig
 
-def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, legend = True, plot_data = False, plot_mle = True, orientation = 'horizontal', section_legend = False, marker_size = 20, section_cmap = 'Spectral', **kwargs):
+def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, legend = True, plot_samples = False, plot_mle = False, orientation = 'horizontal', section_legend = False, marker_size = 20, section_cmap = 'Spectral', **kwargs):
     """
 
     Plot interpolated proxy signal over time (by extending the posterior section age models to a new proxy not included in the inference model) using interpolated age models from :py:meth:`extend_age_model() <stratmc.inference.extend_age_model>` and interpolated proxy values from :py:meth:`interpolate_proxy() <stratmc.inference.interpolate_proxy>` in :py:mod:`stratmc.inference`.
@@ -616,23 +640,23 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
     legend: bool, optional
         Generate a legend. Defaults to ``True``.
 
-    plot_data: bool, optional
+    plot_samples: bool, optional
         Plot proxy observations by most likely posterior age. Defaults to ``False``.
 
     plot_mle: bool, optional
-        Plot the maximum likelihood estimate. Defaults to ``True``.
+        Plot the maximum likelihood estimate. Defaults to ``False``.
 
     orientation: str, optional
         Orientation of figure ('horizontal' or 'vertical'). Defaults to 'horizontal'.
 
     marker_size: int, optional
-        Size of markers if ``plot_data`` is ``True``. Defaults to 20.
+        Size of markers if ``plot_samples`` is ``True``. Defaults to 20.
 
     section_legend: bool, optional
-        Include section names in the legend (if ``plot_data`` is ``True``). Defaults to ``False``.
+        Include section names in the legend (if ``plot_samples`` is ``True``). Defaults to ``False``.
 
     section_cmap: str, optional
-        Name of seaborn color palette to use for sections (if ``plot_data`` is ``True``). Defaults to 'Spectral'.
+        Name of seaborn color palette to use for sections (if ``plot_samples`` is ``True``). Defaults to 'Spectral'.
 
     Returns
     -------
@@ -678,7 +702,7 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
     min_ages = []
     max_ages = []
 
-    if plot_data: # by max likelihood
+    if plot_samples: # by max likelihood
         for section in sections:
             section_df = interpolated_df[interpolated_df['section']==section]
 
@@ -788,7 +812,7 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
     return fig
 
 
-def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = True, cmap = 'Spectral', legend = False, **kwargs):
+def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = True, plot_samples = False, cmap = 'Spectral', legend = False, **kwargs):
     """
     Generate a posterior age-height plot for each section.
 
@@ -884,7 +908,12 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
         hi = np.percentile(sec_ages, 97.5, axis=1).flatten()
 
         if include_excluded_samples:
-            ax.fill_betweenx(section_df['height'], hi, lo,color=(.95,.95,.95),label=r'2-$\sigma$')
+            ax.fill_betweenx(section_df['height'],
+                             hi,
+                             lo,
+                             color=(.95,.95,.95),
+                             linestyle = 'dotted',
+                             label=r'95% envelope')
 
         else:
             included_idx = ~section_df['Exclude?'].values.astype(bool)
@@ -892,39 +921,71 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
                              hi[included_idx],
                              lo[included_idx],
                              color=(.95,.95,.95),
-                             label=r'2-$\sigma$')
+                             linestyle='dotted',
+                             label=r'95% envelope')
 
-        lo = np.percentile(sec_ages,16,axis=1).flatten()
-        hi = np.percentile(sec_ages,100-16,axis=1).flatten()
+        lo = np.percentile(sec_ages,17,axis=1).flatten()
+        hi = np.percentile(sec_ages,100-17,axis=1).flatten()
 
         if include_excluded_samples:
             ax.fill_betweenx(section_df['height'],
                              hi,
                              lo,
                              color=(.8,.8,.8),
-                             label=r'1-$\sigma$')
+                             linestyle='dashed',
+                             label=r'66% envelope')
         else:
             ax.fill_betweenx(section_df['height'][included_idx],
                              hi[included_idx],
                              lo[included_idx],
                              color=(.8,.8,.8),
-                             label=r'1-$\sigma$')
+                             linestyle='dashed',
+                             label=r'66% envelope')
+
+        lo = np.percentile(sec_ages,33.5,axis=1).flatten()
+        hi = np.percentile(sec_ages,100-33.5,axis=1).flatten()
 
         if include_excluded_samples:
-            ax.plot(np.mean(sec_ages, axis = 1),
-                    section_df['height'],
-                    color = cs[section],
-                    linewidth = 2,
-                    linestyle = 'dashed',
-                    label = 'Mean')
+            ax.fill_betweenx(section_df['height'],
+                             hi,
+                             lo,
+                             color=(.65,.65,.65),
+                             linestyle='solid',
+                             label=r'33% envelope')
         else:
-            ax.plot(np.mean(sec_ages, axis = 1)[included_idx],
-                    section_df['height'][included_idx],
-                    color = cs[section],
-                    linewidth = 2,
-                    linestyle = 'dashed',
-                    label = 'Mean')
+            ax.fill_betweenx(section_df['height'][included_idx],
+                             hi[included_idx],
+                             lo[included_idx],
+                             color=(.65,.65,.65),
+                             linestyle='solid',
+                             label=r'33% envelope')
 
+        if plot_samples:
+            # calculate MLE
+            max_like = np.zeros(sec_ages.shape[0])
+            for i in np.arange(sec_ages.shape[0]):
+                sample_ages = sec_ages[i,:]
+                dx = np.linspace(np.min(sample_ages), np.max(sample_ages), 1000)
+                max_like[i] = dx[np.argmax(gaussian_kde(sample_ages, bw_method = 1)(dx))]
+
+            if include_excluded_samples:
+                ax.scatter(max_like,
+                        section_df['height'],
+                        color = cs[section],
+                        linewidth = 1,
+                        linestyle = 'solid',
+                        marker = 'x',
+                        s = 10,
+                        label = 'Mean sample age')
+            else:
+                ax.scatter(max_like[included_idx],
+                        section_df['height'][included_idx],
+                        color = cs[section],
+                        linewidth = 1,
+                        linestyle = 'solid',
+                        marker = 'x',
+                        s = 10,
+                        label = 'Mean sample age')
 
         ax.errorbar(ages_df['age'][ages_df['section']==section],
                      ages_df['height'][ages_df['section']==section],
@@ -935,6 +996,8 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
         ax.scatter(section_ages_df['age'][(~section_ages_df['intermediate intrusive?']) & (~section_ages_df['intermediate detrital?'])],
                     section_ages_df['height'][(~section_ages_df['intermediate intrusive?']) & (~section_ages_df['intermediate detrital?'])],
                     color = cs[section],
+                    lw = 0.5,
+                    edgecolor = 'k',
                     label = r'Age ($\pm2\sigma$)')
 
 
@@ -942,14 +1005,18 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
             ax.scatter(section_ages_df['age'][section_ages_df['intermediate intrusive?']],
                         section_ages_df['height'][section_ages_df['intermediate intrusive?']],
                        marker = 's',
-                        color = cs[section],
+                       color = cs[section],
+                       edgecolor = 'k',
+                       lw = 0.5,
                         label = r'Intrusive Age ($\pm2\sigma$)')
 
         if section_ages_df['age'][section_ages_df['intermediate detrital?']].shape[0] > 0:
             ax.scatter(section_ages_df['age'][section_ages_df['intermediate detrital?']],
                         section_ages_df['height'][section_ages_df['intermediate detrital?']],
-                       marker = '^',
+                        marker = '^',
                         color = cs[section],
+                        edgecolor = 'k',
+                        lw = 0.5,
                         label = r'Detrital Age ($\pm2\sigma$)')
 
         if legend:
@@ -957,7 +1024,7 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
                              bbox_to_anchor=(1, 1),
                              markerfirst = False,
                              frameon = False,
-                             fontsize = 8) #0.95,  0.985
+                             fontsize = 8)
 
         ax.axis('tight')
         ax.set_xlabel('Age (Ma)', fontsize = fs)
@@ -967,11 +1034,11 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
 
     fig.tight_layout()
 
-    plt.subplots_adjust(wspace=0.35) ## , hspace=0.5
+    plt.subplots_adjust(wspace=0.35)
 
     return fig
 
-def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_ages = False, plot_constraints = False, yax = 'height', legend = False, cmap = 'Spectral', **kwargs):
+def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_ages = False, plot_constraints = False, plot_mle = False, yax = 'height', legend = False, cmap = 'Spectral', **kwargs):
     """
     Map the posterior proxy signal back to height in each section (using its most likely posterior age model), and plot alongside the proxy observations (plotted by most likely posterior age).
 
@@ -1006,6 +1073,9 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
 
     plot_constraints: bool, optional
         Plot age constraints for each section as dashed lines. Defaults to ``False``.
+
+    plot_mle: bool, optional
+        Plot the maximum likelihood estimate for the proxy signal as a line. Defaults to ``False``.
 
     yax: str, optional
         Scale for the y-axis ('height' or 'age'). Defaults to 'height'.
@@ -1070,13 +1140,14 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
     proxy_pred = az.extract(full_trace.posterior_predictive)['f_pred_' + proxy].values
     ages_new = full_trace.X_new.X_new.values
 
-    # calculate MLE
-    dy = np.linspace(np.min(proxy_pred), np.max(proxy_pred), 200)
-    max_like = np.zeros(ages_new.size)
-    for i in np.arange(ages_new.size):
-        time_slice = proxy_pred[i,:]
-        max_like[i] = dy[np.argmax(gaussian_kde(time_slice, bw_method = 1)(dy))]
-    max_like = gaussian(max_like, 2)
+    if plot_mle:
+        # calculate MLE
+        dy = np.linspace(np.min(proxy_pred), np.max(proxy_pred), 200)
+        max_like = np.zeros(ages_new.size)
+        for i in np.arange(ages_new.size):
+            time_slice = proxy_pred[i,:]
+            max_like[i] = dy[np.argmax(gaussian_kde(time_slice, bw_method = 1)(dy))]
+        max_like = gaussian(max_like, 2)
 
     mapped_age_models = map_ages_to_section(full_trace, sample_df, ages_df, sections = sections, include_radiometric_ages = include_radiometric_ages)
 
@@ -1128,30 +1199,44 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
                              lo[age_idx],
                              color=(.95,.95,.95),
                              label='95% envelope',
-                             linestyle = '--',
+                             linestyle = 'dotted',
                              lw = 1.5,
                              edgecolor = 'k',
                              zorder = 0)
 
-            hi = np.percentile(proxy_pred, 100-16, axis=1).flatten()
-            lo = np.percentile(proxy_pred, 16, axis=1).flatten()
+            hi = np.percentile(proxy_pred, 100-17, axis=1).flatten()
+            lo = np.percentile(proxy_pred, 17, axis=1).flatten()
 
             ax.fill_betweenx(section_age_model['interpolated height'],
                              hi[age_idx],
                              lo[age_idx],
                              color=(.8,.8,.8),
-                             label='68% envelope',
-                             linestyle = 'solid',
+                             label='66% envelope',
+                             linestyle = 'dashed',
                              lw = 1.5,
                              edgecolor = 'k',
                              zorder = 1)
 
-            ax.plot(max_like[age_idx],
-                    section_age_model['interpolated height'],
-                    color = 'k',
-                    lw = 2,
-                    label = 'Most likely',
-                    zorder = 2)
+            hi = np.percentile(proxy_pred, 100-33.5, axis=1).flatten()
+            lo = np.percentile(proxy_pred, 33.5, axis=1).flatten()
+
+            ax.fill_betweenx(section_age_model['interpolated height'],
+                             hi[age_idx],
+                             lo[age_idx],
+                             color=(.65,.65,.65),
+                             label='33% envelope',
+                             linestyle = 'solid',
+                             lw = 1.5,
+                             edgecolor = 'k',
+                             zorder = 2)
+
+            if plot_mle:
+                ax.plot(max_like[age_idx],
+                        section_age_model['interpolated height'],
+                        color = 'k',
+                        lw = 2,
+                        label = 'Most likely',
+                        zorder = 3)
 
             if plot_constraints:
                 section_ages_df = ages_df[(ages_df['section']==section) & (~ages_df['Exclude?'])]
@@ -1176,30 +1261,44 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
                              lo[age_idx],
                              color=(.95,.95,.95),
                              label='95% envelope',
-                             linestyle = '--',
+                             linestyle = 'dotted',
                              lw = 1.5,
                              edgecolor = 'k',
                              zorder = 0)
 
-            hi = np.percentile(proxy_pred, 100-16, axis=1).flatten()
-            lo = np.percentile(proxy_pred, 16, axis=1).flatten()
+            hi = np.percentile(proxy_pred, 100-17, axis=1).flatten()
+            lo = np.percentile(proxy_pred, 17, axis=1).flatten()
 
             ax.fill_betweenx(ages_new[age_idx],
                              hi[age_idx],
                              lo[age_idx],
                              color=(.8,.8,.8),
-                             label='68% envelope',
-                             linestyle = 'solid',
+                             label='66% envelope',
+                             linestyle = 'dashed',
                              lw = 1.5,
                              edgecolor = 'k',
                              zorder = 1)
 
-            ax.plot(max_like[age_idx],
-                    ages_new[age_idx],
-                    color = 'k',
-                    lw = 2,
-                    label = 'Most likely',
-                    zorder = 2)
+            hi = np.percentile(proxy_pred, 100-33.5, axis=1).flatten()
+            lo = np.percentile(proxy_pred, 33.5, axis=1).flatten()
+
+            ax.fill_betweenx(ages_new[age_idx],
+                             hi[age_idx],
+                             lo[age_idx],
+                             color=(.65,.65,.65),
+                             label='33% envelope',
+                             linestyle = 'solid',
+                             lw = 1.5,
+                             edgecolor = 'k',
+                             zorder = 2)
+
+            if plot_mle:
+                ax.plot(max_like[age_idx],
+                        ages_new[age_idx],
+                        color = 'k',
+                        lw = 2,
+                        label = 'Most likely',
+                        zorder = 3)
 
             sec_ages = az.extract(full_trace.posterior)[str(section)+'_ages'].values
 
@@ -1213,13 +1312,13 @@ def section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_age
                         max_like_samples[proxy_idx],
                         color = cs[section],
                         edgecolor = 'k',
-                       zorder = 3)
+                       zorder = 4)
 
             ax.scatter(section_df[proxy].values[excluded_idx],
                         max_like_samples[excluded_idx],
                         color = 'none',
                         edgecolor = cs[section],
-                       zorder = 4)
+                       zorder = 5)
 
 
             if plot_constraints:
@@ -1979,7 +2078,7 @@ def offset_summary(full_trace, **kwargs):
 
     return fig
 
-def section_proxy_residuals(full_trace, sample_df, legend = True, cmap = 'Spectral', include_excluded_samples = False, **kwargs):
+def section_proxy_residuals(full_trace, sample_df, legend = True, cmap = 'Spectral', plot_mle = False, include_excluded_samples = False, **kwargs):
     """
 
     Plot the residuals between the observed proxy values for each section and the inferred proxy signal (using the posterior section age models to map the signal back to height in section). Use to check for stratigraphic trends in the residuals, which may give insight to the processes that cause noisy sections to deviate from the inferred common signal. If multiple proxies were included in the inference, pass a ``proxy`` argument.
@@ -2011,6 +2110,9 @@ def section_proxy_residuals(full_trace, sample_df, legend = True, cmap = 'Spectr
 
     cmap: str, optional
         Name of seaborn color palette to use for sections. Defaults to 'Spectral'.
+
+    plot_mle: bool, optional
+        Plot the maximum likelihood estimate as a line. Defaults to ``False``.
 
     proxy: str, optional
         Target proxy; only required if more than one proxy was included in the inference.
@@ -2101,37 +2203,51 @@ def section_proxy_residuals(full_trace, sample_df, legend = True, cmap = 'Spectr
                              lo,
                              color=(.95,.95,.95),
                              label='95% envelope',
-                             linestyle = '--',
+                             linestyle = 'dotted',
                              lw = 1.5,
                              edgecolor = 'k',
                              zorder = 0)
 
-        hi = np.percentile(section_residuals, 100-16, axis=1).flatten()
-        lo = np.percentile(section_residuals, 16, axis=1).flatten()
+        hi = np.percentile(section_residuals, 100-17, axis=1).flatten()
+        lo = np.percentile(section_residuals, 17, axis=1).flatten()
 
         ax.fill_betweenx(section_heights,
                          hi,
                          lo,
                          color=(.8,.8,.8),
-                         label='68% envelope',
-                         linestyle = 'solid',
+                         label='66% envelope',
+                         linestyle = 'dashed',
                          lw = 1.5,
                          edgecolor = 'k',
                          zorder = 1)
 
-        # calculate mle
-        dy = np.linspace(np.min(section_residuals.ravel()), np.max(section_residuals.ravel()), 200)
-        max_like = np.zeros(section_heights.size)
-        for i in np.arange(section_heights.size):
-            height_slice = section_residuals[i,:]
-            max_like[i] = dy[np.argmax(gaussian_kde(height_slice, bw_method = 1)(dy))]
+        hi = np.percentile(section_residuals, 100-33.5, axis=1).flatten()
+        lo = np.percentile(section_residuals, 33.5, axis=1).flatten()
 
-        ax.plot(max_like,
-                section_heights,
-                color = 'k',
-                lw = 2,
-                zorder = 2,
-                label = 'Most likely')
+        ax.fill_betweenx(section_heights,
+                         hi,
+                         lo,
+                         color=(.65,.65,.65),
+                         label='33% envelope',
+                         linestyle = 'solid',
+                         lw = 1.5,
+                         edgecolor = 'k',
+                         zorder = 2)
+
+        if plot_mle:
+            # calculate mle
+            dy = np.linspace(np.min(section_residuals.ravel()), np.max(section_residuals.ravel()), 200)
+            max_like = np.zeros(section_heights.size)
+            for i in np.arange(section_heights.size):
+                height_slice = section_residuals[i,:]
+                max_like[i] = dy[np.argmax(gaussian_kde(height_slice, bw_method = 1)(dy))]
+
+            ax.plot(max_like,
+                    section_heights,
+                    color = 'k',
+                    lw = 2,
+                    zorder = 3,
+                    label = 'Most likely')
 
         ax.set_ylabel('Height (m)', fontsize = fs)
 

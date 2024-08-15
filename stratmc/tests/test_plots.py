@@ -48,8 +48,8 @@ def test_proxy_inference(a):
 
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    _ = proxy_inference(sample_df, ages_df, full_trace, plot_constraints = True, plot_data = True, plot_excluded_samples = True, plot_mean = True, plot_mle = True)
-    _ = proxy_inference(sample_df, ages_df, full_trace, sections = ['1', '2'], plot_constraints = True, plot_data = True, section_legend = True, plot_excluded_samples = True, plot_mean = True, plot_mle = True, proxy = 'd18o', orientation = 'vertical', fontsize = 10, figsize = (4, 7))
+    _ = proxy_inference(sample_df, ages_df, full_trace, plot_constraints = True, plot_samples = True, plot_excluded_samples = True, plot_mean = True, plot_mle = True)
+    _ = proxy_inference(sample_df, ages_df, full_trace, sections = ['1', '2'], plot_constraints = True, plot_samples = True, section_legend = True, plot_excluded_samples = True, plot_mean = True, plot_mle = True, proxy = 'd18o', orientation = 'vertical', fontsize = 10, figsize = (4, 7))
 
 
 
@@ -75,7 +75,10 @@ def test_age_height_model(a):
 
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
-    _ = age_height_model(sample_df, ages_df, full_trace)
+    _ = age_height_model(sample_df, ages_df, full_trace, plot_samples = True, include_excluded_samples = True, legend = True)
+    _ = age_height_model(sample_df, ages_df, full_trace, plot_samples = True, include_excluded_samples = False)
+    _ = age_height_model(sample_df, ages_df, full_trace, plot_samples = False, include_excluded_samples = False)
+
 
 @patch("matplotlib.pyplot.show")
 def test_section_proxy_signal(a):
@@ -85,6 +88,8 @@ def test_section_proxy_signal(a):
 
     _ = section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_ages = True, plot_constraints = True)
     _ = section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_ages = False, plot_constraints = True, yax = 'age')
+    _ = section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_ages = True, plot_constraints = True, plot_mle = True)
+    _ = section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_ages = False, plot_constraints = True, yax = 'age', plot_mle = True)
 
 
 @patch("matplotlib.pyplot.show")
