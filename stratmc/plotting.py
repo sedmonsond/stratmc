@@ -214,7 +214,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
        sample_df = load_object(example_sample_path)
        ages_df = load_object(example_ages_path)
 
-       proxy_inference(sample_df, ages_df, full_trace, proxy = 'd13c', plot_constraints = True, plot_samples = True, plot_excluded_samples = False, section_legend = False)
+       proxy_inference(sample_df, ages_df, full_trace, proxy = 'd13c')
 
        plt.show()
 
@@ -348,7 +348,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
             if section_legend:
                 label = section
             elif not plotted_data:
-                label = 'Most likely sample age'
+                label = 'Sample (most likely age)'
             else:
                 label = '_nolegend_'
 
@@ -597,7 +597,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
 
     return fig
 
-def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, legend = True, plot_samples = False, plot_mle = False, orientation = 'horizontal', section_legend = False, marker_size = 20, section_cmap = 'Spectral', **kwargs):
+def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, legend = True, plot_samples = False, plot_mle = True, orientation = 'horizontal', section_legend = False, marker_size = 20, section_cmap = 'Spectral', **kwargs):
     """
 
     Plot interpolated proxy signal over time (by extending the posterior section age models to a new proxy not included in the inference model) using interpolated age models from :py:meth:`extend_age_model() <stratmc.inference.extend_age_model>` and interpolated proxy values from :py:meth:`interpolate_proxy() <stratmc.inference.interpolate_proxy>` in :py:mod:`stratmc.inference`.
@@ -644,7 +644,7 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
         Plot proxy observations by most likely posterior age. Defaults to ``False``.
 
     plot_mle: bool, optional
-        Plot the maximum likelihood estimate. Defaults to ``False``.
+        Plot the maximum likelihood estimate. Defaults to ``True``.
 
     orientation: str, optional
         Orientation of figure ('horizontal' or 'vertical'). Defaults to 'horizontal'.
@@ -714,7 +714,6 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
             if vertical:
                 ax.scatter(section_df[proxy],
                            section_df['mle'],
-                           #np.mean(sec_ages, axis = 1),
                            s = marker_size,
                            color = cs[section],
                            label = label,
@@ -812,7 +811,7 @@ def interpolated_proxy_inference(interpolated_df, interpolated_proxy_df, proxy, 
     return fig
 
 
-def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = True, plot_samples = False, cmap = 'Spectral', legend = False, **kwargs):
+def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = True, plot_samples = True, cmap = 'Spectral', legend = False, **kwargs):
     """
     Generate a posterior age-height plot for each section.
 
@@ -854,6 +853,9 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
 
     include_excluded_samples: bool, optional
         Whether to consider excluded samples (``Exclude?`` is ``True`` in ``sample_df``) whose ages were passively tracked in the inference model. Defaults to ``True``.
+
+    plot_samples: bool, optional
+        Plot proxy observations by most likely posterior age. Defaults to ``True``.
 
     Returns
     -------
@@ -976,7 +978,7 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
                         linestyle = 'solid',
                         marker = 'x',
                         s = 10,
-                        label = 'Mean sample age')
+                        label = 'Most likely sample age')
             else:
                 ax.scatter(max_like[included_idx],
                         section_df['height'][included_idx],
@@ -985,7 +987,7 @@ def age_height_model(sample_df, ages_df, full_trace, include_excluded_samples = 
                         linestyle = 'solid',
                         marker = 'x',
                         s = 10,
-                        label = 'Mean sample age')
+                        label = 'Most likely sample age')
 
         ax.errorbar(ages_df['age'][ages_df['section']==section],
                      ages_df['height'][ages_df['section']==section],
@@ -3242,7 +3244,7 @@ def proxy_data_density(full_trace, time_grid = None, figsize = (6, 3.5), **kwarg
         from stratmc.data import load_trace
         from stratmc.plotting import proxy_data_density
 
-        full_trace = load_trace('examples/example_docs_trace_data')
+        full_trace = load_trace('examples/example_docs_trace')
 
         proxy_data_density(full_trace, time_grid = full_trace.X_new.X_new.values[::2])
 

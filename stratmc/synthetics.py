@@ -763,7 +763,7 @@ def synthetic_signal_from_prior(ages, num_signals = 100, ls_dist = 'Wald', ls_mi
 def quantify_signal_recovery(full_trace, true_signal, proxy = 'd13c', mode = 'posterior'):
 
     """
-    Calculates the likelihood of the true signal (for synthetic tests, where the true signal is known) given draws from the posterior (default) or prior. The likelihood is evaluated at each age (the posterior signal and the true signal must be evaluated at the same ages). Provides a measure of signal recovery.
+    Calculates the likelihood of the true proxy signal (for synthetic tests, where the true signal is known) conditioned on the posterior (default) or prior proxy signal inference. The likelihood is evaluated at each age (the posterior signal and the true signal must be evaluated at the same ages). Provides a measure of signal recovery.
 
     Parameters
     ----------
@@ -774,10 +774,10 @@ def quantify_signal_recovery(full_trace, true_signal, proxy = 'd13c', mode = 'po
         True values for the proxy signal, evaluated at the same ages as the posterior signal in ``full_trace``.
 
     proxy: str, optional
-        Tracer signal to evaluate. Defaults to `d13c'.
+        Tracer signal to evaluate. Defaults to 'd13c'.
 
     mode: str, optional
-        Whether to use the posterior or prior to calculate signal recovery. Defaults to `posterior`.
+        Whether to use the posterior or prior to calculate signal recovery. Defaults to 'posterior'.
 
     Returns
     -------
@@ -836,7 +836,7 @@ def sample_age_recovery(full_trace, sample_df, sections = None, mode = 'posterio
         List of sections to evaluate. Defaults to all sections in sample_df.
 
     mode: str, optional
-         Whether to use the posterior or prior age models. Defaults to `posterior`.
+         Whether to use the posterior or prior age models. Defaults to 'posterior'.
 
     Returns
     -------
@@ -929,7 +929,7 @@ def sample_age_residuals(full_trace, sample_df, sections = None, mode = 'posteri
         List of sections to evaluate. Defaults to all sections in sample_df.
 
     mode: str, optional
-         Whether to use the posterior or prior age models. Defaults to `posterior`.
+         Whether to use the posterior or prior age models. Defaults to 'posterior'.
 
     Returns
     -------
