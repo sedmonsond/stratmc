@@ -126,27 +126,26 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
 
         if plot_constraints:
             depositional_age_heights = ages_df['height'][(ages_df['section']==section) & (ages_df['Exclude?'] == False) & (ages_df['intermediate detrital?'] == False)  & (ages_df['intermediate intrusive?'] == False)]
-            ax.hlines(depositional_age_heights,
-                      xl[0],
-                      xl[1],
+            for h in depositional_age_heights:
+                ax.axhline(h,
                       color = cs[section],
                       linestyle = 'dashed',
                       label = 'Depositional age',
                       zorder = 2)
 
             detrital_age_heights = ages_df['height'][(ages_df['section']==section) & (ages_df['Exclude?'] == False) & (ages_df['intermediate detrital?'] == True)]
-            ax.hlines(detrital_age_heights,
-                      xl[0],
-                      xl[1],
-                      color = cs[section],
-                      linestyle = 'dotted',
-                      label = 'Detrital age',
-                      zorder = 2)
+
+            for h in detrital_age_heights:
+                ax.axhline(h,
+                        color = cs[section],
+                        linestyle = 'dotted',
+                        label = 'Detrital age',
+                        zorder = 2)
 
             intrusive_age_heights = ages_df['height'][(ages_df['section']==section) & (ages_df['Exclude?'] == False) & (ages_df['intermediate intrusive?'] == True)]
-            ax.hlines(intrusive_age_heights,
-                      xl[0],
-                      xl[1],
+
+            for h in intrusive_age_heights:
+                ax.axhline(h,
                       color = cs[section],
                       linestyle = 'dashdot',
                       label = 'Intrusive age',

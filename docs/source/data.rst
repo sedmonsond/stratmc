@@ -22,6 +22,7 @@ Functions for importing and processing proxy and age constraint data.
     clean_data
     depth_to_height
     combine_duplicates
+    downsample
 
 .. automodule:: stratmc.data
   :members:

@@ -5,6 +5,8 @@ import warnings
 import arviz as az
 import numpy as np
 import pandas as pd
+from sklearn.cluster import KMeans
+from tqdm.notebook import tqdm
 
 pd.options.mode.chained_assignment = None
 
@@ -26,7 +28,7 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
         Path to .csv file containing age constraints for all sections (without '.csv` extension).
 
     proxies: str or list(str), optional
-        Tracer names (must match column headers in ``sample_file.csv``); defaults to 'd13c`.
+        proxy names (must match column headers in ``sample_file.csv``); defaults to 'd13c`.
 
     proxy_sigma_default: float or dict{float}, optional
         Measurement uncertainty (:math:`1\\sigma`) to use for proxy observations if not specified in ``proxy_std`` column of ``sample_df``. To set a different value for each proxy, pass a dictionary with proxy names as keys. Defaults to 0.1.
@@ -165,7 +167,7 @@ def clean_data(sample_df, ages_df, proxies, sections):
         :class:`pandas.DataFrame` containing age constraints for all sections.
 
     proxies: str or list(str)
-        Tracers to include in the inference.
+        Proxies to include in the inference.
 
     sections: list(str) or numpy.array(str)
         List of sections to include in the inference (as named in ``sample_df`` and ``ages_df``).
@@ -712,3 +714,542 @@ def accumulation_rate(full_trace, sample_df, ages_df, method = 'all', age_model 
             rate_df = pd.concat([rate_df.astype(section_rate_df.dtypes), section_rate_df], ignore_index = True)
 
     return rate_df
+
+def upsample(full_trace, downsampled_df, sample_df, ages_df, **kwargs):
+    """
+    Extend age models calculated using downsampled proxy observations from :py:meth:`downsample() <bayestrat.data>` to the full set of proxy observations.
+
+    .. todo::
+        Remove? Shouldn't be necessary since ages for excluded samples can now be tracked w/in the model
+    .. todo::
+        Check behavior with excluded samples
+
+
+    Parameters
+    ----------
+    full_trace: arviz.InferenceData
+        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`build_model() <bayestrat.model>` in :py:mod:`bayestrat.model`.
+
+    downsampled_df: pandas.DataFrame
+        Downsampled sample DataFrame from ``bayestrat.data.downsample`` (used for the proxy inference associated with ``full_trace``).
+
+    sample_df: pandas.DataFrame
+        :class:`pandas.DataFrame` containing all proxy data.
+    ages_df: pandas.DataFrame
+        :class:`pandas.DataFrame` containing age constraints from all sections.
+
+    Returns
+    -------
+    age_model_summary: pandas.DataFrame
+        :class:`pandas.DataFrame` containing sample age summary statistics (mean, standard deviation, median, and 68% and 95% confidence intervals) for each sample.
+    """
+
+    if 'sections' in kwargs:
+        sections = list(kwargs['sections'])
+    else:
+        sections = np.unique(sample_df['section'])
+
+    # get list of proxies included in model from full_trace
+    variables = [
+            l
+            for l in list(full_trace["posterior"].data_vars.keys())
+            if f"{'gp_ls_'}" in l
+            ]
+
+    proxies = []
+    for var in variables:
+        proxies.append(var[6:])
+
+    if type(proxies) == str:
+        proxies = list([proxies])
+
+    keep_idx = np.sort(np.unique((np.concatenate([downsampled_df.index[~np.isnan(downsampled_df[proxy])] for proxy in proxies]))))
+
+    downsampled_df = downsampled_df.loc[keep_idx]
+
+    downsampled_df = downsampled_df.sort_values(by = ['section', 'height'])
+
+    keep_idx_all = np.sort(np.unique((np.concatenate([sample_df.index[~np.isnan(sample_df[proxy])] for proxy in proxies]))))
+
+    sample_df = sample_df.loc[keep_idx_all]
+
+    sample_df = sample_df.sort_values(by = ['section', 'height'])
+
+    interp_df = pd.DataFrame(columns = list(sample_df.columns) + ['interp'])
+
+    for section in sections:
+        # height of samples included in inference
+        downsampled_section_df = downsampled_df[downsampled_df['section']==section]
+        downsampled_heights = np.concatenate([downsampled_section_df[~np.isnan(downsampled_section_df[proxy])]['height'].values for proxy in proxies])
+
+        downsampled_heights = np.sort(np.unique(downsampled_heights))
+
+        # all sample + age constraint heights
+        section_df = sample_df[sample_df['section']==section]
+        sample_heights = np.concatenate([section_df[~np.isnan(section_df[proxy])]['height'].values for proxy in proxies])
+
+        sample_heights = np.unique(sample_heights)
+        sample_heights = np.sort(sample_heights)
+
+        # heights of radiometric age constraints
+        sample_ages_df = ages_df[ages_df['section']==section]
+        age_heights = sample_ages_df['height'].values
+
+        # heigts at which to interpolate age models
+        interp_heights = [h for h in sample_heights if h not in downsampled_heights]
+
+        interp_section_df = pd.DataFrame(columns = list(sample_df.columns) + ['interp'])
+        for h in interp_heights:
+            idx = sample_df[sample_df['height']==h].index.tolist()
+            interp_section_df = pd.concat([interp_section_df, sample_df.loc[idx]])
+
+        interp_section_df['interp'] = 'y'
+        interp_section_df.reset_index(inplace = True, drop = True)
+
+        # sample age posterior - shape (samples x draws)
+        sample_age_post = az.extract(full_trace.posterior)[str(section) + '_ages'].values
+
+        age_constraint_post = az.extract(full_trace.posterior)[str(section) + '_radiometric_age'].values
+
+        if sample_age_post.shape[0] != len(downsampled_heights):
+            sys.exit(f"Number of data points for {section} does not match the number of data points in the trace. Check that input data and list of proxies match.")
+
+        if age_constraint_post.shape[0] != len(age_heights):
+            sys.exit(f"Number of data points for {section} does not match the number of data points in the trace. Check that input data and list of proxies match.")
+
+
+        # combine position data for all samples + age constraints included in the inference
+        all_heights = np.concatenate([downsampled_heights, age_heights])
+        sorted_idx = np.argsort(all_heights)
+        all_heights_sort = all_heights[sorted_idx]
+
+        # construct age and height vectors for the current draw using posteriors for 1) samples in section, and 2) age constraints
+        for i in np.arange(sample_age_post.shape[1]):
+            sample_age_vec = sample_age_post[:, i]
+            constraint_age_vec = age_constraint_post[:, i]
+            age_vec = np.concatenate([sample_age_vec, constraint_age_vec])
+            age_vec_sort = age_vec[sorted_idx]
+
+            # interpolate - x is height (must be strictly increasing), y is age
+            interp_age = np.interp(interp_heights, all_heights_sort, age_vec_sort)
+            interp_age = np.asarray(interp_age).reshape(len(interp_heights), 1)
+
+            # rows = samples, columns = draws
+            if i == 0:
+                age_paths = interp_age
+
+            else:
+                age_paths = np.hstack((age_paths, interp_age))
+
+
+        downsampled_section_df['interp'] = 'n'
+        downsampled_section_df['age_draws'] = np.nan
+        downsampled_section_df['age_draws'] = downsampled_section_df['age_draws'].astype(object)
+
+        interp_section_df['age_draws'] = np.nan
+        interp_section_df['age_draws'] = interp_section_df['age_draws'].astype(object)
+        for i in interp_section_df.index.tolist():
+            interp_section_df['age_draws'].loc[i] = age_paths[i, :]
+
+        downsampled_section_df.reset_index(inplace = True, drop = True)
+        for i in downsampled_section_df.index.tolist():
+            downsampled_section_df['age_draws'].loc[i] = sample_age_post[i, :]
+
+        interp_df = pd.concat([interp_df, downsampled_section_df, interp_section_df])
+
+
+        interp_df.sort_values(by = ['section', 'height'], inplace = True)
+        interp_df.reset_index(inplace = True, drop = True)
+        interp_df['mle'] = np.nan
+        interp_df['2.5'] = np.nan
+        interp_df['16'] = np.nan
+        interp_df['50'] = np.nan
+        interp_df['84'] = np.nan
+        interp_df['97.5'] = np.nan
+
+        for i in interp_df.index.tolist():
+            current_ages = interp_df['age_draws'].loc[i]
+
+            # mle
+            dy = np.linspace(np.min(current_ages), np.max(current_ages), 2000)
+            max_like = dy[np.argmax(gaussian_kde(current_ages, bw_method = 1)(dy))]
+            interp_df['mle'].loc[i] = max_like
+
+            # median
+            interp_df['50'].loc[i] = np.percentile(current_ages, 50)
+
+            # 2.5%
+            interp_df['2.5'].loc[i] = np.percentile(current_ages, 2.5)
+
+            # 16%
+            interp_df['16'].loc[i] = np.percentile(current_ages, 16)
+
+            # 84%
+            interp_df['84'].loc[i] = np.percentile(current_ages, 84)
+
+            # 97.5%
+            interp_df['97.5'].loc[i] = np.percentile(current_ages, 97.5)
+
+    return interp_df
+
+def downsample(sample_df, ages_df, method = 'target_cluster_std', proxy = 'd13c', nearest_point = True, **kwargs):
+    """
+    Downsample proxy observations using k-means clustering. Downsampling is performed on each section 'segment' between pairs of successive age constraints. To downsample multiple proxies, separately downsample each proxy and then merge using :py:meth:`combine_data() <bayestrat.data>`.
+
+    Parameters
+    ----------
+    sample_df: pandas.DataFrame
+        :class:`pandas.DataFrame` containing proxy data for all sections.
+
+    ages_df: pandas.DataFrame
+        :class:`pandas.DataFrame` containing age constraints for all sections.
+
+    proxy: str, optional
+        Proxy to downsample. Defaults to 'd13c`.
+
+    sections: list(str) or numpy.array(str), optional
+        List of sections to downsample. Defaults to all sections in ``sample_df``.
+
+    method: str, optional
+        Downsampling method ('target_cluster_std', 'resolution', 'n_clusters', or 'keep_fraction'). Defaults to ``target_cluster_std``, which increases the number of clusters until the within-cluster standard deviation of the proxy values is less than or equal to ``target_cluster_std``.
+
+    target_cluster_std: float or dict{float}, optional
+        Target within-cluster standard deviation; used if ``method = 'target_cluster_std'. Defaults to 0.5.
+
+    cluster_std_method: str
+        Whether to select the number of clusters such that all clusters have a standard deviation less than or equal to ``target_cluster_std`` ('all`), or such that the mean of the within-cluster standard deviations is less than or equal to ``target_cluster_std`` ('mean`). Defaults to 'all`.
+
+    target_res: float or dict{float}, optional
+        Target resolution (vertical distance between samples, in meters). Used if ``method = 'resolution'``; defaults to 5. If a float is passed, uses the same value for every section; to use a different resolution for each section, pass a dictionary with section names as keys.
+
+    n_clusters: int or dict{int}, optional
+        Number of clusters. Used if ``method = 'n_clusters'``; defaults to 10. If a float is passed, uses the same value for every segment. To use a different resolution for each section, pass a dictionary with section names as keys. To use a different value for each segment within a given section, set its dictionary entry equal to a dictionary with segment numbers (e.g., 0 for the lowermost segment) as keys.
+
+    keep_fraction: float or dict{float}, optional
+        Number of clusters = (numer of samples $\times$ keep_fraction). Used if ``method = 'keep_fraction'``; defaults to 0.5. If a float is passed, uses the same value for every section. To use a different resolution for each section, pass a dictionary with section names as keys.
+
+    min_clusters_per_interval: int or dict{int}, optional
+        Minimum number of clusters per interval; to use a different value for each section, pass a dictionary with section names as keys. Defaults to 2.
+
+    nearest_point: boolean, optional
+        For each cluster, keep the data point closest to the cluster center (with its measurement uncertainty) and exclude all other observations; defaults to ``True``. If ``False``, instead uses the cluster center (which does not necessarily correspond to a real data point) and excludes the original observations, with 'proxy_std` equal to the population standard deviation of the proxy observations assigned to the cluster.
+
+    Returns
+    -------
+    downsampled_data: pandas.DataFrame
+        :class:`pandas.DataFrame` containing downsampled proxy data. All samples are still included in the DataFrame, but samples that were excluded during downsampling are marked ``Exclude? = True``.
+
+    """
+
+    sample_df_downsampled = sample_df.copy()
+
+    if 'sections' in kwargs:
+            sections = list(kwargs['sections'])
+    else:
+        sections = np.unique(sample_df_downsampled['section'])
+
+    if method == 'resolution':
+        n_clusters = {}
+        if 'target_res' in kwargs:
+            target_res = kwargs['target_res']
+            temp_res = target_res
+            if (type(temp_res) == float) or (type(temp_res) == int):
+                target_res = {}
+                for section in sections:
+                    target_res[section] = temp_res
+        else:
+            target_res = {}
+            for section in sections:
+                target_res[section] = 5
+
+    elif method == 'n_clusters':
+        if 'n_clusters' in kwargs:
+            n_clusters = kwargs['n_clusters']
+        else:
+            n_clusters = {}
+            for section in sections:
+                n_clusters[section] = 10
+
+    elif method == 'keep_fraction':
+        if 'keep_fraction' in kwargs:
+            keep_fraction = kwargs['keep_fraction']
+            if type(keep_fraction) == float:
+                temp = keep_fraction
+                keep_fraction = {}
+                for section in sections:
+                    keep_fraction[section] = temp
+
+        else:
+            keep_fraction = {}
+            for section in sections:
+                keep_fraction[section] = 0.25
+
+    elif method == 'target_cluster_std':
+        if 'target_cluster_std' in kwargs:
+            target_cluster_std = kwargs['target_cluster_std']
+            if type(target_cluster_std) == float:
+                temp = target_cluster_std
+                target_cluster_std = {}
+                for section in sections:
+                    target_cluster_std[section] = temp
+
+        else:
+            target_cluster_std = {}
+            for section in sections:
+                target_cluster_std[section] = 0.5
+
+        if 'cluster_std_method' in kwargs:
+            cluster_std_method = kwargs['cluster_std_method']
+            if type(cluster_std_method) == float:
+                temp = cluster_std_method
+                cluster_std_method = {}
+                for section in sections:
+                    cluster_std_method[section] = temp
+
+        else:
+            cluster_std_method = {}
+            for section in sections:
+                cluster_std_method[section] = 'all'
+
+    if 'min_clusters_per_interval' in kwargs:
+        min_clusters_per_interval = kwargs['min_clusters_per_interval']
+        if type(min_clusters_per_interval) == float:
+                temp = min_clusters_per_interval
+                min_clusters_per_interval = {}
+                for section in sections:
+                    min_clusters_per_interval[section] = temp
+    else:
+        min_clusters_per_interval = {}
+        for section in sections:
+            min_clusters_per_interval[section] = 2
+
+
+    downsampled_df = {}
+    proxy_nan_df = {}
+
+    # excluded samples -- put these back into the final DataFrame as-is
+    excluded_df =  sample_df_downsampled[sample_df_downsampled['Exclude?']]
+
+    # keep track of samples that aren't marked as exclude, but that don't have any data for the proxy to be downsampled (these should be included in the final dataframe as-is)
+    proxy_nan_df[proxy] = sample_df_downsampled[(sample_df_downsampled['section']==section) & (~sample_df_downsampled['Exclude?']) & (np.isnan(sample_df_downsampled[proxy]))]
+
+    downsampled_df[proxy] = pd.DataFrame(columns = ['section', 'height', proxy, proxy + '_std', 'Exclude?'])
+
+    for section in tqdm(sections):
+        print(f'Downsampling {section}')
+        section_df = sample_df_downsampled[(sample_df_downsampled['section']==section) & (~sample_df_downsampled['Exclude?'])].dropna(subset = proxy)
+        section_ages_df = ages_df[ages_df['section']==section]
+        heights = section_df['height'].values
+        proxy_vec = section_df[proxy].values
+        age_heights = section_ages_df['height'].values
+
+        centers = {}
+        closest_df_idx = []
+        cluster_center_idx = []
+        no_downsample_idx = []
+        center_std = {}
+
+        intervals = []
+
+        for interval in np.arange(0, len(age_heights)-1).tolist():
+            label = str(section)+'_'+ str(interval) +'_'
+            above = section_df['height']>=age_heights[interval]
+            below = section_df['height']<age_heights[interval+1]
+            interval_df = section_df[above & below]
+            interval_samples = interval_df[proxy].values
+
+            interval_heights = interval_df['height'].values
+
+            if len(interval_heights) > min_clusters_per_interval[section]:
+
+                intervals.append(interval)
+
+                if method == 'resolution':
+                    if len(np.diff(interval_heights) > 0):
+                        interval_res = np.mean(np.diff(interval_heights))
+                        scale = target_res[section]/interval_res
+                        if (scale > 1) and (len(interval_heights) >= min_clusters_per_interval[section]):
+                            current_n_clusters = round(len(interval_samples)/scale)
+                            if current_n_clusters > 0:
+                                go = True
+                            else:
+                                go = False
+                        else:
+                            go = False
+
+                    else:
+                        go = False
+
+                elif method == 'n_clusters':
+                    section_n_clusters = n_clusters[section]
+                    if type(section_n_clusters) == dict:
+                        current_n_clusters = section_n_clusters[interval]
+                    else:
+                        current_n_clusters = n_clusters[section]
+                    if (current_n_clusters < len(interval_heights)) and (len(interval_heights) >= min_clusters_per_interval[section]) and (current_n_clusters > 0):
+                        go = True
+
+                    else:
+                        go = False
+
+                elif method == 'keep_fraction':
+                    current_n_clusters = np.round(keep_fraction[section] * len(interval_heights)).astype(int)
+                    if (current_n_clusters < len(interval_heights)) and (len(interval_heights) >= min_clusters_per_interval[section]) and (current_n_clusters > 0):
+                        go = True
+                    else:
+                        go = False
+
+                elif method == 'target_cluster_std':
+                    section_target_cluster_std = target_cluster_std[section]
+                    if (len(interval_heights) >= min_clusters_per_interval[section]):
+                        go = True
+                    else:
+                        go = False
+
+                if go and (method != 'target_cluster_std'):
+                    X = [[x, y] for x, y in zip(interval_df['height'], interval_df[proxy])]
+
+                    # init kmeans classifier
+                    km = KMeans(n_clusters=current_n_clusters, random_state=0,  init='k-means++')
+
+                    # assign a cluster to each example
+                    yhat = km.fit_predict(X)
+
+                    # retrieve unique clusters
+                    clusters = np.unique(yhat)
+
+                    centers[interval] = km.cluster_centers_
+                    center_std[interval] = []
+                    delete_centers = []
+
+                    for cluster in clusters:
+                        row_ix = np.asarray(np.where(yhat == cluster))[0]
+                        X = np.asarray(X)
+                        if row_ix.shape[0] > 1:
+                            # TODO: should we just use the sample w/ the proxy value closest to the center proxy value (disregarding the height)?
+                            # calculate distance between cluster center and each data point in the cluster
+                            current_center = centers[interval][cluster]
+                            distance = np.zeros(row_ix.shape[0]) * np.nan
+                            for i in np.arange(len(row_ix)):
+                                #distance[i] = np.linalg.norm(current_center - X[row_ix[i]])
+                                distance[i] = np.abs(current_center[1] - X[row_ix[i]][1])
+                            closest_idx = row_ix[np.argmin(distance)]
+                            closest_df_idx.append(interval_df.index.tolist()[closest_idx])
+                            center_std[interval].append(np.std(X[row_ix, 0]))
+                        else:
+                            delete_centers.append(cluster)
+                            closest_df_idx.append(interval_df.index.tolist()[row_ix[0]])
+                            # if the cluster only contains 1 data point, we'll keep it regardless of whether nearest_point is True or False
+                            cluster_center_idx.append(interval_df.index.tolist()[row_ix[0]])
+
+                    if len(delete_centers) > 0:
+                        center_std[interval] = np.delete(center_std[interval], delete_centers, axis=0)
+                        centers[interval] = np.delete(centers[interval], delete_centers, axis=0)
+
+                elif go and (method == 'target_cluster_std'):
+                    X = [[x, y] for x, y in zip(interval_df['height'], interval_df[proxy])]
+
+                    # init kmeans classifier
+                    current_n_clusters = min_clusters_per_interval[section]
+                    # np.nanstd(interval_df[proxy].values)
+                    current_cluster_std = [section_target_cluster_std + 1] * min_clusters_per_interval[section]
+
+                    while any(np.array(current_cluster_std) > section_target_cluster_std):
+                        current_n_clusters += 1
+
+                        km = KMeans(n_clusters=current_n_clusters, init = 'k-means++', random_state=0)
+
+                        yhat = km.fit_predict(X)
+
+                        # retrieve unique clusters
+                        clusters = np.unique(yhat)
+
+                        centers[interval] = km.cluster_centers_
+                        center_std_temp = []
+                        delete_centers = []
+
+                        for cluster in clusters:
+                            row_ix = np.asarray(np.where(yhat == cluster))[0]
+                            X = np.asarray(X)
+
+                            if len(row_ix) > 1:
+                                center_std_temp.append(np.nanstd(X[row_ix, 1]))
+
+                        if cluster_std_method[section] == 'mean':
+                            current_cluster_std = [np.nanmean(center_std_temp)]
+                        elif cluster_std_method[section] == 'all':
+                            current_cluster_std = np.array(center_std_temp)
+
+
+                    center_std[interval] = []
+                    delete_centers = []
+
+                    for cluster in clusters:
+                        row_ix = np.asarray(np.where(yhat == cluster))[0]
+                        if row_ix.shape[0] > 1:
+                            # TODO: decide if we should just use the sample w/ the proxy value closest to the center proxy value (disregarding the height
+                            # calculate distance between cluster center and each data point in the cluster
+                            current_center = centers[interval][cluster]
+                            distance = np.zeros(row_ix.shape[0]) * np.nan
+                            for i in np.arange(len(row_ix)):
+                                # distance[i] = np.linalg.norm(current_center - X[row_ix[i]])
+                                distance[i] = np.abs(current_center[1] - X[row_ix[i]][1])
+                            closest_idx = row_ix[np.argmin(distance)]
+                            closest_df_idx.append(interval_df.index.tolist()[closest_idx])
+                            # standard deviation of the proxy values within this cluster
+                            center_std[interval].append(np.std(X[row_ix, 1]))
+                        else:
+                            # if only 1 data point in the cluster, don't need to add it to sample_df if nearest_point = False
+                            delete_centers.append(cluster)
+                            center_std[interval].append(np.nan)
+                            closest_df_idx.append(interval_df.index.tolist()[row_ix[0]])
+                            # if the cluster only contains 1 data point, we'll keep it regardless of whether nearest_point is True or False
+                            cluster_center_idx.append(interval_df.index.tolist()[row_ix[0]])
+
+                    if len(delete_centers) > 0:
+                        centers[interval] = np.delete(centers[interval], delete_centers, axis=0)
+                        center_std[interval] = np.delete(center_std[interval], delete_centers, axis=0)
+
+                # if go = False (don't meet the requirements to downsample)
+                else:
+                    # if the cluster only contains 1 data point, we'll keep it regardless of whether nearest_point is True or False
+                    no_downsample_idx.append(interval_df.index.tolist())
+
+        if not nearest_point:
+            for interval in intervals:
+                if interval == intervals[0]:
+                    section_centers = np.asarray(centers[interval])
+                    section_center_std = np.asarray(center_std[interval])
+                else:
+                    section_centers = np.concatenate([section_centers, np.asarray(centers[interval])])
+                    section_center_std =  np.concatenate([section_center_std, np.asarray(center_std[interval])])
+
+        if nearest_point:
+            # mark the samples we're keeping as Exclude? = False, and the rest as Exclude? = True
+            # don't change samples that didn't have data for the downsampled proxy anyway
+            sample_df_downsampled['Exclude?'][(sample_df_downsampled['section'] == section) & (~np.isnan(sample_df_downsampled[proxy]))] = True
+            sample_df_downsampled['Exclude?'].loc[closest_df_idx] = False
+            sample_df_downsampled['Exclude?'].loc[no_downsample_idx] = False
+
+        else:
+            # mark all the samples in section as Exclude? = True, unless they don't have data for the downsampled proxy
+            sample_df_downsampled['Exclude?'][(sample_df_downsampled['section'] == section) & (~np.isnan(sample_df_downsampled[proxy]))] = True
+            sample_df_downsampled['Exclude?'].loc[no_downsample_idx] = False
+            sample_df_downsampled['Exclude?'].loc[cluster_center_idx] = False
+
+            # add cluster centers to DataFrame
+            downsampled_section_df = pd.DataFrame({'section': [section] * section_centers.shape[0],
+                                               'height': section_centers[:, 0],
+                                               proxy: section_centers[:, 1],
+                                               proxy + '_std': section_center_std,
+                                                'Exclude?': [False] * section_centers.shape[0]})
+
+
+            sample_df_downsampled = pd.concat([sample_df_downsampled, downsampled_section_df], ignore_index = True)
+
+    sample_df_downsampled.sort_values(by = ['section', 'height'], inplace = True)
+
+    sample_df_downsampled.reset_index(inplace = True, drop = True)
+
+
+    return sample_df_downsampled

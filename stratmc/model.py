@@ -56,7 +56,7 @@ DIST_DICT = {
     "PolyaGamma": pm.PolyaGamma,
 }
 
-def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.1, approximate = False,  hsgp_m = 15, hsgp_c = 1.3, ls_dist = 'Wald', ls_min = 0, ls_mu = 20, ls_lambda = 50, ls_sigma = 50, var_sigma = 10,  white_noise_sigma = 1e-1, gp_mean_mu = None, gp_mean_sigma = None, offset_type = 'section', offset_prior = 'Laplace', offset_alpha = 0, offset_beta = 1, offset_sigma = 1, offset_mu = 0, offset_b = 2, noise_type = 'section', noise_prior = 'HalfCauchy', noise_beta = 1, noise_sigma = 1, noise_nu = 1,  jitter = 0.001, proxy_observed = True, **kwargs):
+def build_model_dev(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.1, approximate = False,  hsgp_m = 15, hsgp_c = 1.3, ls_dist = 'Wald', ls_min = 0, ls_mu = 20, ls_lambda = 50, ls_sigma = 50, var_sigma = 10,  white_noise_sigma = 1e-1, gp_mean_mu = None, gp_mean_sigma = None, offset_type = 'section', offset_prior = 'Laplace', offset_alpha = 0, offset_beta = 1, offset_sigma = 1, offset_mu = 0, offset_b = 2, noise_type = 'section', noise_prior = 'HalfNormal', noise_beta = 1, noise_sigma = 1, noise_nu = 1,  jitter = 0.001, proxy_observed = True, **kwargs):
     """
     Create a proxy signal (i.e., carbon isotope) :ref:`inference model <model_target>`.
 
@@ -223,8 +223,8 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
             noise_type[proxy] = temp
 
     for proxy in proxies:
-        if noise_type[proxy] not in ['section', 'groups']:
-            sys.exit(f"noise type {noise_type[proxy]} not implemented. Choose from 'section' or 'groups'.")
+        if noise_type[proxy] not in ['section', 'groups', 'none']:
+            sys.exit(f"noise type {noise_type[proxy]} not implemented. Choose from 'section', 'groups', or 'none'.")
 
     # also convert noise prior parameters to dictionaries
     if type(noise_beta) != dict:
@@ -447,7 +447,6 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
 
         # GP for each proxy
         for proxy in proxies:
-
             if ls_dist[proxy] == 'Wald':
                 ls_temp = pm.Wald('gp_ls_unshifted_' + proxy, mu = ls_mu[proxy], lam = ls_lambda[proxy], shape = 1)
                 gp_ls[proxy] = pm.Deterministic('gp_ls_' + proxy, ls_temp + ls_min[proxy])
@@ -603,6 +602,9 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
             heights = section_df['height'].values
             age_heights = section_age_df['height'].values
 
+            # grab list of depositional age constraint names for current section (must match name of age in ages_df)
+            depositional_age_names = section_df['depositional age'].dropna().unique()
+
             # create age constraint distributions
             if len(age_heights) == 0:
                 print(str(section) + ' has no age constraints')
@@ -695,6 +697,8 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                     below = section_df['height']<age_heights[interval+1]
                     interval_df = section_df[above & below]
                     interval_samples = interval_df[proxy].values
+                    interval_superposition = interval_df['superposition?'].values
+                    interval_heights = interval_df['height'].values
 
                     above = intermediate_detrital_section_ages_df['height']>age_heights[interval]
                     below = intermediate_detrital_section_ages_df['height']<age_heights[interval+1]
@@ -718,10 +722,83 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
 
                         # sort random draws if >1 sample
                         if len(interval_samples) > 1:
+                            shuffle_heights = np.unique(interval_heights[~interval_superposition])
 
                             random_sample_ages_unsorted = pm.Uniform(label + 'unsorted_random_ages', lower = 0, upper = 1, size = len(interval_samples))
 
-                            random_sample_ages = pm.Deterministic(label + 'random_ages', at.sort(random_sample_ages_unsorted))
+                            # if superposition is known for all samples, sort random ages
+                            if all(interval_superposition):
+                                random_sample_ages = pm.Deterministic(label + 'random_ages', at.sort(random_sample_ages_unsorted))
+
+                            # if there's no superposition information for any samples, skip sorting
+                            elif (all(~interval_superposition)) and (len(shuffle_heights) == 1):
+                                random_sample_ages = random_sample_ages_unsorted
+
+                            # if only some samples are missing superposition information, only sort samples w/ superposition = True
+                            else:
+                                sorted_idx = at.argsort(random_sample_ages_unsorted)
+
+                                # create a dictionary to store lists of indices to shuffle (one list per stratigraphic horizon)
+                                shuffle_group_idx = {}
+
+                                for h in shuffle_heights:
+                                    shuffle_group_idx[h] = []
+
+                                # grab indices for each group of unsorted samples
+                                for i, h in enumerate(interval_heights):
+                                    if h in shuffle_heights:
+                                        shuffle_group_idx[h].append(i)
+
+                                # sort all of the ages
+                                random_sample_ages = at.sort(random_sample_ages_unsorted) #[sorted_idx]
+
+                                # unsort each group of samples without superposition information
+                                for i, h in enumerate(shuffle_heights):
+                                    # replace w/ another set of random draws from Uniform(0, 1), then scale between bounding samples
+                                    # note - not possible to re-shuffle the original draws (permutations not allowed in logp graph)
+                                    interval_shuffled_random_ages = pm.Uniform('shuffled_ages_' + str(section) + '_' + str(h),
+                                                                               lower = 0,
+                                                                               upper = 1,
+                                                                               size = len(shuffle_group_idx[h])
+                                                                              )
+
+                                    # get indices of samples below and above the shuffled range
+                                    start_shuffle_idx = np.max([0, shuffle_group_idx[h][0]-1])
+                                    stop_shuffle_idx = np.min([len(interval_heights) - 1, shuffle_group_idx[h][-1] + 1])
+
+                                    shuffle_base_age = random_sample_ages[start_shuffle_idx]
+                                    shuffle_top_age = random_sample_ages[stop_shuffle_idx]
+
+                                    # check if the starting index is also from a previously shuffled interval. if yes, reset base age to youngest sample in that group
+                                    # don't need to worry about the overlying interval, because it hasn't been reset yet
+                                    if i != 0:
+                                        start_shuffle_height = interval_heights[start_shuffle_idx]
+                                        # if the underlying sample was also shuffled, find the youngest sample in its group, and use it as the new 'base age'
+                                        if start_shuffle_height in shuffle_heights[:i]:
+                                            under_shuffle_idx = shuffle_group_idx[start_shuffle_height]
+
+                                            # note: because of how the scaled ages are calculated (age = base - unscaled age), the youngest sample will have the highest value in [0, 1]
+                                            shuffle_base_age = at.max(random_sample_ages[under_shuffle_idx])
+
+                                    # calculate (unscaled) total time spanned by the shuffled interval
+                                    #observed_shuffle_age_diff = random_sample_ages[stop_shuffle_idx] - random_sample_ages[start_shuffle_idx]
+                                    # note: ages still flipped s.t. larger values = younger
+                                    observed_shuffle_age_diff = shuffle_top_age - shuffle_base_age
+
+                                    # scale the shuffled [0, 1] ages s.t. the values fall in between the (sorted) values for over/underlying samples
+                                    # scaling: max - (random * observed diff)
+
+                                    interval_shuffled_scaled_random_ages = pm.Deterministic('shuffled_scaled_ages_' + str(section) + '_' + str(h),
+                                                                                            shuffle_top_age - (interval_shuffled_random_ages * observed_shuffle_age_diff))
+
+
+                                    # insert unsorted random ages in tensor
+                                    random_sample_ages = at.set_subtensor(random_sample_ages[shuffle_group_idx[h]], interval_shuffled_scaled_random_ages)
+
+                                random_sample_ages = pm.Deterministic(label + 'random_ages', random_sample_ages)
+
+                                # for approach 1
+                                #random_sample_ages = random_sample_ages_unsorted[interval_sort_idx]
 
                         # skip sorting if interval only contains 1 sample
                         else:
@@ -735,7 +812,6 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                         ages[interval] = pm.Deterministic(label + 'ages', base_age_dist - (random_sample_ages * observed_age_diff * scaling_factor_1) - (1 - scaling_factor_2) * observed_age_diff * (1 - scaling_factor_1))
 
                         intervals.append(interval)
-
 
                         # if there are intermediate detrital ages in the section, check if they're inside the current interval (iterate over constraints)
                         if detrital_interval_df.shape[0] > 0:
@@ -908,6 +984,45 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
 
                 section_age_dist[section] = pm.Deterministic(label+'ages', section_age_tensor)
 
+
+#
+# shared_ages = ages_df[ages_df['shared?']==True]
+
+#         if len(shared_ages) > 0:
+#             unique_shared_constraints = np.unique(shared_ages['name'])
+
+#             for constraint in unique_shared_constraints:
+#                 constraint = str(constraint)
+#                 constraint_df = shared_ages[shared_ages['name']==constraint]
+#                 dist = np.unique(constraint_df['distribution_type'])
+#                 dist_age = np.unique(constraint_df['age'])
+#                 dist_age_std = np.unique(constraint_df['age_std'])
+
+#                 if (len(dist) > 1) or (len(dist_age) > 1) or (len(dist_age_std) > 1):
+#                     sys.exit(f"Initialization of shared age constraint {constraint} is inconsistent. Check that distribution type and parameters are the same for each section.")
+
+                ## for samples with depositional ages, enforce with a likelihood function
+                if len(depositional_age_names) > 0:
+                    for constraint in depositional_age_names:
+                        print(f'Adding depositional age likelihood term for section {section}: {constraint}')
+
+                        age_mu = np.unique(ages_df[ages_df['name'] == constraint]['age'])
+                        age_std = np.unique(ages_df[ages_df['name'] == constraint]['age_std'])
+
+                        if (len(age_mu) > 1) or (len(age_std) > 1):
+                            sys.exit(f"Initialization of depositional age constraint {constraint} is inconsistent. Check that the mean and standard deviation are the same for each instance in the ages DataFrame.")
+
+                        else:
+                            # grab indices of samples with the current depositional age
+                            dep_constraint_idx = np.where(section_df['depositional age'] == constraint)[0]
+                            # likelihood function: mean = modeled sample age, sigma = depositioanl age constraint standard deviation, observed = depositional age constraint mean
+                            dep_age_dist = pm.Normal(str(section) + '_depositional_age_likelihood_' + constraint,
+                                                     mu = section_age_dist[section][dep_constraint_idx],
+                                                     sigma = list([age_std[0]]) * len(dep_constraint_idx),
+                                                     observed = list([age_mu[0]]) * len(dep_constraint_idx)
+                                                     )
+
+
                 ages_all = np.append(ages_all, ages)
 
                 proxy_obs = {}
@@ -1072,18 +1187,53 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                 f = gp[proxy].prior('f_' + proxy, X=ages[proxy_idx[proxy],None])
 
             if proxy_observed:
-                if offset_type[proxy] != 'none':
+                if (offset_type[proxy] != 'none') and (noise_type[proxy] != 'none'):
                     proxy_pred = pm.Normal(proxy + '_pred', mu=f.flatten() + offset[proxy],
                                         sigma = proxy_quadrature_uncertainty[proxy] + noise[proxy],
                                         shape = proxy_all[proxy][proxy_idx[proxy]].shape,
                                         observed=proxy_all[proxy][proxy_idx[proxy]])
 
+                    # pull out the predicted proxy value for each observation (GP + offset) as a deterministic (i.e., predicted value w/out noise)
+                    proxy_pred_mu = pm.Deterministic(proxy + '_' + '_pred_mu', f.flatten() + offset[proxy])
 
-                else:
+
+                elif (offset_type[proxy] == 'none') and (noise_type[proxy] == 'none'):
+                    proxy_pred = pm.Normal(proxy + '_pred', mu=f.flatten(),
+                                        sigma = proxy_quadrature_uncertainty[proxy],
+                                        shape = proxy_all[proxy][proxy_idx[proxy]].shape,
+                                        observed=proxy_all[proxy][proxy_idx[proxy]])
+
+                                # print('using StudentT likelihood with no added noise or offset')
+                                # pm.StudentT(proxy + '_pred', nu = 1, mu=f.flatten(),
+                                        # sigma = proxy_quadrature_uncertainty[proxy],
+                                        # shape = proxy_all[proxy][proxy_idx[proxy]].shape,
+                                        # observed=proxy_all[proxy][proxy_idx[proxy]])
+
+                    proxy_pred_mu = pm.Deterministic(proxy + '_' + '_pred_mu', f.flatten())
+
+                elif (offset_type[proxy] != 'none') and (noise_type[proxy] == 'none'):
+                     proxy_pred = pm.Normal(proxy + '_pred', mu=f.flatten()+ offset[proxy],
+                                        sigma = proxy_quadrature_uncertainty[proxy],
+                                        shape = proxy_all[proxy][proxy_idx[proxy]].shape,
+                                        observed=proxy_all[proxy][proxy_idx[proxy]])
+
+                                    # print('using StudentT likelihood with no added noise and Laplace offset')
+                                    # pm.StudentT(proxy + '_pred', nu = 1, mu=f.flatten()+ offset[proxy],
+                                    #     sigma = proxy_quadrature_uncertainty[proxy],
+                                    #     shape = proxy_all[proxy][proxy_idx[proxy]].shape,
+                                    #     observed=proxy_all[proxy][proxy_idx[proxy]])
+
+                     proxy_pred_mu = pm.Deterministic(proxy + '_' + '_pred_mu', f.flatten()+ offset[proxy])
+
+                elif (offset_type[proxy] == 'none') and (noise_type[proxy] != 'none'):
                     proxy_pred = pm.Normal(proxy + '_pred', mu=f.flatten(),
                                     sigma = proxy_quadrature_uncertainty[proxy] + noise[proxy],
                                     shape = proxy_all[proxy][proxy_idx[proxy]].shape,
                                     observed=proxy_all[proxy][proxy_idx[proxy]])
+
+
+                    proxy_pred_mu = pm.Deterministic(proxy + '_' + '_pred_mu', f.flatten())
+
 
             else:
                 if offset_type[proxy] != 'none':
@@ -1091,11 +1241,15 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                                     sigma = proxy_quadrature_uncertainty[proxy] + noise[proxy],
                                     shape = proxy_all[proxy][proxy_idx[proxy]].shape)
 
+                    proxy_pred_mu = pm.Deterministic(proxy + '_' + '_pred_mu', f.flatten()+ offset[proxy])
+
 
                 else:
                     proxy_pred = pm.Normal(proxy + '_pred', mu=f.flatten(),
                                     sigma = proxy_quadrature_uncertainty[proxy] + noise[proxy],
                                     shape = proxy_all[proxy][proxy_idx[proxy]].shape)
+
+                    proxy_pred_mu = pm.Deterministic(proxy + '_' + '_pred_mu', f.flatten())
 
     return model, gp
 

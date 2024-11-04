@@ -3,7 +3,7 @@
 ``depth``,"Depth of age constraint in core (in meters). For sections where stratigraphic position instead is described by **height**, leave blank."
 ``age``,Age (in Myr).
 ``age_std``,1-:math:`\sigma` age uncertainty (in Myr).
-``name``,Name of age constraint (type ``string``). Only required if one of ``shared?`` is ``True``.
+``name``,"Name of age constraint (type ``string``). Only required if ``shared?`` is ``True``, and for depositional age constraints linked to proxy obsevations in ``Stratigraphic proxy data``. "
 ``shared?``,"Whether the age constraint is shared between multiple sections (and should have the same age in all sections where it is present -- i.e., a correlative age constraint) (``True`` or ``False``). Shared constraints must have the same ``name``. Optional; defaluts to ``False``. "
 ``intermediate detrital?``,"Whether the age constraint is an intermediate (i.e., in the middle of a section) detrital age, which provides a maximum age for all overlying samples but does not constrain the age of underlying samples (``True`` or ``False``. Optional; defaults to ``False``."
 ``intermediate intrusive?``,"Whether the age constraint is an intermediate (i.e., in the middle of a section) intrusive age, which provides a minimum age for all underlying samples but does not constrain the age of overlying samples (``True`` or ``False``). Optional; defaults to ``False``.  "
