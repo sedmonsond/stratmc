@@ -109,15 +109,22 @@ def check_superposition(full_trace, sample_df, ages_df, quiet = True, **kwargs):
     chains = list(full_trace.posterior.chain.values)
     bad_chains = []
     for section in sections:
-        sample_heights = sample_df[sample_df['section']==section]['height']
+        section_df = sample_df[sample_df['section'] == section]
+
+        sample_superposition = section_df['superposition?'].values
+
+        shuffle_heights = np.unique(section_df['height'].values[~sample_superposition])
+
+        sample_heights = section_df['height'][sample_superposition]
         age_heights = ages_df[ages_df['section']==section]['height']
 
         comb = np.concatenate([sample_heights, age_heights])
         sort_idx = np.argsort(comb)
 
+        # check superposition for samples w/ superposition = True
         # chains x draws x # samples
         for c, chain in enumerate(chains):
-            sample_posterior = np.swapaxes(full_trace.posterior[str(section) + '_ages'].values[c, :, :], 0, 1)
+            sample_posterior = np.swapaxes(full_trace.posterior[str(section) + '_ages'].values[c, :, :], 0, 1)[sample_superposition, :]
             # chains x draws x # ages
             age_posterior = np.swapaxes(full_trace.posterior[str(section) + '_radiometric_age'].values[c, :, :], 0, 1)
 
@@ -132,10 +139,31 @@ def check_superposition(full_trace, sample_df, ages_df, quiet = True, **kwargs):
                         print("stratigraphic superposition violated in section " + str(section) + ', chain ' + str(chain) +  ", draw " + str(i) + '. Check that the heights for all age constraints in ``ages_df`` are correct, and that the reported ages respect superposition (the model can correct for mean ages that are out of superposition, but may fail if the age constraints do not overlap given their reported uncertainties).')
                     bad_chains.append(chain)
 
-    bad_chains = np.unique(bad_chains)
+            # check superposition for samples w/ superposition = False
+            for h in shuffle_heights:
+                older_idx = section_df['height'] < h
+                younger_idx = section_df['height'] > h
+
+                older_ages = np.swapaxes(full_trace.posterior[str(section) + '_ages'].values[c, :, :], 0, 1)[older_idx, :]
+                younger_ages = np.swapaxes(full_trace.posterior[str(section) + '_ages'].values[c, :, :], 0, 1)[younger_idx, :]
+
+                shuffle_sample_idx = np.where((~section_df['superposition?']) & (~section_df['Exclude?']) & (section_df['height'] == h))[0]
+
+                # check each sample in the shuffled group
+                for idx in shuffle_sample_idx:
+                    current_age = np.swapaxes(full_trace.posterior[str(section) + '_ages'].values[c, :, :], 0, 1)[idx, :]
+
+                    # check each draw
+                    for i in range(draws):
+                        if not (all(older_ages[:, i] >= current_age[i])) and (all(younger_ages[:, i] <= current_age[i])):
+                            if not quiet:
+                                print("stratigraphic superposition violated in section " + str(section) + ', chain ' + str(chain) +  ", draw " + str(i) + '. Check that the heights for all age constraints in ``ages_df`` are correct, and that the reported ages respect superposition (the model can correct for mean ages that are out of superposition, but may fail if the age constraints do not overlap given their reported uncertainties).')
+
+                            bad_chains.append(chain)
+
+        bad_chains = np.unique(bad_chains)
 
     return bad_chains
-
 
 def check_detrital_ages(full_trace, sample_df, ages_df, quiet = True, **kwargs):
     """

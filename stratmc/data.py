@@ -17,7 +17,7 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
     """
     Import and pre-process proxy data and age constraints from .csv files formatted according to the :ref:`Data table formatting <datatable_target>` guidelines. To combine data from different .csv files, load each file separately and then combine the DataFrames with :py:meth:`combine_data() <stratmc.data>`.
 
-    If ``sample_file.csv`` includes multiple proxy observations from the same stratigraphic horizon (for a given proxy), then all measurements marked ``Exclude? = False`` will be combined using :py:meth:`combine_duplicates() <stratmc.data>`.
+    If ``sample_file.csv`` includes multiple proxy observations from the same stratigraphic horizon (for a given proxy), then all measurements marked ``Exclude? = False`` and ``superposition? = True ``  will be combined using :py:meth:`combine_duplicates() <stratmc.data>`. Samples marked ``superposition? = False`` will remain separate, and their order will be randomized within the inference model.
 
     Parameters
     ----------
@@ -90,6 +90,9 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
     if 'Exclude?' not in list(samples.columns):
         samples['Exclude?'] = False
 
+    if 'superposition?' not in list(samples.columns):
+        samples['superposition?'] = True
+
     if ('depth' in list(samples.columns)) or ('depth' in list(ages.columns)):
         sample_df, ages_df = depth_to_height(samples, ages)
 
@@ -103,7 +106,7 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
     if drop_excluded_ages:
         ages_df = ages_df[~ages_df['Exclude?']]
 
-    # where there's more than 1 measurement for a proxy, combine
+    # where there's more than 1 measurement for a proxy, combine (unless superposition = False)
     sample_df = combine_duplicates(sample_df, proxies, proxy_sigma_default)
 
     return sample_df, ages_df
@@ -263,9 +266,11 @@ def combine_duplicates(sample_df, proxies, proxy_sigma_default = 0.1):
 
     # don't consider excluded samples when averaging observations from same height -- remove from dataframe and add back later
     excluded_sample_df = sample_df[sample_df['Exclude?']]
-    sample_df = sample_df[~sample_df['Exclude?'].values.astype(bool)]
+    no_superposition_sample_df = sample_df[~sample_df['superposition?']]
+    sample_df = sample_df[(~sample_df['Exclude?'].values.astype(bool)) & (sample_df['superposition?'].values.astype(bool))]
 
     excluded_sample_df.reset_index(inplace = True, drop = True)
+    no_superposition_sample_df.reset_index(inplace = True, drop = True)
     sample_df.reset_index(inplace = True, drop = True)
 
     dup_idx = np.where(sample_df.duplicated(subset = ['section', 'height'], keep = 'first').values)[0]
@@ -314,6 +319,10 @@ def combine_duplicates(sample_df, proxies, proxy_sigma_default = 0.1):
     # put the excluded samples back
     if excluded_sample_df.shape[0] > 0:
         sample_df = pd.concat([sample_df, excluded_sample_df], ignore_index = True)
+
+    # put samples w/out superposition information back
+    if no_superposition_sample_df.shape[0] > 0:
+        sample_df = pd.concat([sample_df, no_superposition_sample_df], ignore_index = True)
 
     # sort and reset indexing
     sample_df.sort_values(by = ['section', 'height'], inplace = True)
