@@ -68,6 +68,9 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
     legend: bool, optional
         Generate a legend. Defaults to ``False``.
 
+    print_ages: bool, optional
+        Print ages as text on figure.
+
     Returns
     -------
     fig: matplotlib.pyplot.figure
@@ -125,8 +128,8 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
         yl = ax.get_ylim()
 
         if plot_constraints:
-            depositional_age_heights = ages_df['height'][(ages_df['section']==section) & (ages_df['Exclude?'] == False) & (ages_df['intermediate detrital?'] == False)  & (ages_df['intermediate intrusive?'] == False)]
-            for h in depositional_age_heights:
+            age_heights = ages_df['height'][(ages_df['section']==section) & (~ages_df['Exclude?']) & (~ages_df['intermediate detrital?'])  & (~ages_df['intermediate intrusive?']) & (~ages_df['depositional?'])]
+            for h in age_heights:
                 ax.axhline(h,
                       color = cs[section],
                       linestyle = 'dashed',
@@ -159,12 +162,14 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
         y_range = yl[1] - yl[0]
 
         if print_ages:
-            for age, height, sigma, dist_type, param1, param2 in zip(ages_df['age'][(ages_df['section']==section) & (ages_df['Exclude?'] != True)],
-                                          ages_df['height'][(ages_df['section']==section) & (ages_df['Exclude?'] != True)],
-                                          ages_df['age_std'][(ages_df['section']==section) & (ages_df['Exclude?'] != True)],
-                                          ages_df['distribution_type'][(ages_df['section']==section) & (ages_df['Exclude?'] != True)],
-                                          ages_df['param_1'][(ages_df['section']==section) & (ages_df['Exclude?'] != True)],
-                                          ages_df['param_2'][(ages_df['section']==section) & (ages_df['Exclude?'] != True)]):
+            for age, height, sigma, dist_type, param1, param2 in zip(ages_df['age'][(ages_df['section']==section) & (~ages_df['Exclude?']) & (~ages_df['depositional?'])],
+                                          ages_df['height'][(ages_df['section']==section) & (ages_df['Exclude?'] != True) & (~ages_df['depositional?'])],
+                                          ages_df['age_std'][(ages_df['section']==section) & (ages_df['Exclude?'] != True) & (~ages_df['depositional?'])],
+                                          ages_df['distribution_type'][(ages_df['section']==section) & (ages_df['Exclude?'] != True) & (~ages_df['depositional?'])],
+                                          ages_df['param_1'][(ages_df['section']==section) & (ages_df['Exclude?'] != True) & (~ages_df['depositional?'])],
+                                          ages_df['param_2'][(ages_df['section']==section) & (ages_df['Exclude?'] != True) & (~ages_df['depositional?'])]):
+                # print(np.isnan(height))
+                # print(section)
                 if dist_type == 'Normal':
                     ax.text(xl[0] + x_range * 0.05, # 0.45
                             height + y_range * 0.01,
@@ -2429,7 +2434,6 @@ def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_pr
         Figure with per-chain posterior sample age distributions.
 
     """
-
     # get list of proxies included in model from full_trace
     variables = [
             l
@@ -2442,6 +2446,7 @@ def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_pr
         proxies.append(var[6:])
 
     sample_df, _ = clean_data(sample_df, None, proxies, list(section))
+
 
     # chains x draws x samples
     vals = full_trace.posterior[str(section)+'_ages'].values

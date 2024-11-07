@@ -56,7 +56,7 @@ DIST_DICT = {
     "PolyaGamma": pm.PolyaGamma,
 }
 
-def build_model_dev(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.1, approximate = False,  hsgp_m = 15, hsgp_c = 1.3, ls_dist = 'Wald', ls_min = 0, ls_mu = 20, ls_lambda = 50, ls_sigma = 50, var_sigma = 10,  white_noise_sigma = 1e-1, gp_mean_mu = None, gp_mean_sigma = None, offset_type = 'section', offset_prior = 'Laplace', offset_alpha = 0, offset_beta = 1, offset_sigma = 1, offset_mu = 0, offset_b = 2, noise_type = 'section', noise_prior = 'HalfNormal', noise_beta = 1, noise_sigma = 1, noise_nu = 1,  jitter = 0.001, proxy_observed = True, **kwargs):
+def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.1, approximate = False,  hsgp_m = 15, hsgp_c = 1.3, ls_dist = 'Wald', ls_min = 0, ls_mu = 20, ls_lambda = 50, ls_sigma = 50, var_sigma = 10,  white_noise_sigma = 1e-1, gp_mean_mu = None, gp_mean_sigma = None, offset_type = 'section', offset_prior = 'Laplace', offset_alpha = 0, offset_beta = 1, offset_sigma = 1, offset_mu = 0, offset_b = 2, noise_type = 'section', noise_prior = 'HalfNormal', noise_beta = 1, noise_sigma = 1, noise_nu = 1,  jitter = 0.001, proxy_observed = True, **kwargs):
     """
     Create a proxy signal (i.e., carbon isotope) :ref:`inference model <model_target>`.
 
@@ -591,10 +591,12 @@ def build_model_dev(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default 
 
             section_df = sample_df[sample_df['section']==section]
 
-            # separate dataframes for intermediate detrital or intrusive constraints
-            section_age_df = ages_df[(ages_df['section']==section) & (~ages_df['intermediate detrital?']) & (~ages_df['intermediate intrusive?'])]
+            # separate dataframes for intermediate detrital or intrusive constraints and depositional age constraints
+            section_age_df = ages_df[(ages_df['section']==section) & (~ages_df['intermediate detrital?']) & (~ages_df['intermediate intrusive?'])  & (~ages_df['depositional?'])]
             intermediate_detrital_section_ages_df = ages_df[(ages_df['section']==section) & (ages_df['intermediate detrital?'])]
             intermediate_intrusive_section_ages_df =  ages_df[(ages_df['section']==section) & (ages_df['intermediate intrusive?'])]
+            depositional_section_ages_df =  ages_df[(ages_df['section']==section) & (ages_df['depositional?'])]
+
 
             section_ages = section_age_df['age'].values
             section_ages_unc = section_age_df['age_std'].values
@@ -732,7 +734,7 @@ def build_model_dev(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default 
 
                             # if there's no superposition information for any samples, skip sorting
                             elif (all(~interval_superposition)) and (len(shuffle_heights) == 1):
-                                random_sample_ages = random_sample_ages_unsorted
+                                random_sample_ages = pm.Deterministic(label + 'random_ages', random_sample_ages_unsorted)
 
                             # if only some samples are missing superposition information, only sort samples w/ superposition = True
                             else:
@@ -750,9 +752,9 @@ def build_model_dev(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default 
                                         shuffle_group_idx[h].append(i)
 
                                 # sort all of the ages
-                                random_sample_ages = at.sort(random_sample_ages_unsorted) #[sorted_idx]
+                                random_sample_ages = at.sort(random_sample_ages_unsorted)
 
-                                # unsort each group of samples without superposition information
+                                # unsort each group of samples without superposition information (base to top)
                                 for i, h in enumerate(shuffle_heights):
                                     # replace w/ another set of random draws from Uniform(0, 1), then scale between bounding samples
                                     # note - not possible to re-shuffle the original draws (permutations not allowed in logp graph)
@@ -781,13 +783,12 @@ def build_model_dev(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default 
                                             shuffle_base_age = at.max(random_sample_ages[under_shuffle_idx])
 
                                     # calculate (unscaled) total time spanned by the shuffled interval
-                                    #observed_shuffle_age_diff = random_sample_ages[stop_shuffle_idx] - random_sample_ages[start_shuffle_idx]
+                                    # observed_shuffle_age_diff = random_sample_ages[stop_shuffle_idx] - random_sample_ages[start_shuffle_idx]
                                     # note: ages still flipped s.t. larger values = younger
                                     observed_shuffle_age_diff = shuffle_top_age - shuffle_base_age
 
                                     # scale the shuffled [0, 1] ages s.t. the values fall in between the (sorted) values for over/underlying samples
                                     # scaling: max - (random * observed diff)
-
                                     interval_shuffled_scaled_random_ages = pm.Deterministic('shuffled_scaled_ages_' + str(section) + '_' + str(h),
                                                                                             shuffle_top_age - (interval_shuffled_random_ages * observed_shuffle_age_diff))
 
@@ -795,10 +796,8 @@ def build_model_dev(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default 
                                     # insert unsorted random ages in tensor
                                     random_sample_ages = at.set_subtensor(random_sample_ages[shuffle_group_idx[h]], interval_shuffled_scaled_random_ages)
 
+                                # store final random age tensor in deterministic
                                 random_sample_ages = pm.Deterministic(label + 'random_ages', random_sample_ages)
-
-                                # for approach 1
-                                #random_sample_ages = random_sample_ages_unsorted[interval_sort_idx]
 
                         # skip sorting if interval only contains 1 sample
                         else:
@@ -1006,11 +1005,14 @@ def build_model_dev(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default 
                     for constraint in depositional_age_names:
                         print(f'Adding depositional age likelihood term for section {section}: {constraint}')
 
-                        age_mu = np.unique(ages_df[ages_df['name'] == constraint]['age'])
-                        age_std = np.unique(ages_df[ages_df['name'] == constraint]['age_std'])
+                        age_mu = np.unique(depositional_section_ages_df[depositional_section_ages_df['name'] == constraint]['age'])
+                        age_std = np.unique(depositional_section_ages_df[depositional_section_ages_df['name'] == constraint]['age_std'])
 
                         if (len(age_mu) > 1) or (len(age_std) > 1):
                             sys.exit(f"Initialization of depositional age constraint {constraint} is inconsistent. Check that the mean and standard deviation are the same for each instance in the ages DataFrame.")
+
+                        elif (len(age_mu) == 0) or (len(age_std) == 0):
+                            sys.exit(f"Depositional age constraint {constraint} not included in age constraint DataFrame for section {section}. Check that the constraint name in ages_df matches the name in sample_df, and that the constraint has not been excluded.")
 
                         else:
                             # grab indices of samples with the current depositional age

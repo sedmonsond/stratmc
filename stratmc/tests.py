@@ -7,7 +7,7 @@ def check_inference(full_trace, sample_df, ages_df, quiet = True, **kwargs):
     """
     Master function (calls each of the functions in the ``tests`` module) for checking that superposition is never violated in the posterior. Returns a list of chain indices where superposition was violated; these chains can be dropped from the trace using :py:meth:`drop_chains() <stratmc.data.drop_chains>`. Run automatically inside of :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
 
-    Because of the likelihood penalty used to manually enforce detrital and intrusive ages in :py:meth:`intermediate_detrital_potential() <stratmc.model.intermediate_detrital_potential>` and :py:meth:`intermediate_intrusive_potential() <stratmc.model.intermediate_intrusive_potential>` (called in :py:meth:`build_model() <stratmc.model.build_model>`), rare chains may have minor superposition violations when deterital/intrusive ages are present. These chains can simply be discarded. If superposition is frequently violated in a given section, or if superposition violations are severe, check that the heights for all age constraints in ``ages_df`` are correct, and that the reported ages respect superposition. The model can correct for mean ages that are out of superposition, but may fail if the age constraints do not overlap given their 2$\sigma$ uncertainties.
+    Because of the likelihood penalty used to manually enforce detrital and intrusive ages in :py:meth:`intermediate_detrital_potential() <stratmc.model.intermediate_detrital_potential>` and :py:meth:`intermediate_intrusive_potential() <stratmc.model.intermediate_intrusive_potential>` (called in :py:meth:`build_model() <stratmc.model.build_model>`), rare chains may have minor superposition violations when deterital/intrusive ages are present. These chains can simply be discarded. If superposition is frequently violated in a given section, or if superposition violations are severe, check that the heights for all age constraints in ``ages_df`` are correct, and that the reported ages respect superposition. The model can correct for mean ages that are out of superposition, but may fail if the age constraints do not overlap within uncertainty.
 
     Parameters
     ----------
@@ -33,13 +33,12 @@ def check_inference(full_trace, sample_df, ages_df, quiet = True, **kwargs):
 
     """
 
-    # get list of proxies included in model from full_trace
+    #get list of proxies included in model from full_trace
     variables = [
             l
             for l in list(full_trace["posterior"].data_vars.keys())
             if (f"{'gp_ls_'}" in l) and (f"{'unshifted'}" not in l)
             ]
-
     proxies = []
     for var in variables:
         proxies.append(var[6:])

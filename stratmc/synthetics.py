@@ -495,10 +495,16 @@ def synthetic_signal_to_df(proxy_vec, heights, section_ages, section_names, ages
     ages_df['name'] = np.nan
     ages_df['intermediate detrital?'] = False
     ages_df['intermediate intrusive?'] = False
+    ages_df['depositional?'] = False
     ages_df['Exclude?'] = False
     ages_df['distribution_type'] = 'Normal'
+    ages_df['param_1'] = np.nan
+    ages_df['param_2'] = np.nan
 
     sample_df['Exclude?'] = False
+    sample_df['superposition?'] = True
+    sample_df['depositional age'] = np.nan
+
 
     return ages_df, sample_df
 

@@ -63,6 +63,8 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
     if 'name' not in list(ages.columns):
         ages['name'] = np.nan
 
+    ages['name']=ages['name'].apply(str)
+
     if 'distribution_type' not in list(ages.columns):
         ages['distribution_type'] = 'Normal'
 
@@ -93,6 +95,9 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
     if 'superposition?' not in list(samples.columns):
         samples['superposition?'] = True
 
+    if 'depositional age' not in list(samples.columns):
+        samples['depositional age'] = np.nan
+
     if ('depth' in list(samples.columns)) or ('depth' in list(ages.columns)):
         sample_df, ages_df = depth_to_height(samples, ages)
 
@@ -108,6 +113,10 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
 
     # where there's more than 1 measurement for a proxy, combine (unless superposition = False)
     sample_df = combine_duplicates(sample_df, proxies, proxy_sigma_default)
+
+    ages_df.sort_values(by = ['section', 'height'], inplace = True)
+
+    ages_df.reset_index(inplace = True, drop = True)
 
     return sample_df, ages_df
 
