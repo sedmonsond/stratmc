@@ -160,7 +160,7 @@ def check_superposition(full_trace, sample_df, ages_df, quiet = True, **kwargs):
 
                             bad_chains.append(chain)
 
-        bad_chains = np.unique(bad_chains)
+    bad_chains = np.unique(bad_chains)
 
     return bad_chains
 
@@ -216,7 +216,7 @@ def check_detrital_ages(full_trace, sample_df, ages_df, quiet = True, **kwargs):
     bad_chains = []
 
     for section in sections:
-        section_df = sample_df[(sample_df['section']==section) & (~sample_df['Exclude?'])]
+        section_df = sample_df[(sample_df['section']==section)]
         section_df.sort_values(by = 'height', inplace = True)
 
         section_age_df = ages_df[(ages_df['section']==section) & (~ages_df['intermediate detrital?']) & (~ages_df['intermediate intrusive?']) & ~(ages_df['Exclude?'])]
