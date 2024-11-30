@@ -147,6 +147,17 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
         elif sampler == 'blackjax':
             full_trace = pm.sampling.jax.sample_blackjax_nuts(draws, tune=tune, chains=chains, target_accept=target_accept, postprocessing_vectorize='scan', postprocessing_backend = postprocessing_backend, random_seed = seed, idata_kwargs = idata_kwargs, nuts_kwargs = nuts_kwargs)
 
+        elif sampler == 'nutpie':
+            nuts_kwargs['target_accept'] = target_accept
+
+            full_trace = pm.sample(draws=draws, tune=tune, chains=chains,
+                      nuts_sampler = 'nutpie',
+                      nuts=nuts_kwargs,
+                      idata_kwargs = idata_kwargs,
+                      random_seed = seed,
+                      )
+
+
         if save:
             # save the trace with posterior samples -- if an error is encountered during sample_posterior_predictive, can re-load this file so we don't have to start over
             full_trace.to_netcdf("traces/temp/" + str(name) + '_' + tstamp + ".nc")

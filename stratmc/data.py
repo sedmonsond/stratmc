@@ -14,7 +14,7 @@ pd.options.mode.chained_assignment = None
 warnings.filterwarnings("ignore", ".*The group X_new is not defined in the InferenceData scheme.*")
 warnings.filterwarnings("ignore", ".*X_new group is not defined in the InferenceData scheme.*")
 
-def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 0.1, drop_excluded_samples = False, drop_excluded_ages = True):
+def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 0.1, drop_excluded_samples = False, drop_excluded_ages = True, combine_no_superposition = False):
     """
     Import and pre-process proxy data and age constraints from .csv files formatted according to the :ref:`Data table formatting <datatable_target>` guidelines. To combine data from different .csv files, load each file separately and then combine the DataFrames with :py:meth:`combine_data() <stratmc.data>`.
 
@@ -114,7 +114,7 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
 
 
     # where there's more than 1 measurement for a proxy, combine (unless superposition = False)
-    sample_df = combine_duplicates(sample_df, proxies, proxy_sigma_default)
+    sample_df = combine_duplicates(sample_df, proxies, proxy_sigma_default, combine_no_superposition = combine_no_superposition)
 
     ages_df.sort_values(by = ['section', 'height'], inplace = True)
 
@@ -235,7 +235,7 @@ def clean_data(sample_df, ages_df, proxies, sections):
 
     return sample_df, ages_df
 
-def combine_duplicates(sample_df, proxies, proxy_sigma_default = 0.1):
+def combine_duplicates(sample_df, proxies, proxy_sigma_default = 0.1, combine_no_superposition = False):
     """
     Helper function for combining multiple proxy measurements from the same stratigraphic horizon. For each horizon with multiple proxy values, replaces the proxy value with the mean, and replaces the standard deviation with the combined uncertainty (``proxy_std`` values summed in quadrature) for all measurements. The standard deviation of the population of proxy values for each horizon is stored in the ``proxy_population_std`` column of ``sample_df`` (in :py:meth:`build_model() <stratmc.model.build_model>`, the uncertainty of each proxy observation is modeled as the ``proxy_std`` and ``proxy_population_std`` values summed in quadrature).
 
@@ -277,11 +277,15 @@ def combine_duplicates(sample_df, proxies, proxy_sigma_default = 0.1):
 
     # don't consider excluded samples when averaging observations from same height -- remove from dataframe and add back later
     excluded_sample_df = sample_df[sample_df['Exclude?']]
-    no_superposition_sample_df = sample_df[~sample_df['superposition?']]
-    sample_df = sample_df[(~sample_df['Exclude?'].values.astype(bool)) & (sample_df['superposition?'].values.astype(bool))]
+
+    if combine_no_superposition:
+        sample_df = sample_df[(~sample_df['Exclude?'].values.astype(bool))]
+    else:
+        no_superposition_sample_df = sample_df[~sample_df['superposition?']]
+        no_superposition_sample_df.reset_index(inplace = True, drop = True)
+        sample_df = sample_df[(~sample_df['Exclude?'].values.astype(bool)) & (sample_df['superposition?'].values.astype(bool))]
 
     excluded_sample_df.reset_index(inplace = True, drop = True)
-    no_superposition_sample_df.reset_index(inplace = True, drop = True)
     sample_df.reset_index(inplace = True, drop = True)
 
     dup_idx = np.where(sample_df.duplicated(subset = ['section', 'height'], keep = 'first').values)[0]
@@ -332,8 +336,9 @@ def combine_duplicates(sample_df, proxies, proxy_sigma_default = 0.1):
         sample_df = pd.concat([sample_df, excluded_sample_df], ignore_index = True)
 
     # put samples w/out superposition information back
-    if no_superposition_sample_df.shape[0] > 0:
-        sample_df = pd.concat([sample_df, no_superposition_sample_df], ignore_index = True)
+    if (not combine_no_superposition):
+        if no_superposition_sample_df.shape[0] > 0:
+            sample_df = pd.concat([sample_df, no_superposition_sample_df], ignore_index = True)
 
     # sort and reset indexing
     sample_df.sort_values(by = ['section', 'height'], inplace = True)
@@ -468,7 +473,7 @@ def save_trace(trace, path):
     ----------
 
     trace: arviz.InferenceData
-        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`build_model() <stratmc.model>` in :py:mod:`stratmc.model` (the output of :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`).
+        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`build_model() <stratmc.model.build_model>` in :py:mod:`stratmc.model` (the output of :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`).
 
     path: str
         Location (including the file name, without '.nc` extension) to save ``trace``.
@@ -539,7 +544,7 @@ def accumulation_rate(full_trace, sample_df, ages_df, method = 'all', age_model 
     """
     Calculate apparent sediment accumulation rate between successive samples (if ``method = 'successive'``) or every possible sample pairing (``method = 'all'``).
 
-    Note that if ``method = 'all'``, rate is returned in mm/year, and duration is returned in years. If ``method = 'successive'``, rate is returned in m/Myr, and duration is returned in Myr. Input data are assumed to have units of meters and millions of years. Used as input to :py:meth:`sadler_plot() <stratmc.plotting>` and :py:meth:`accumulation_rate_stratigraphy() <stratmc.plotting>` in :py:mod:`stratmc.plotting`.
+    Note that if ``method = 'all'``, rate is returned in mm/year, and duration is returned in years. If ``method = 'successive'``, rate is returned in m/Myr, and duration is returned in Myr. Input data are assumed to have units of meters and millions of years. Used as input to :py:meth:`sadler_plot() <stratmc.plotting.sadler_plot>` and :py:meth:`accumulation_rate_stratigraphy() <stratmc.plotting.accumulation_rate_stratigraphy>` in :py:mod:`stratmc.plotting`.
 
     Parameters
     ----------
@@ -737,7 +742,7 @@ def accumulation_rate(full_trace, sample_df, ages_df, method = 'all', age_model 
 
 def upsample(full_trace, downsampled_df, sample_df, ages_df, **kwargs):
     """
-    Extend age models calculated using downsampled proxy observations from :py:meth:`downsample() <bayestrat.data>` to the full set of proxy observations.
+    Extend age models calculated using downsampled proxy observations from :py:meth:`downsample() <bayestrat.data.downsample>` to the full set of proxy observations.
 
     .. todo::
         Remove? Shouldn't be necessary since ages for excluded samples can now be tracked w/in the model
@@ -748,7 +753,7 @@ def upsample(full_trace, downsampled_df, sample_df, ages_df, **kwargs):
     Parameters
     ----------
     full_trace: arviz.InferenceData
-        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`build_model() <bayestrat.model>` in :py:mod:`bayestrat.model`.
+        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`build_model() <bayestrat.model.build_model>` in :py:mod:`bayestrat.model`.
 
     downsampled_df: pandas.DataFrame
         Downsampled sample DataFrame from ``bayestrat.data.downsample`` (used for the proxy inference associated with ``full_trace``).
@@ -914,7 +919,7 @@ def upsample(full_trace, downsampled_df, sample_df, ages_df, **kwargs):
 
 def downsample_kmeans(sample_df, ages_df, method = 'target_cluster_std', proxy = 'd13c', nearest_point = True, **kwargs):
     """
-    Downsample proxy observations using k-means clustering. Downsampling is performed on each section 'segment' between pairs of successive age constraints. To downsample multiple proxies, separately downsample each proxy and then merge using :py:meth:`combine_data() <bayestrat.data>`.
+    Downsample proxy observations using k-means clustering. Downsampling is performed on each section 'segment' between pairs of successive age constraints. To downsample multiple proxies, separately downsample each proxy and then merge using :py:meth:`combine_data() <bayestrat.data.combine_data>`.
 
     Parameters
     ----------
@@ -1399,7 +1404,19 @@ def downsample_kmeans(sample_df, ages_df, method = 'target_cluster_std', proxy =
 
 def downsample(sample_df, ages_df, pvalue_thresh = 0.05, proxy = 'd13c', nearest_point = False, **kwargs):
     """
-    Downsample proxy observations
+    Downsample a set of proxy observations. Executes the following steps for each section:
+
+    #. Find all samples that have not yet been assigned to a group. Set the lower bound to the lowermost ungrouped sample and the upper bound to the top of the section.
+    #. Assess the criteria listed below using :py:meth:`check_convergence() <stratmc.data.check_convergence>`. If all criteria are met, keep the group. If the criteria are not met, move the upper bound down by 1 sample and re-assess.
+    #. Repeat until all samples have been assigned to a group.
+
+    Criteria:
+    #. If there are only 2-3 samples in the group, only accept if the standard deviation is less than 0.5. Otherwise, move on to criteria 3-6.
+    #. If superposition between samples is unknown (all observations have the same height), place all samples in the same group.
+    #. If there are at least 6 samples in the group, use a two-sample Kolmogorov-Smirnov test (:py:func:`scipy.stats.ks_2samp() <scipy.stats.ks_2samp>`) to evaluate whether samples from the upper and lower halves of the group (based on stratigraphic height) come from the same underlying probaility distribution. If the p-value is greater than ``pvalue_thresh``, keep the group; if it is lower, reject it. A low p-value provides evidence against the null hypothesis that the upper and lower halves of the group (based on stratigraphic height) come from the same underlying probability distribution, in favor of the alternative hypothesis that they do not. A higher p-value threshold favors more splitting, while a lower vale favors lumping.
+    #. If there are fewer than 6 samples in the group, reject if the difference between the means of the upper and lower halves is greater than 1.
+    #. If there are at least 4 samples in the group, check whether the slopes of lines fit through the upper and lower halves of the group a) have the same sign, and b) have values within  0.2 of each other. If not, reject the group. For consistency between sections with different thicknesses and sampling resolutions, the line is fit with x = proxy values and y = sample numbers (instead of stratigraphic heights).
+    #. Fit a line through the entire group of samples. If the residuals between the actual and predicted proxy values are autocorrelated (Pearson correlation coefficient >0.5) -- which suggests there are more complex stratigraphic trends within the group -- reject.
 
     Parameters
     ----------
@@ -1415,25 +1432,8 @@ def downsample(sample_df, ages_df, pvalue_thresh = 0.05, proxy = 'd13c', nearest
     sections: list(str) or numpy.array(str), optional
         List of sections to downsample. Defaults to all sections in ``sample_df``.
 
-    pvalue_thresh: float, optional
-
-    target_cluster_std: float or dict{float}, optional
-        Target within-cluster standard deviation; used if ``method = 'target_cluster_std'. Defaults to 0.5.
-
-    cluster_std_method: str
-        Whether to select the number of clusters such that all clusters have a standard deviation less than or equal to ``target_cluster_std`` ('all`), or such that the mean of the within-cluster standard deviations is less than or equal to ``target_cluster_std`` ('mean`). Defaults to 'all`.
-
-    target_res: float or dict{float}, optional
-        Target resolution (vertical distance between samples, in meters). Used if ``method = 'resolution'``; defaults to 5. If a float is passed, uses the same value for every section; to use a different resolution for each section, pass a dictionary with section names as keys.
-
-    n_clusters: int or dict{int}, optional
-        Number of clusters. Used if ``method = 'n_clusters'``; defaults to 10. If a float is passed, uses the same value for every segment. To use a different resolution for each section, pass a dictionary with section names as keys. To use a different value for each segment within a given section, set its dictionary entry equal to a dictionary with segment numbers (e.g., 0 for the lowermost segment) as keys.
-
-    keep_fraction: float or dict{float}, optional
-        Number of clusters = (numer of samples $\times$ keep_fraction). Used if ``method = 'keep_fraction'``; defaults to 0.5. If a float is passed, uses the same value for every section. To use a different resolution for each section, pass a dictionary with section names as keys.
-
-    min_clusters_per_interval: int or dict{int}, optional
-        Minimum number of clusters per interval; to use a different value for each section, pass a dictionary with section names as keys. Defaults to 1.
+    pvalue_thresh: float in (0, 1), optional
+        Threshold p-value (associated the two-sample Kolmogorov-Smirnov test :py:func:`scipy.stats.ks_2samp() <scipy.stats.ks_2samp>`) below which to further downsample proposed group of samples. A higher p-value threshold favors more splitting, while a lower vale favors lumping. Defalts to 0.05; must be a float between 0 and 1.
 
     nearest_point: boolean, optional
         For each cluster, keep the data point closest to the cluster center (with its measurement uncertainty) and exclude all other observations; defaults to ``True``. If ``False``, instead uses the cluster center (which does not necessarily correspond to a real data point) and excludes the original observations, with 'proxy_std` equal to the population standard deviation of the proxy observations assigned to the cluster.
@@ -1748,9 +1748,28 @@ def downsample(sample_df, ages_df, pvalue_thresh = 0.05, proxy = 'd13c', nearest
 
     return sample_df_downsampled
 
-# helper function for checking whether a group of samples meets our criteria
-# inputs = pandas series
 def check_convergence(proxy, heights, pvalue_thresh = 0.05):
+    """
+    Helper function for :py:meth:`downsample() <stratmc.data.downsample>`; checks whether a group of samples meets the downsampling criteria.
+
+    Parameters
+    ----------
+    proxy: pandas.Series
+        Proxy values for the group.
+
+    heights: pandas.Series
+        Heights corresponding to proxy values.
+
+    pvalue_thresh: float in (0, 1), optional
+        Threshold p-value (associated the two-sample Kolmogorov-Smirnov test :py:func:`scipy.stats.ks_2samp() <scipy.stats.ks_2samp>`) below which to further downsample proposed group of samples. A higher p-value threshold favors more splitting, while a lower vale favors lumping. Defalts to 0.05.
+
+    Returns
+    -------
+    meets_criteria: bool
+        ``True`` if the group meets the downsampling criteria (and should be kept); ``False`` if the group fails to meet the criteria (and should be further downsampled).
+
+    """
+
     lower_proxy, lower_heights, upper_proxy, upper_heights = split_data(proxy, heights)
 
     # if only 2-3 samples, split up if the standard deviation is > 0.5 (other criteria may not work well)
@@ -1809,9 +1828,36 @@ def check_convergence(proxy, heights, pvalue_thresh = 0.05):
 
     return meets_criteria
 
-# helper function for splitting group of samples into lower/upper halves based on height
-# works on pandas series
+
 def split_data(proxy, heights):
+    """
+    Helper function for :py:meth:`downsample() <stratmc.data.downsample>` and :py:meth:`check_convergence() <stratmc.data.check_convergence>`; splits a group of proxy values and heights into upper and lower halves. For groups with an odd number of samples, the lower half will contain 1 more sample than the upper half.
+
+    Parameters
+    ----------
+    proxy: pandas.Series
+        Proxy values for the group.
+
+    heights: pandas.Series
+        Heights corresponding to proxy values.
+
+    Returns
+    -------
+    lower_proxy: pandas.Series
+        Proxy values for samples in the lower half of the group.
+
+    lower_heights: pandas.Series
+        Heights of samples in the lower half of the group.
+
+    upper_proxy: pandas.Series
+        Proxy values for samples in the upper half of the group.
+
+    upper_heights: pandas.Series
+        Heights of samples in the upper half of the group.
+
+
+
+    """
 
     sort_idx = np.argsort(heights.values)
     lower_idx = sort_idx[0:int(np.ceil(len(heights)/2))]
