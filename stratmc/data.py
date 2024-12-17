@@ -5,6 +5,7 @@ import warnings
 import arviz as az
 import numpy as np
 import pandas as pd
+from scipy.fftpack import fft, fftfreq
 from scipy.stats import ks_2samp
 from sklearn.cluster import KMeans
 from tqdm.notebook import tqdm
@@ -14,7 +15,7 @@ pd.options.mode.chained_assignment = None
 warnings.filterwarnings("ignore", ".*The group X_new is not defined in the InferenceData scheme.*")
 warnings.filterwarnings("ignore", ".*X_new group is not defined in the InferenceData scheme.*")
 
-def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 0.1, drop_excluded_samples = False, drop_excluded_ages = True, combine_no_superposition = False):
+def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 0.2, drop_excluded_samples = True, drop_excluded_ages = True, combine_no_superposition = False):
     """
     Import and pre-process proxy data and age constraints from .csv files formatted according to the :ref:`Data table formatting <datatable_target>` guidelines. To combine data from different .csv files, load each file separately and then combine the DataFrames with :py:meth:`combine_data() <stratmc.data>`.
 
@@ -35,7 +36,7 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
         Measurement uncertainty (:math:`1\\sigma`) to use for proxy observations if not specified in ``proxy_std`` column of ``sample_df``. To set a different value for each proxy, pass a dictionary with proxy names as keys. Defaults to 0.1.
 
     drop_excluded_samples: bool, optional
-        Whether to remove samples with ``Exclude? = True`` from the ``sample_df``; defaults to ``False``. If excluded samples are not dropped, their ages will be passively tracked within the inference model (but they will not be considered during the proxy signal reconstruction).
+        Whether to remove samples with ``Exclude? = True`` from the ``sample_df``; defaults to ``True``. If excluded samples are not dropped, their ages will be passively tracked within the inference model (but they will not be considered during the proxy signal reconstruction).
 
     drop_excluded_ages: bool, optional
         Whether to remove ages with ``Exclude? = True`` from the ``ages_df``; defaults to ``True``.
@@ -323,11 +324,12 @@ def combine_duplicates(sample_df, proxies, proxy_sigma_default = 0.1, combine_no
             for key in list(duplicate_dict.keys()):
                 duplicate_dict[key] = [duplicate_dict[key]]
 
-            # removes the duplicate samples from sample_df
+            # remove the duplicate samples from sample_df
             sample_df.drop(index = duplicate_sub_idx, inplace = True)
 
             duplicate_dicts.append(duplicate_dict)
 
+    # add combined data to dataframe
     for duplicate in duplicate_dicts:
         sample_df = pd.concat([sample_df, pd.DataFrame.from_dict(duplicate)], ignore_index = True)
 
@@ -917,9 +919,9 @@ def upsample(full_trace, downsampled_df, sample_df, ages_df, **kwargs):
 
     return interp_df
 
-def downsample_kmeans(sample_df, ages_df, method = 'target_cluster_std', proxy = 'd13c', nearest_point = True, **kwargs):
+def downsample(sample_df, ages_df, N = 5000, corr_coef_min = 0.90, proxy = 'd13c', mode = 'clusters', keep = 'best', keep_seed = None, flexible_cluster_size = True, check_cluster_std_dev = False, check_cluster_residual_autocorr = False, check_cluster_autocorr = False, cluster_std_max = 0.5, check_residuals = False, max_interp_residual = 1, resample_with_lowest_n = True, compare_white_noise_fft = False, relative_structure_min = 0.90, N_white_noise = 1000, best_criteria = 'corr_coef', **kwargs):
     """
-    Downsample proxy observations using k-means clustering. Downsampling is performed on each section 'segment' between pairs of successive age constraints. To downsample multiple proxies, separately downsample each proxy and then merge using :py:meth:`combine_data() <bayestrat.data.combine_data>`.
+    Downsample a set of proxy observations. Computes the correlation coefficient between N downsampled (by randomly grouping or subsampling the data, depending on ``mode``) versions of the data and the original data set. Returns the solution that meets the correlation coefficient minimum with the lowest number of downsampled data points. See input parameter descriptions for additional details.
 
     Parameters
     ----------
@@ -929,502 +931,17 @@ def downsample_kmeans(sample_df, ages_df, method = 'target_cluster_std', proxy =
     ages_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing age constraints for all sections.
 
-    proxy: str, optional
-        Proxy to downsample. Defaults to 'd13c`.
+    N: int
+        Number of random sample groupings to test. Defaults to 5,000.
 
-    sections: list(str) or numpy.array(str), optional
-        List of sections to downsample. Defaults to all sections in ``sample_df``.
+    mode: str
+        Method for downsampling data. The 'clusters` mode splits samples into groups by testing ``N`` random sample groupings. Each group then is represented by its centroid, and the downsampled data set is comprised of these centroids (with uncertainty equal to population standard deviation). The 'data` mode instead retains a subset of the original data points, and discards the others (by marking them as ``Exclude? = True`` in the ``downsampled_data`` DataFrame).
 
-    method: str, optional
-        Downsampling method ('target_cluster_std', 'resolution', 'n_clusters', or 'keep_fraction'). Defaults to ``target_cluster_std``, which increases the number of clusters until the within-cluster standard deviation of the proxy values is less than or equal to ``target_cluster_std``.
+    keep: str
+        If there are multiple solutions that satisfy ``corr_coef_min`` using the minimum possible number of data points, whether to return the best one of these solutions ('best`), or a random solution ('random`). Defaults to 'best`.
 
-    target_cluster_std: float or dict{float}, optional
-        Target within-cluster standard deviation; used if ``method = 'target_cluster_std'. Defaults to 0.5.
-
-    cluster_std_method: str
-        Whether to select the number of clusters such that all clusters have a standard deviation less than or equal to ``target_cluster_std`` ('all`), or such that the mean of the within-cluster standard deviations is less than or equal to ``target_cluster_std`` ('mean`). Defaults to 'all`.
-
-    target_res: float or dict{float}, optional
-        Target resolution (vertical distance between samples, in meters). Used if ``method = 'resolution'``; defaults to 5. If a float is passed, uses the same value for every section; to use a different resolution for each section, pass a dictionary with section names as keys.
-
-    n_clusters: int or dict{int}, optional
-        Number of clusters. Used if ``method = 'n_clusters'``; defaults to 10. If a float is passed, uses the same value for every segment. To use a different resolution for each section, pass a dictionary with section names as keys. To use a different value for each segment within a given section, set its dictionary entry equal to a dictionary with segment numbers (e.g., 0 for the lowermost segment) as keys.
-
-    keep_fraction: float or dict{float}, optional
-        Number of clusters = (numer of samples $\times$ keep_fraction). Used if ``method = 'keep_fraction'``; defaults to 0.5. If a float is passed, uses the same value for every section. To use a different resolution for each section, pass a dictionary with section names as keys.
-
-    min_clusters_per_interval: int or dict{int}, optional
-        Minimum number of clusters per interval; to use a different value for each section, pass a dictionary with section names as keys. Defaults to 1.
-
-    nearest_point: boolean, optional
-        For each cluster, keep the data point closest to the cluster center (with its measurement uncertainty) and exclude all other observations; defaults to ``True``. If ``False``, instead uses the cluster center (which does not necessarily correspond to a real data point) and excludes the original observations, with 'proxy_std` equal to the population standard deviation of the proxy observations assigned to the cluster.
-
-    Returns
-    -------
-    downsampled_data: pandas.DataFrame
-        :class:`pandas.DataFrame` containing downsampled proxy data. All samples are still included in the DataFrame, but samples that were excluded during downsampling are marked ``Exclude? = True``.
-
-    """
-
-    sample_df_downsampled = sample_df.copy()
-
-    if 'sections' in kwargs:
-            sections = list(kwargs['sections'])
-    else:
-        sections = np.unique(sample_df_downsampled['section'])
-
-    if method == 'resolution':
-        n_clusters = {}
-        if 'target_res' in kwargs:
-            target_res = kwargs['target_res']
-            temp_res = target_res
-            if (type(temp_res) == float) or (type(temp_res) == int):
-                target_res = {}
-                for section in sections:
-                    target_res[section] = temp_res
-        else:
-            target_res = {}
-            for section in sections:
-                target_res[section] = 5
-
-    elif method == 'n_clusters':
-        if 'n_clusters' in kwargs:
-            n_clusters = kwargs['n_clusters']
-        else:
-            n_clusters = {}
-            for section in sections:
-                n_clusters[section] = 10
-
-    elif method == 'keep_fraction':
-        if 'keep_fraction' in kwargs:
-            keep_fraction = kwargs['keep_fraction']
-            if type(keep_fraction) == float:
-                temp = keep_fraction
-                keep_fraction = {}
-                for section in sections:
-                    keep_fraction[section] = temp
-
-        else:
-            keep_fraction = {}
-            for section in sections:
-                keep_fraction[section] = 0.25
-
-    elif method == 'target_cluster_std':
-        if 'target_cluster_std' in kwargs:
-            target_cluster_std = kwargs['target_cluster_std']
-            if type(target_cluster_std) == float:
-                temp = target_cluster_std
-                target_cluster_std = {}
-                for section in sections:
-                    target_cluster_std[section] = temp
-
-        else:
-            target_cluster_std = {}
-            for section in sections:
-                target_cluster_std[section] = 0.5
-
-        if 'cluster_std_method' in kwargs:
-            cluster_std_method = kwargs['cluster_std_method']
-            if type(cluster_std_method) == float:
-                temp = cluster_std_method
-                cluster_std_method = {}
-                for section in sections:
-                    cluster_std_method[section] = temp
-
-        else:
-            cluster_std_method = {}
-            for section in sections:
-                cluster_std_method[section] = 'all'
-
-    if 'min_clusters_per_interval' in kwargs:
-        min_clusters_per_interval = kwargs['min_clusters_per_interval']
-        if type(min_clusters_per_interval) == float:
-                temp = min_clusters_per_interval
-                min_clusters_per_interval = {}
-                for section in sections:
-                    min_clusters_per_interval[section] = temp
-    else:
-        min_clusters_per_interval = {}
-        for section in sections:
-            min_clusters_per_interval[section] = 1
-
-
-    downsampled_df = {}
-    # proxy_nan_df = {}
-
-    # excluded samples -- put these back into the final DataFrame as-is
-    excluded_df =  sample_df_downsampled[sample_df_downsampled['Exclude?']]
-
-    # keep track of samples that aren't marked as exclude, but that don't have any data for the proxy to be downsampled (these should be included in the final dataframe as-is)
-    # proxy_nan_df[proxy] = sample_df_downsampled[((~sample_df_downsampled['Exclude?']) & (np.isnan(sample_df_downsampled[proxy]))]
-
-    downsampled_df[proxy] = pd.DataFrame(columns = ['section', 'height', proxy, proxy + '_std', 'superposition?', 'Exclude?', 'Depositional Environment'])
-
-    for section in tqdm(sections):
-        print(f'Downsampling {section}')
-        section_df = sample_df_downsampled[(sample_df_downsampled['section']==section) & (~sample_df_downsampled['Exclude?'].astype(bool))].dropna(subset = proxy)
-        section_ages_df = ages_df[(ages_df['section']==section)  & (~ages_df['depositional?'])]
-        heights = section_df['height'].values
-        proxy_vec = section_df[proxy].values
-        age_heights = section_ages_df['height'].values
-
-        section_unique_dep_env = section_df['Depositional Environment'].unique()
-        section_dep_env = section_df['Depositional Environment'].values
-        section_superposition = section_df['superposition?'].values
-        section_dep_ages = section_df['depositional age'].values
-        section_unique_dep_ages = list(section_df['depositional age'].astype(str).unique())
-
-        if 'nan' in section_unique_dep_ages:
-            section_unique_dep_ages.remove('nan')
-
-        centers = {}
-        closest_df_idx = []
-        cluster_center_idx = []
-        no_downsample_idx = []
-        center_std = {}
-
-        intervals = []
-
-        # create a list of interval boundary heights: 1) age constraint, 2) change in 'superposition?' boolean, 3) change in depositional environment
-        interval_boundary_heights = list(age_heights)
-
-        # if there's a change in superposition boolean within the interval, need to split into a separate interval (w/ same lower and upper bound -- just add the height twice)
-        if not (all(section_superposition)) or (all(~(section_superposition.astype(bool)))):
-            # grab heights of samples without superposition
-            super_heights = np.unique(section_df[~section_df['superposition?'].astype(bool)]['height'])
-
-            for h in super_heights:
-                if h not in interval_boundary_heights:
-                    # append the height
-                    interval_boundary_heights += [h]
-                    top_h_idx = np.where(section_df['height'] == h)[0][-1]
-
-                # bound with height of overlying sample, if not already done or at top of section
-                if (h != np.max(heights)):
-                    if heights[top_h_idx + 1] not in super_heights:
-                        interval_boundary_heights.append(heights[top_h_idx + 1])
-
-        # add boundaries around groups of samples with the same depositional age
-        for dep_age in section_unique_dep_ages:
-            # print(f'splitting depositional ages for section {section}')
-            dep_age_idx = np.where(section_dep_ages == dep_age)[0]
-
-            # assuming all the ages are in 1 chunk, add the base and the overlying sample
-            if all(np.diff(dep_age_idx) == 1):
-
-                # only add base if chunk isn't at base of section
-                if dep_age_idx[0] != 0:
-                    interval_boundary_heights.append(heights[dep_age_idx[0]])
-
-                # only add overlying sample if not at top of section (already bounded by another age constraint)
-                if dep_age_idx[-1] != len(heights) - 1:
-                    interval_boundary_heights.append(heights[dep_age_idx[-1] + 1])
-
-            else:
-                print(f'samples with depositional age {dep_age} in section {section} are not in a continuous chunk - check that depositional age assignment is correct')
-                if (len(dep_age_idx) > 1):
-                        switch_idx = np.where(np.diff(dep_age_idx) != 1)[0]
-
-                        interval_boundary_heights += list(heights[dep_age_idx[switch_idx] + 1])
-
-                        # add boundary above the uppermost chunk, unless it's the top of the secion  (in which case there should already be an age constraint)
-                        if dep_age_idx[-1] != len(heights) - 1:
-                            interval_boundary_heights += list([heights[dep_age_idx[-1] + 1]])
-
-
-        # add boundaries between different depositional environments
-        if len(section_unique_dep_env) > 1:
-            for env in section_unique_dep_env:
-                env_idx = np.where(section_dep_env == env)[0]
-
-                # add base of lowermost group, unless we're at the bottom of the section
-                if env_idx[0] != 0:
-                    interval_boundary_heights.append(heights[env_idx[0]])
-
-                # if all samples from this environment are in 1 chunk, just add the top boundary
-                if (len(env_idx)) >= 1 and (all(np.diff(env_idx) == 1)):
-                    # don't add to list if chunk is at top of the section (already bounded by an age constraint)
-                    if (env_idx[-1] != len(heights) - 1):
-                        interval_boundary_heights.append(heights[env_idx[-1] + 1])
-
-                else:
-                    # if there's more than one sample from this environment (scenario with only 1 is covered above)
-                    if (len(env_idx) > 1):
-                        switch_idx = np.where(np.diff(env_idx) != 1)[0]
-
-                        interval_boundary_heights += list(heights[env_idx[switch_idx] + 1])
-
-                        # add boundary above the uppermost chunk, unless it's the top of the secion  (in which case there should already be an age constraint)
-                        if env_idx[-1] != len(heights) - 1:
-                            interval_boundary_heights += list([heights[env_idx[-1] + 1]])
-
-            # # if we added the lowermost sample, remove it
-            # if heights[0] in interval_boundary_heights:
-            #     interval_boundary_heights.remove(heights[0])
-
-        # sort interval boundaries, and get rid of any duplicate boundaries
-        interval_boundary_heights = np.sort(np.unique(interval_boundary_heights))
-
-        for interval, boundary_height in enumerate(interval_boundary_heights[:-1]):
-            above = section_df['height']>=boundary_height
-            below = section_df['height']<interval_boundary_heights[interval+1]
-            interval_df = section_df[above & below]
-
-            interval_samples = interval_df[proxy].values
-
-            if len(interval_df['Depositional Environment'].unique()) > 1:
-                print(f'error - multiple depositional environments in same interval in section {section}')
-                print(interval_df['Depositional Environment'].unique())
-                print(boundary_height, interval_boundary_heights[interval + 1])
-
-            if len(interval_df['depositional age'].unique()) > 1:
-                print(f'error - multiple depositional ages in same interval in section {section}')
-                print(interval_df['depositional age'].unique())
-                print(boundary_height, interval_boundary_heights[interval + 1])
-
-            interval_heights = interval_df['height'].values
-
-            if len(interval_heights) > min_clusters_per_interval[section]:
-
-                intervals.append(interval)
-
-                interval_dep_env = interval_df['Depositional Environment'].unique()[0]
-
-                # TODO: put this into the dataframe after clustering
-                interval_dep_age = interval_df['depositional age'].unique()[0]
-
-
-                if method == 'resolution':
-                    if len(np.diff(interval_heights) > 0):
-                        interval_res = np.mean(np.diff(interval_heights))
-                        scale = target_res[section]/interval_res
-                        if (scale > 1) and (len(interval_heights) >= min_clusters_per_interval[section]):
-                            current_n_clusters = round(len(interval_samples)/scale)
-                            if current_n_clusters > 0:
-                                go = True
-                            else:
-                                go = False
-                        else:
-                            go = False
-
-                    else:
-                        go = False
-
-                elif method == 'n_clusters':
-                    section_n_clusters = n_clusters[section]
-                    if type(section_n_clusters) == dict:
-                        current_n_clusters = section_n_clusters[interval]
-                    else:
-                        current_n_clusters = n_clusters[section]
-                    if (current_n_clusters < len(interval_heights)) and (len(interval_heights) >= min_clusters_per_interval[section]) and (current_n_clusters > 0):
-                        go = True
-
-                    else:
-                        go = False
-
-                elif method == 'keep_fraction':
-                    current_n_clusters = np.round(keep_fraction[section] * len(interval_heights)).astype(int)
-                    if (current_n_clusters < len(interval_heights)) and (len(interval_heights) >= min_clusters_per_interval[section]) and (current_n_clusters > 0):
-                        go = True
-                    else:
-                        go = False
-
-                elif method == 'target_cluster_std':
-                    section_target_cluster_std = target_cluster_std[section]
-                    if (len(interval_heights) >= min_clusters_per_interval[section]):
-                        go = True
-                    else:
-                        go = False
-
-                if go and (method != 'target_cluster_std'):
-                    X = [[x, y] for x, y in zip(interval_df['height'], interval_df[proxy])]
-
-                    # init kmeans classifier
-                    km = KMeans(n_clusters=current_n_clusters, random_state=0,  init='k-means++')
-
-                    # assign a cluster to each example
-                    yhat = km.fit_predict(X)
-
-                    # retrieve unique clusters
-                    clusters = np.unique(yhat)
-
-                    centers[interval] = km.cluster_centers_
-                    center_std[interval] = []
-                    delete_centers = []
-
-                    for cluster in clusters:
-                        row_ix = np.asarray(np.where(yhat == cluster))[0]
-                        X = np.asarray(X)
-                        if row_ix.shape[0] > 1:
-                            # TODO: should we just use the sample w/ the proxy value closest to the center proxy value (disregarding the height)?
-                            # calculate distance between cluster center and each data point in the cluster
-                            current_center = centers[interval][cluster]
-                            distance = np.zeros(row_ix.shape[0]) * np.nan
-                            for i in np.arange(len(row_ix)):
-                                # this version calculates distance from cluster center using both heights and proxy values
-                                #distance[i] = np.linalg.norm(current_center - X[row_ix[i]])
-
-                                # this version only uses proxy values to calculate distance from cluster center
-                                distance[i] = np.abs(current_center[1] - X[row_ix[i]][1])
-
-                            closest_idx = row_ix[np.argmin(distance)]
-                            closest_df_idx.append(interval_df.index.tolist()[closest_idx])
-                            center_std[interval].append(np.std(X[row_ix, 0]))
-                        else:
-                            delete_centers.append(cluster)
-                            closest_df_idx.append(interval_df.index.tolist()[row_ix[0]])
-                            # if the cluster only contains 1 data point, we'll keep it regardless of whether nearest_point is True or False
-                            cluster_center_idx.append(interval_df.index.tolist()[row_ix[0]])
-
-                    if len(delete_centers) > 0:
-                        center_std[interval] = np.delete(center_std[interval], delete_centers, axis=0)
-                        centers[interval] = np.delete(centers[interval], delete_centers, axis=0)
-
-                elif go and (method == 'target_cluster_std'):
-                    X = [[x, y] for x, y in zip(interval_df['height'], interval_df[proxy])]
-
-                    # init kmeans classifier
-                    current_n_clusters = min_clusters_per_interval[section]
-                    # np.nanstd(interval_df[proxy].values)
-                    current_cluster_std = [section_target_cluster_std + 1] * min_clusters_per_interval[section]
-
-                    while any(np.array(current_cluster_std) > section_target_cluster_std):
-                        current_n_clusters += 1
-
-                        km = KMeans(n_clusters=current_n_clusters, init = 'k-means++', random_state=0)
-
-                        yhat = km.fit_predict(X)
-
-                        # retrieve unique clusters
-                        clusters = np.unique(yhat)
-
-                        centers[interval] = km.cluster_centers_
-                        center_std_temp = []
-                        delete_centers = []
-
-                        for cluster in clusters:
-                            row_ix = np.asarray(np.where(yhat == cluster))[0]
-                            X = np.asarray(X)
-
-                            if len(row_ix) > 1:
-                                center_std_temp.append(np.nanstd(X[row_ix, 1]))
-
-                        if cluster_std_method[section] == 'mean':
-                            current_cluster_std = [np.nanmean(center_std_temp)]
-                        elif cluster_std_method[section] == 'all':
-                            current_cluster_std = np.array(center_std_temp)
-
-                    center_std[interval] = []
-                    delete_centers = []
-
-                    for cluster in clusters:
-                        row_ix = np.asarray(np.where(yhat == cluster))[0]
-                        if row_ix.shape[0] > 1:
-                            # TODO: decide if we should just use the sample w/ the proxy value closest to the center proxy value (disregarding the height
-                            # calculate distance between cluster center and each data point in the cluster
-                            current_center = centers[interval][cluster]
-                            distance = np.zeros(row_ix.shape[0]) * np.nan
-                            for i in np.arange(len(row_ix)):
-                                # this version calculates distance from cluster center using both heights and proxy values
-                                # distance[i] = np.linalg.norm(current_center - X[row_ix[i]])
-
-                                # this version only uses proxy values to calculate distance from cluster center
-                                distance[i] = np.abs(current_center[1] - X[row_ix[i]][1])
-
-                            closest_idx = row_ix[np.argmin(distance)]
-                            closest_df_idx.append(interval_df.index.tolist()[closest_idx])
-                            # standard deviation of the proxy values within this cluster
-                            center_std[interval].append(np.std(X[row_ix, 1]))
-                        else:
-                            # if only 1 data point in the cluster, don't need to add it to sample_df if nearest_point = False
-                            delete_centers.append(cluster)
-                            center_std[interval].append(np.nan)
-                            closest_df_idx.append(interval_df.index.tolist()[row_ix[0]])
-                            # if the cluster only contains 1 data point, we'll keep it regardless of whether nearest_point is True or False
-                            cluster_center_idx.append(interval_df.index.tolist()[row_ix[0]])
-
-                    if len(delete_centers) > 0:
-                        centers[interval] = np.delete(centers[interval], delete_centers, axis=0)
-                        center_std[interval] = np.delete(center_std[interval], delete_centers, axis=0)
-
-                # if go = False (don't meet the requirements to downsample)
-                else:
-                    # if the interval doesn't contain enough data points to downsample, we'll keep it regardless of whether nearest_point is True or False
-                    no_downsample_idx.append(interval_df.index.tolist())
-
-        if not nearest_point:
-            for interval in intervals:
-                if interval == intervals[0]:
-                    section_centers = np.asarray(centers[interval])
-                    section_center_std = np.asarray(center_std[interval])
-                else:
-                    section_centers = np.concatenate([section_centers, np.asarray(centers[interval])])
-                    section_center_std =  np.concatenate([section_center_std, np.asarray(center_std[interval])])
-
-        if nearest_point:
-            # mark the samples we're keeping as Exclude? = False, and the rest as Exclude? = True
-            # don't change samples that didn't have data for the downsampled proxy anyway
-            sample_df_downsampled['Exclude?'][(sample_df_downsampled['section'] == section) & (~np.isnan(sample_df_downsampled[proxy]))] = True
-            sample_df_downsampled['Exclude?'].loc[closest_df_idx] = False
-            sample_df_downsampled['Exclude?'].loc[no_downsample_idx] = False
-
-        else:
-            # mark all the samples in section as Exclude? = True, unless they don't have data for the downsampled proxy
-            sample_df_downsampled['Exclude?'][(sample_df_downsampled['section'] == section) & (~np.isnan(sample_df_downsampled[proxy]))] = True
-            sample_df_downsampled['Exclude?'].loc[no_downsample_idx] = False
-            sample_df_downsampled['Exclude?'].loc[cluster_center_idx] = False # this only applies to clusters that only contain 1 data point
-
-
-            # if depositional age is present, save in dataframe (if not, set to nan)
-            if str(interval_dep_age) != 'nan':
-                dep_age_vec = [interval_dep_env] * section_centers.shape[0]
-            else:
-                dep_age_vec = [np.nan] * section_centers.shape[0]
-
-            # add cluster centers to DataFrame
-            downsampled_section_df = pd.DataFrame({'section': [section] * section_centers.shape[0],
-                                               'height': section_centers[:, 0],
-                                               proxy: section_centers[:, 1],
-                                               proxy + '_std': section_center_std,
-                                               'superposition?': [True] * section_centers.shape[0],
-                                               'depositional age': dep_age_vec,
-                                                'Exclude?': [False] * section_centers.shape[0],
-                                                'Depositional Environment': [interval_dep_env] * section_centers.shape[0]})
-
-            sample_df_downsampled = pd.concat([sample_df_downsampled, downsampled_section_df], ignore_index = True)
-
-    sample_df_downsampled.sort_values(by = ['section', 'height'], inplace = True)
-
-    sample_df_downsampled['Exclude?'] = sample_df_downsampled['Exclude?'].astype(bool)
-
-    sample_df_downsampled.reset_index(inplace = True, drop = True)
-
-
-    return sample_df_downsampled
-
-def downsample(sample_df, ages_df, pvalue_thresh = 0.05, proxy = 'd13c', nearest_point = False, **kwargs):
-    """
-    Downsample a set of proxy observations. Executes the following steps for each section:
-
-    #. Find all samples that have not yet been assigned to a group. Set the lower bound to the lowermost ungrouped sample and the upper bound to the top of the section.
-    #. Assess the criteria listed below using :py:meth:`check_convergence() <stratmc.data.check_convergence>`. If all criteria are met, keep the group. If the criteria are not met, move the upper bound down by 1 sample and re-assess.
-    #. Repeat until all samples have been assigned to a group.
-
-    Criteria:
-    #. If there are only 2-3 samples in the group, only accept if the standard deviation is less than 0.5. Otherwise, move on to criteria 3-6.
-    #. If superposition between samples is unknown (all observations have the same height), place all samples in the same group.
-    #. If there are at least 6 samples in the group, use a two-sample Kolmogorov-Smirnov test (:py:func:`scipy.stats.ks_2samp() <scipy.stats.ks_2samp>`) to evaluate whether samples from the upper and lower halves of the group (based on stratigraphic height) come from the same underlying probaility distribution. If the p-value is greater than ``pvalue_thresh``, keep the group; if it is lower, reject it. A low p-value provides evidence against the null hypothesis that the upper and lower halves of the group (based on stratigraphic height) come from the same underlying probability distribution, in favor of the alternative hypothesis that they do not. A higher p-value threshold favors more splitting, while a lower vale favors lumping.
-    #. If there are fewer than 6 samples in the group, reject if the difference between the means of the upper and lower halves is greater than 1.
-    #. If there are at least 4 samples in the group, check whether the slopes of lines fit through the upper and lower halves of the group a) have the same sign, and b) have values within  0.2 of each other. If not, reject the group. For consistency between sections with different thicknesses and sampling resolutions, the line is fit with x = proxy values and y = sample numbers (instead of stratigraphic heights).
-    #. Fit a line through the entire group of samples. If the residuals between the actual and predicted proxy values are autocorrelated (Pearson correlation coefficient >0.5) -- which suggests there are more complex stratigraphic trends within the group -- reject.
-
-    Parameters
-    ----------
-    sample_df: pandas.DataFrame
-        :class:`pandas.DataFrame` containing proxy data for all sections.
-
-    ages_df: pandas.DataFrame
-        :class:`pandas.DataFrame` containing age constraints for all sections.
+    flexible_cluster_size: bool
+        Whether to consider solutions with 1 more number of clusters/data points than the minimum when ``keep`` is 'random`. Defaults to ``True``.
 
     proxy: str, optional
         Proxy to downsample. Defaults to 'd13c`.
@@ -1432,16 +949,16 @@ def downsample(sample_df, ages_df, pvalue_thresh = 0.05, proxy = 'd13c', nearest
     sections: list(str) or numpy.array(str), optional
         List of sections to downsample. Defaults to all sections in ``sample_df``.
 
-    pvalue_thresh: float in (0, 1), optional
-        Threshold p-value (associated the two-sample Kolmogorov-Smirnov test :py:func:`scipy.stats.ks_2samp() <scipy.stats.ks_2samp>`) below which to further downsample proposed group of samples. A higher p-value threshold favors more splitting, while a lower vale favors lumping. Defalts to 0.05; must be a float between 0 and 1.
-
-    nearest_point: boolean, optional
-        For each cluster, keep the data point closest to the cluster center (with its measurement uncertainty) and exclude all other observations; defaults to ``True``. If ``False``, instead uses the cluster center (which does not necessarily correspond to a real data point) and excludes the original observations, with 'proxy_std` equal to the population standard deviation of the proxy observations assigned to the cluster.
+    corr_coef_min: float or dict{float}, optional
+        Minimum acceptable correlation coefficient. For each section, the algorithm selects the smallest downsampled data set that meets this threshold. If multiple solutions with this minimum number of data points exist, then the solution with the highest correlation coefficient is selected if ``keep`` is 'best`, while a random one of these solutions is selected if ``keep`` is 'random`. Must be in ``[0, 1]``; defaults to 0.9. Pass as a dictionary to specify a different value for each section.
 
     Returns
     -------
     downsampled_data: pandas.DataFrame
         :class:`pandas.DataFrame` containing downsampled proxy data. All samples are still included in the DataFrame, but samples that were excluded during downsampling are marked ``Exclude? = True``.
+
+    solution_corr_coefs: dict
+        Dictionary with the correlation coefficients for chosen solutions; keys are section names.
 
     """
 
@@ -1453,70 +970,551 @@ def downsample(sample_df, ages_df, pvalue_thresh = 0.05, proxy = 'd13c', nearest
     else:
         sections = np.unique(sample_df_downsampled['section'])
 
+    if type(corr_coef_min) != dict:
+        temp = corr_coef_min
+        corr_coef_min = {}
+        for section in sections:
+            corr_coef_min[section] = temp
 
     downsampled_df = {}
-    # proxy_nan_df = {}
-
-    # excluded samples -- put these back into the final DataFrame as-is
-    excluded_df =  sample_df_downsampled[sample_df_downsampled['Exclude?']]
-
-    # keep track of samples that aren't marked as exclude, but that don't have any data for the proxy to be downsampled (these should be included in the final dataframe as-is)
-    # proxy_nan_df[proxy] = sample_df_downsampled[(sample_df_downsampled['section']==section) & (~sample_df_downsampled['Exclude?']) & (np.isnan(sample_df_downsampled[proxy]))]
+    solution_corr_coefs = {}
 
     downsampled_df[proxy] = pd.DataFrame(columns = ['section', 'height', proxy, proxy + '_std', 'superposition?', 'Exclude?', 'Depositional Environment'])
 
     for section in tqdm(sections):
         print(f'Downsampling {section}')
 
-        section_cluster_number = 0
+        section_df = sample_df[(sample_df['section']==section) & (~sample_df['Exclude?'].astype(bool))].dropna(subset = proxy)
 
-        section_df = sample_df_downsampled[(sample_df_downsampled['section']==section) & (~sample_df_downsampled['Exclude?'].astype(bool))].dropna(subset = proxy)
-        section_ages_df = ages_df[(ages_df['section']==section)  & (~ages_df['depositional?'])]
         heights = section_df['height'].values
         proxy_vec = section_df[proxy].values
-        age_heights = section_ages_df['height'].values
 
-        section_unique_dep_env = section_df['Depositional Environment'].unique()
-        section_dep_env = section_df['Depositional Environment'].values
-        section_superposition = section_df['superposition?'].values
-        section_dep_ages = section_df['depositional age'].values
-        section_unique_dep_ages = list(section_df['depositional age'].astype(str).unique())
+        if len(heights) > 2:
+            # grab required boundaries (changes in depositional environment, superposition, depositional ages)
+            required_boundaries = get_boundaries(sample_df, ages_df, proxy, section)
 
-        if 'nan' in section_unique_dep_ages:
-            section_unique_dep_ages.remove('nan')
+            # grab list of non-required candidate boundaries (heights between samples that aren't already in required_bondaries_
+            candidate_boundaries = get_candidate_boundaries(heights, required_boundaries)
+
+            # make evenly height grid for fft
+            height_grid = get_height_grid(heights)
+
+            # interpolate proxy values to height grid
+            proxy_grid = get_proxy_grid(proxy_vec, heights, height_grid)
+
+            max_n_clusters = len(heights)
+
+            # not counting upper/lower bounds of section, + 1 because number of clusters is 1 more than # of boundaries
+            min_n_clusters = len(required_boundaries) - 2 + 1
+
+            max_n_data = len(heights)
+
+            # if we're going to compare with white noise, go ahead and run fft for section
+            if compare_white_noise_fft:
+
+                _, full_powers = get_powers(proxy_grid, height_grid)
+
+                data_mean = np.mean(proxy_grid)
+                data_std = np.std(proxy_grid)
+
+                power_diff_white = np.ones(N_white_noise) * np.nan
+
+                for i in tqdm(np.arange(N_white_noise)):
+                    rng = np.random.default_rng(seed = i)
+                    white_noise = rng.normal(data_mean, data_std, len(height_grid))
+                    _, white_noise_powers = get_powers(white_noise, height_grid)
+                    power_diff_white[i] = np.mean(np.abs(white_noise_powers - full_powers))
+
+                # mean difference to use in comparisons
+                mean_power_diff_white = np.mean(power_diff_white)
+
+            centroids = {}
+            centroid_std = {}
+            n_clusters = {}
+            cluster_bounds = {}
+            random_data_idx = {}
+            corr_coef = np.ones(N) * np.nan
+            n_clusters = np.ones(N) * np.nan
+            n_data_points = np.ones(N) * np.nan
+
+            if compare_white_noise_fft:
+                power_diff_means = np.ones(N) * np.nan
+
+            if check_residuals or best_criteria == 'residuals':
+                mean_residuals =  np.ones(N) * np.nan
+
+            if check_cluster_std_dev or check_cluster_residual_autocorr or check_cluster_autocorr or check_residuals or compare_white_noise_fft:
+                check2 = []
+
+            for i in tqdm(np.arange(N)):
+                rng = np.random.default_rng(seed = i)
+
+                if mode == 'clusters':
+                    n_clusters[i] = rng.choice(np.arange(min_n_clusters, max_n_clusters + 1), 1)[0]
+                    cluster_bounds[i] = required_boundaries.copy()
+
+                    # upper and lower bounds don't split the section (+2)
+                    # number of boundaries is 1 less than number of clusters (-1)
+                    n_new_bounds = n_clusters[i] - len(cluster_bounds[i]) + 2 - 1
+
+                    new_bounds = rng.choice(candidate_boundaries, size = int(n_new_bounds), replace = False)
+
+                    cluster_bounds[i] = np.sort(np.concatenate([cluster_bounds[i], new_bounds]))
+
+                    cluster_bounds[i] = remove_extra_bounds(heights, cluster_bounds[i])
+
+                    centroids[i], centroid_std[i] = get_centroids(proxy_vec, heights, cluster_bounds[i])
+
+                    if check_cluster_std_dev:
+                        check2.append(all(centroid_std[i] <= cluster_std_max))
+
+                    elif check_cluster_residual_autocorr:
+                        # residual_autocorr = get_cluster_autocorr(proxy_vec, heights, cluster_bounds[i])
+                        # check2.append(all(np.array(residual_autocorr) <= 0.5))
+                        residual_autocorr, shuffled_autocorr = get_cluster_autocorr_vs_shuffled(proxy_vec, heights, cluster_bounds[i], mode = 'residual')
+                        check2.append(all(np.array(residual_autocorr) <= (np.array(shuffled_autocorr))))
+
+                    elif check_cluster_autocorr:
+                        # residual_autocorr = get_cluster_autocorr(proxy_vec, heights, cluster_bounds[i])
+                        # check2.append(all(np.array(residual_autocorr) <= 0.5))
+                        residual_autocorr, shuffled_autocorr = get_cluster_autocorr_vs_shuffled(proxy_vec, heights, cluster_bounds[i], mode = 'data')
+                        check2.append(all(np.array(residual_autocorr) <= (np.array(shuffled_autocorr))))
+
+                    interp_proxy = np.interp(height_grid, centroids[i][:, 1], centroids[i][:, 0])
+
+                    if compare_white_noise_fft:
+                        _, interp_powers = get_powers(interp_proxy, height_grid)
+
+                        power_diff_means[i] = np.mean(np.abs(interp_powers - full_powers))
 
 
-        centers = {}
-        clusters = {}
-        closest_df_idx = []
-        cluster_center_idx = []
-        no_downsample_idx = []
-        cluster_centers = {}
-        cluster_std = {}
+                elif mode == 'data':
+                    random_data_idx[i] = []
+                    n_data_points[i] = rng.choice(np.arange(np.max([min_n_clusters, 2]), max_n_data + 1), 1)[0]
 
-        intervals = []
-        cluster_center_intervals = []
-        cluster_numbers = []
+                    candidate_idx = section_df.index.tolist()
 
-        # create a list of interval boundary heights: 1) age constraint, 2) change in 'superposition?' boolean, 3) change in depositional environment
-        interval_boundary_heights = list(age_heights)
+                    # first, select 1 data point each from w/in each 'required' interval -- this ensures that all age constraints and depositional environments are represented
+                    for interval, boundary_height in enumerate(required_boundaries[:-1]):
+                        above = heights >= boundary_height
+                        below = heights < required_boundaries[interval + 1]
 
+                        cluster_idx = np.array(section_df.index.tolist())[above & below]
+
+                        random_data_idx[i].append(rng.choice(cluster_idx, 1)[0])
+
+                        # remove the chosen sample from the list of candidate data points
+                        candidate_idx.remove(random_data_idx[i][-1])
+
+                    # calculate how many additional data points we need to reach target number
+                    n_remaining = n_data_points[i] - len(random_data_idx[i])
+
+                    random_data_idx[i] += list(rng.choice(candidate_idx, int(n_remaining), replace = False))
+
+                    random_data_idx[i].sort()
+
+                    interp_proxy = np.interp(height_grid, section_df['height'].loc[random_data_idx[i]], section_df[proxy].loc[random_data_idx[i]])
+
+                    if check_residuals or best_criteria == 'residuals':
+                        if len(random_data_idx[i]) == len(heights):
+                            if check_residuals:
+                                check2.append(True)
+
+                            mean_residuals[i] = 0
+
+                        else:
+                            for idx in random_data_idx[i]:
+                                if idx in candidate_idx:
+                                    candidate_idx.remove(idx)
+
+                                candidate_idx.sort()
+
+                            # interpolate downsampled signal to heights of samples that weren't chosen
+                            proxy_interp_to_excluded_data = np.interp(section_df['height'].loc[candidate_idx], section_df['height'].loc[random_data_idx[i]], section_df[proxy].loc[random_data_idx[i]])
+
+                            proxy_interp_residuals = np.abs(proxy_interp_to_excluded_data - section_df[proxy].loc[candidate_idx])
+
+                            mean_residuals[i] = np.mean(proxy_interp_residuals)
+
+                            if check_residuals:
+                                check2.append(all(proxy_interp_residuals <= max_interp_residual))
+
+                    if compare_white_noise_fft:
+                        _, interp_powers = get_powers(interp_proxy, height_grid)
+
+                        power_diff_means[i] = np.mean(np.abs(interp_powers - full_powers))
+
+                corr_coef[i] = np.corrcoef(proxy_grid, interp_proxy)[0, 1]
+
+            # full list of configurations that meet the criteria
+            if check_cluster_std_dev or check_cluster_residual_autocorr or check_cluster_autocorr or check_residuals:
+                check1 = (corr_coef >= corr_coef_min[section])
+                above = check1 & check2
+
+            elif compare_white_noise_fft:
+                check1 = (corr_coef >= corr_coef_min[section])
+                relative_structure_retained = 1 - (power_diff_means/mean_power_diff_white)
+                check2 = relative_structure_retained >= relative_structure_min
+                above = check1 & check2
+
+            else:
+                above = corr_coef >= corr_coef_min[section]
+
+            keep_idx_list = np.argwhere(above)
+
+            if mode == 'clusters':
+                # minimum number of clusters in list
+                min_n_clusters = np.min(n_clusters[keep_idx_list])
+
+                if (keep == 'random') and (flexible_cluster_size):
+                    n_cluster_idx = np.where((n_clusters[keep_idx_list] == min_n_clusters) | (n_clusters[keep_idx_list] == min_n_clusters + 1))[0]
+                else:
+                    # get indices (within candidate list) where number of clusters is equal to the minimum
+                    n_cluster_idx = np.where(n_clusters[keep_idx_list] == min_n_clusters)[0]
+
+                if (keep == 'best') or (len(n_cluster_idx) == 1):
+                    best_idx_temp = np.argmax(corr_coef[keep_idx_list][n_cluster_idx])
+                    best_idx = keep_idx_list[n_cluster_idx[best_idx_temp]][0]
+
+                elif (keep == 'random') and (len(n_cluster_idx) > 1):
+                    keep_rng = np.random.default_rng(seed = keep_seed)
+                    best_idx_temp = keep_rng.choice(n_cluster_idx, 1)[0]
+                    best_idx = keep_idx_list[best_idx_temp][0]
+
+                # once we've found the best configuration, gather info for dataframe
+                keep_centroids = centroids[best_idx]
+                keep_centroid_std = centroid_std[best_idx]
+
+                # assign clusters to groups
+                cluster_center_idx = []
+
+                dep_env_list = []
+                dep_age_list = []
+
+                keep_centroid_idx = list(np.arange(keep_centroids.shape[0]))
+
+                for interval, boundary_height in enumerate(cluster_bounds[best_idx][:-1]):
+                    #plt.axhline(h, color = 'indianred', linestyle = 'dashed', zorder = 0)
+                    above = heights >= boundary_height
+                    below = heights < cluster_bounds[best_idx][interval + 1]
+
+                    cluster_idx = np.array(section_df.index.tolist())[above & below]
+                    sample_df_downsampled['cluster'].loc[cluster_idx] = interval
+
+                    # save indices of clusters with only n = 1 data point
+                    if len(heights[above & below]) == 1:
+                        row_idx = np.where(heights == heights[above & below])[0]
+                        cluster_center_idx += list(np.array(section_df.index.tolist())[row_idx])
+                        keep_centroid_idx.remove(interval)
+
+                    # if more than one sample, grab depositional environment and depositional age info for adding centers to dataframe
+                    else:
+                        interval_dep_env_list = np.unique(section_df['Depositional Environment'].iloc[above & below])
+
+                        if len(interval_dep_env_list) > 1:
+                            print('multiple depositional environments in same group')
+                        else:
+                            dep_env_list.append(interval_dep_env_list[0])
+
+                        interval_dep_age_list = np.unique(section_df['depositional age'].iloc[above & below].astype(str))
+
+                        if len(interval_dep_age_list) > 1:
+                            print('multiple depositional ages in same group')
+
+                        else:
+                            if interval_dep_age_list[0] != 'nan':
+                                dep_age_list.append(interval_dep_age_list[0])
+                            else:
+                                dep_age_list.append(np.nan)
+
+
+            elif mode == 'data':
+                # minimum number of clusters in list
+                min_n_data = int(np.min(n_data_points[keep_idx_list]))
+
+                # NOTE -- this can rarely cause problems if it doesn't re-find the solution from the previous part w/ the sufficiently high correlation coeficient. in this case, probably try re-running w/ higher N
+                if resample_with_lowest_n:
+                    if check_residuals:
+                        check2 = []
+                    print(f'Resampling {section}')
+                    for i in tqdm(np.arange(N)):
+
+                        rng = np.random.default_rng(seed = i)
+
+                        random_data_idx[i] = []
+
+                        if flexible_cluster_size:
+                            if min_n_data < len(heights):
+                                n_data_points[i] = rng.choice([min_n_data, min_n_data + 1], 1)
+                            else:
+                                n_data_points[i] = min_n_data
+                        else:
+                            n_data_points[i] = min_n_data
+
+                        candidate_idx = section_df.index.tolist()
+
+                        # first, select 1 data point each from w/in each 'required' interval -- this ensures that all age constraints and depositional environments are represented
+                        for interval, boundary_height in enumerate(required_boundaries[:-1]):
+                            above = heights >= boundary_height
+                            below = heights < required_boundaries[interval + 1]
+
+                            cluster_idx = np.array(section_df.index.tolist())[above & below]
+
+                            random_data_idx[i].append(rng.choice(cluster_idx, 1)[0])
+
+                            # remove the chosen sample from the list of candidate data points
+                            candidate_idx.remove(random_data_idx[i][-1])
+
+                        # calculate how many additional data points we need to reach target number
+                        n_remaining = n_data_points[i] - len(random_data_idx[i])
+
+                        random_data_idx[i] += list(rng.choice(candidate_idx, int(n_remaining), replace = False))
+
+                        random_data_idx[i].sort()
+
+                        interp_proxy = np.interp(height_grid, section_df['height'].loc[random_data_idx[i]], section_df[proxy].loc[random_data_idx[i]])
+
+                        corr_coef[i] = np.corrcoef(proxy_grid, interp_proxy)[0, 1]
+
+                        if compare_white_noise_fft:
+                            _, interp_powers = get_powers(interp_proxy, height_grid)
+
+                            power_diff_means[i] = np.mean(np.abs(interp_powers - full_powers))
+
+                        if check_residuals or best_criteria == 'residuals':
+
+                            if len(random_data_idx[i]) == len(heights):
+                                if check_residuals:
+                                    check2.append(True)
+
+                                mean_residuals[i] = 0
+
+                            else:
+                                for idx in random_data_idx[i]:
+                                    if idx in candidate_idx:
+                                        candidate_idx.remove(idx)
+
+                                    candidate_idx.sort()
+
+                                # interpolate downsampled signal to heights of samples that weren't chosen
+                                proxy_interp_to_excluded_data = np.interp(section_df['height'].loc[candidate_idx], section_df['height'].loc[random_data_idx[i]], section_df[proxy].loc[random_data_idx[i]])
+
+                                proxy_interp_residuals = np.abs(proxy_interp_to_excluded_data - section_df[proxy].loc[candidate_idx])
+                                mean_residuals[i] = np.mean(proxy_interp_residuals)
+                                if check_residuals:
+                                    check2.append(all(proxy_interp_residuals <= max_interp_residual))
+
+                    if compare_white_noise_fft:
+                        check1 = corr_coef >= corr_coef_min[section]
+                        relative_structure_retained = 1 - (power_diff_means/mean_power_diff_white)
+                        check2 = relative_structure_retained >= relative_structure_min
+                        above = check1 & check2
+
+                    if check_residuals:
+                        check1 = corr_coef >= corr_coef_min[section]
+                        above = check1 & check2
+
+                    else:
+                        above = corr_coef >= corr_coef_min[section]
+
+                    # solutions that meet minimum criteria
+                    keep_idx_list = np.argwhere(above)
+
+                    if len(keep_idx_list) == 0:
+                        print('Try running with higher N; no viable solutions found after resampling')
+
+                # NOTE: changed so size can be flexible (+1 larger than the minimum) even if we're looking for the best solution, not just a random one
+                if flexible_cluster_size:  # (keep == 'random') and
+                    n_data_idx = np.where((n_data_points[keep_idx_list] == min_n_data) | (n_data_points[keep_idx_list] == min_n_data + 1))[0]
+
+                else:
+                    # get indices (within candidate list) where number of clusters is equal to the minimum
+                    n_data_idx = np.where(n_data_points[keep_idx_list] == min_n_data)[0]
+
+                # TODO: use different criteria to find best solution
+                if (keep == 'best') or (len(n_data_idx) == 1):
+                    # out of the viable solutions, choose the one with the highest correlation coefficient
+                    if best_criteria == 'corr_coef':
+                        best_idx_temp = np.argmax(corr_coef[keep_idx_list][n_data_idx])
+
+                    # out of the viable solutions, choose the one with the lowest (mean) residuals between the interpolated signal and the excluded data points
+                    elif best_criteria == 'residuals':
+                        best_idx_temp = np.argmin(mean_residuals[keep_idx_list][n_data_idx])
+
+                    elif best_criteria == 'structure_retained':
+                        best_idx_temp = np.argmax(relative_structure_retained[keep_idx_list][n_data_idx])
+
+                    best_idx = keep_idx_list[n_data_idx[best_idx_temp]][0]
+
+
+                elif (keep == 'random') and (len(n_data_idx) > 1):
+                    keep_rng = np.random.default_rng(seed = keep_seed)
+
+                    best_idx_temp = keep_rng.choice(n_data_idx, 1)[0]
+
+                    best_idx = keep_idx_list[best_idx_temp][0]
+
+            solution_corr_coefs[section] = corr_coef[best_idx]
+
+            if mode == 'data':
+                # mark the samples we're keeping as Exclude? = False, and the rest as Exclude? = True
+                # don't change samples that didn't have data for the downsampled proxy anyway
+                sample_df_downsampled.loc[(sample_df_downsampled['section'] == section) & (~np.isnan(sample_df_downsampled[proxy])), 'Exclude?'] = True
+                sample_df_downsampled.loc[random_data_idx[best_idx], 'Exclude?'] = False
+
+            elif mode == 'clusters':
+                # mark all the samples in section as Exclude? = True, unless they don't have data for the downsampled proxy
+                sample_df_downsampled.loc[(sample_df_downsampled['section'] == section) & (~np.isnan(sample_df_downsampled[proxy])), 'Exclude?'] = True
+                sample_df_downsampled.loc[cluster_center_idx, 'Exclude?'] = False # this only applies to clusters that only contain 1 data point
+
+                # add cluster centers to DataFrame
+                downsampled_section_df = pd.DataFrame({'section': [section] * len(keep_centroids[keep_centroid_idx, 0]),
+                                                   'height': keep_centroids[keep_centroid_idx, 1],
+                                                   proxy: keep_centroids[keep_centroid_idx, 0],
+                                                   proxy + '_std': keep_centroid_std[keep_centroid_idx],
+                                                   'superposition?': [True] * len(keep_centroids[keep_centroid_idx, 0]),
+                                                   'depositional age': dep_age_list,
+                                                    'Exclude?': [False] * len(keep_centroids[keep_centroid_idx, 0]),
+                                                    'Depositional Environment': dep_env_list,
+                                                     'cluster': keep_centroid_idx})
+
+                sample_df_downsampled = pd.concat([sample_df_downsampled, downsampled_section_df], ignore_index = True)
+
+    sample_df_downsampled['Exclude?'] = sample_df_downsampled['Exclude?'].astype(bool)
+
+    return sample_df_downsampled, solution_corr_coefs
+
+def get_cluster_autocorr(proxy, heights, boundaries, mode = 'residual'):
+    autocorr = []
+    for interval, boundary_height in enumerate(boundaries[:-1]):
+        above = heights >= boundary_height
+        below = heights < boundaries[interval + 1]
+
+        proxy_cluster = proxy[above & below]
+
+        # can't compute without at least 3 data points
+        if len(proxy_cluster) > 2:
+            if mode == 'residual':
+                p = np.polyfit(np.arange(len(proxy_cluster)), proxy_cluster, deg = 1)
+                autocorr_temp = pd.Series(proxy_cluster -  (np.arange(len(proxy_cluster)) * p[0] + p[1])).autocorr()
+
+            elif mode == 'data':
+                autocorr_temp = pd.Series(proxy_cluster).autocorr()
+            autocorr.append(autocorr_temp)
+
+    return autocorr
+
+def get_cluster_autocorr_vs_shuffled(proxy, heights, boundaries, mode = 'residual'):
+    autocorr = []
+    shuffled_autocorr = []
+    for interval, boundary_height in enumerate(boundaries[:-1]):
+        above = heights >= boundary_height
+        below = heights < boundaries[interval + 1]
+
+        proxy_cluster = proxy[above & below]
+
+        # can't compute without at least 3 data points
+        if len(proxy_cluster) > 2:
+
+            if mode == 'residual':
+                p = np.polyfit(np.arange(len(proxy_cluster)), proxy_cluster, deg = 1)
+                autocorr_temp = pd.Series(proxy_cluster -  (np.arange(len(proxy_cluster)) * p[0] + p[1])).autocorr()
+
+            elif mode == 'data':
+                autocorr_temp = pd.Series(proxy_cluster).autocorr()
+
+            autocorr.append(autocorr_temp)
+
+            shuffled_autocorr_temp = []
+            for i in np.arange(10):
+                rng = np.random.default_rng(seed = i)
+                proxy_new = rng.permutation(proxy_cluster)
+
+                if mode == 'residual':
+                    p = np.polyfit(np.arange(len(proxy_new)), proxy_new, deg = 1)
+                    autocorr_temp = pd.Series(proxy_new -  (np.arange(len(proxy_new)) * p[0] + p[1])).autocorr()
+
+                elif mode == 'data':
+                    autocorr_temp = pd.Series(proxy_new).autocorr()
+
+                shuffled_autocorr_temp.append(autocorr_temp)
+
+            shuffled_autocorr.append(np.mean(shuffled_autocorr_temp))
+
+
+    return autocorr, shuffled_autocorr
+
+
+def get_boundaries(sample_df, ages_df, proxy, section, environment = True, depositional_ages = True, superposition = True):
+    """
+    Helper function for :py:meth:`downsample() <stratmc.data.downsample>`. Returns list of height boundaries where the target section must be split into different groups. By default, inserts breaks between samples from different depositional environments, around groups of samples with the same depositional age, and around groups of samples without superposition information.
+
+    Parameters
+    ----------
+    sample_df: pandas.DataFrame
+        :class:`pandas.DataFrame` containing all proxy data.
+
+    ages_df: pandas.DataFrame
+        :class:`pandas.DataFrame` containing age constraints from all sections.
+
+    proxy: str
+        Name of proxy to be downsampled.
+
+    section: str
+        Name of target section.
+
+    environment: bool
+        Whether to insert breaks between different depositional environments.
+
+    depositional_ages: bool
+        Whether to insert breaks around groups of samples with the same depositional age constraint.
+
+    superposition:
+        Whether to insert breaks around groups of samples without superposition information.
+
+    Returns
+    -------
+    boundary_heights: numpy.array
+        Array containing required cluster boundaries.
+
+    """
+
+    section_df = sample_df[(sample_df['section']==section) & (~sample_df['Exclude?'].astype(bool))].dropna(subset = proxy)
+    section_ages_df = ages_df[(ages_df['section']==section)  & (~ages_df['depositional?'])]
+
+    heights = section_df['height'].values
+    age_heights = section_ages_df['height'].values
+
+    # create a list of interval boundary heights: 1) age constraint, 2) change in 'superposition?' boolean, 3) change in depositional environment
+    boundary_heights = list(age_heights)
+
+    section_unique_dep_env = section_df['Depositional Environment'].unique()
+    section_dep_env = section_df['Depositional Environment'].values
+    section_superposition = section_df['superposition?'].values
+    section_dep_ages = section_df['depositional age'].values
+    section_unique_dep_ages = list(section_df['depositional age'].astype(str).unique())
+
+    if 'nan' in section_unique_dep_ages:
+        section_unique_dep_ages.remove('nan')
+
+    if superposition:
         # if there's a change in superposition boolean within the interval, need to split into a separate interval (w/ same lower and upper bound -- just add the height twice)
         if not (all(section_superposition)) or (all(~section_superposition)):
             # grab heights of samples without superposition
             super_heights = np.unique(section_df[~section_df['superposition?']]['height'])
 
             for h in super_heights:
-                if h not in interval_boundary_heights:
+                if h not in boundary_heights:
                     # append the height
-                    interval_boundary_heights += [h]
+                    boundary_heights += [h]
                     top_h_idx = np.where(section_df['height'] == h)[0][-1]
 
                 # bound with height of overlying sample, if not already done or at top of section
                 if (h != np.max(heights)):
                     if heights[top_h_idx + 1] not in super_heights:
-                        interval_boundary_heights.append(heights[top_h_idx + 1])
+                        boundary_heights.append(heights[top_h_idx + 1])
 
+    if depositional_ages:
         # add boundaries around groups of samples with the same depositional age
         for dep_age in section_unique_dep_ages:
             # print(f'splitting depositional ages for section {section}')
@@ -1527,347 +1525,243 @@ def downsample(sample_df, ages_df, pvalue_thresh = 0.05, proxy = 'd13c', nearest
 
                 # only add base if chunk isn't at base of section
                 if dep_age_idx[0] != 0:
-                    interval_boundary_heights.append(heights[dep_age_idx[0]])
+                    boundary_heights.append(heights[dep_age_idx[0]])
 
                 # only add overlying sample if not at top of section (already bounded by another age constraint)
                 if dep_age_idx[-1] != len(heights) - 1:
-                    interval_boundary_heights.append(heights[dep_age_idx[-1] + 1])
+                    boundary_heights.append(heights[dep_age_idx[-1] + 1])
 
             else:
                 print(f'samples with depositional age {dep_age} in section {section} are not in a continuous chunk - check that depositional age assignment is correct')
                 if (len(dep_age_idx) > 1):
                         switch_idx = np.where(np.diff(dep_age_idx) != 1)[0]
 
-                        interval_boundary_heights += list(heights[dep_age_idx[switch_idx] + 1])
+                        boundary_heights += list(heights[dep_age_idx[switch_idx] + 1])
 
                         # add boundary above the uppermost chunk, unless it's the top of the secion  (in which case there should already be an age constraint)
                         if dep_age_idx[-1] != len(heights) - 1:
-                            interval_boundary_heights += list([heights[dep_age_idx[-1] + 1]])
+                            boundary_heights += list([heights[dep_age_idx[-1] + 1]])
 
-
-        # add boundaries between different depositional environments
+    # add boundaries between different depositional environments
+    if environment:
         if len(section_unique_dep_env) > 1:
             for env in section_unique_dep_env:
                 env_idx = np.where(section_dep_env == env)[0]
 
                 # add base of lowermost group, unless we're at the bottom of the section
                 if env_idx[0] != 0:
-                    interval_boundary_heights.append(heights[env_idx[0]])
+                    boundary_heights.append(heights[env_idx[0]])
 
                 # if all samples from this environment are in 1 chunk, just add the top boundary
                 if (len(env_idx)) >= 1 and (all(np.diff(env_idx) == 1)):
                     # don't add to list if chunk is at top of the section (already bounded by an age constraint)
                     if (env_idx[-1] != len(heights) - 1):
-                        interval_boundary_heights.append(heights[env_idx[-1] + 1])
+                        boundary_heights.append(heights[env_idx[-1] + 1])
 
                 else:
                     # if there's more than one sample from this environment (scenario with only 1 is covered above)
                     if (len(env_idx) > 1):
                         switch_idx = np.where(np.diff(env_idx) != 1)[0]
 
-                        interval_boundary_heights += list(heights[env_idx[switch_idx] + 1])
+                        boundary_heights += list(heights[env_idx[switch_idx] + 1])
 
                         # add boundary above the uppermost chunk, unless it's the top of the secion  (in which case there should already be an age constraint)
                         if env_idx[-1] != len(heights) - 1:
-                            interval_boundary_heights += list([heights[env_idx[-1] + 1]])
+                            boundary_heights += list([heights[env_idx[-1] + 1]])
 
-            # # if we added the lowermost sample, remove it
-            # if heights[0] in interval_boundary_heights:
-            #     interval_boundary_heights.remove(heights[0])
+    # sort interval boundaries, and get rid of any duplicate boundaries
+    boundary_heights = np.sort(np.unique(boundary_heights))
 
-        # sort interval boundaries, and get rid of any duplicate boundaries
-        interval_boundary_heights = np.sort(np.unique(interval_boundary_heights))
-
-        for interval, boundary_height in enumerate(interval_boundary_heights[:-1]):
-            above = section_df['height']>=boundary_height
-            below = section_df['height']<interval_boundary_heights[interval+1]
-            interval_df = section_df[above & below]
-
-            interval_proxy = interval_df[proxy]#.values
-            interval_heights = interval_df['height']#.values
-
-            if len(interval_heights) > 0:
-
-                cluster_centers[interval] = []
-                cluster_std[interval] = []
-
-                # clusters[interval] = np.ones(len(interval_proxy)) * np.nan
-                clusters[interval] = pd.Series(np.ones(len(interval_proxy)) * np.nan).reindex_like(interval_heights)
-
-                if len(interval_df['Depositional Environment'].unique()) > 1:
-                    print(f'error - multiple depositional environments in same interval in section {section}')
-                    print(interval_df['Depositional Environment'].unique())
-                    print(boundary_height, interval_boundary_heights[interval + 1])
-
-                if len(interval_df['depositional age'].unique()) > 1:
-                    print(f'error - multiple depositional ages in same interval in section {section}')
-                    print(interval_df['depositional age'].unique())
-                    print(boundary_height, interval_boundary_heights[interval + 1])
-
-                intervals.append(interval)
-                interval_dep_env = interval_df['Depositional Environment'].unique()[0]
-
-                # TODO: put this into the dataframe after clustering
-                interval_dep_age = interval_df['depositional age'].unique()[0]
-
-                # here, check if we need to split the section at all, or if it already meets our criteria
-                converged = check_convergence(interval_proxy, interval_heights, pvalue_thresh = pvalue_thresh)
-
-                top_idx = len(interval_heights) - 1
-
-                if converged:
-                    clusters[interval][:] = section_cluster_number
-
-                else:
-
-                    while any(np.isnan(clusters[interval])):
-
-                        group_not_found = True
-
-                        lower_bound = np.where(np.isnan(clusters[interval]))[0][0]
-                        upper_bound = top_idx
-
-                        if len(np.where(np.isnan(clusters[interval]))[0]) > 1:
-                            while group_not_found:
-
-                                converged = check_convergence(interval_proxy.iloc[lower_bound:upper_bound + 1], interval_heights.iloc[lower_bound:upper_bound + 1], pvalue_thresh = pvalue_thresh)
-
-                                # if group doesn't need to be split any more, assign to group
-                                if converged:
-                                    clusters[interval].iloc[lower_bound:upper_bound + 1] = int(section_cluster_number)
-                                    group_not_found = False
-                                    section_cluster_number += 1
-
-                                else:
-                                    upper_bound -= 1
-
-                        # if only 1 sample left, assign to new cluster
-                        else:
-                            clusters[interval].iloc[np.where(np.isnan(clusters[interval]))[0][0]] = section_cluster_number
-                            section_cluster_number += 1
-                            group_not_found = False
-
-                clusters[interval] = clusters[interval].astype(int)
-                unique_clusters = np.unique(clusters[interval])
-
-                c = 0
-                for cluster in unique_clusters:
-
-                    cluster_idx = np.where(clusters[interval] == cluster)[0]
-
-                    # if only 1 data point, we'll just mark the sample as exclude = False instead of calculating cluster center
-                    if len(cluster_idx) == 1:
-                        no_downsample_idx.append(interval_df.index.tolist()[cluster_idx[0]])
-
-                    # calculate cluster centers
-                    else:
-                        cluster_center_intervals.append(interval)
-
-                        cluster_centers[interval].append((np.mean(interval_proxy[clusters[interval] == cluster]), np.mean(interval_heights[clusters[interval] == cluster])))
-                        cluster_std[interval].append(np.std(interval_proxy[clusters[interval] == cluster]))
-                        cluster_numbers.append(cluster)
-                        # if not using cluster centers, find the index of the observation with the proxy value closest to the mean of each cluster
-                        if nearest_point:
-                            row_ix = np.asarray(np.where(clusters[interval] == cluster))[0]
-                            if row_ix.shape[0] > 1:
-                                # TODO: should we just use the sample w/ the proxy value closest to the center proxy value (disregarding the height)?
-                                # calculate distance between cluster center and each data point in the cluster
-                                current_center = cluster_centers[interval][c]
-                                distance = np.zeros(row_ix.shape[0]) * np.nan
-                                for i in np.arange(len(row_ix)):
-                                    # this version calculates distance from cluster center using both heights and proxy values
-                                    #distance[i] = np.linalg.norm(current_center - X[row_ix[i]])
-
-                                    # this version only uses proxy values to calculate distance from cluster center
-                                    distance[i] = np.abs(current_center[0] - interval_proxy.iloc[row_ix[i]])
-
-                                closest_idx = row_ix[np.argmin(distance)]
-                                closest_df_idx.append(interval_df.index.tolist()[closest_idx])
-
-                            # if only 1 sample in cluster, keep it
-                            else:
-                                closest_df_idx.append(interval_df.index.tolist()[row_ix[0]])
-                        c += 1
-
-        # calculate cluster centers
-        # if not nearest_point:
-        for interval in intervals:
-            if interval == intervals[0]:
-                section_clusters = np.asarray(clusters[interval])
-                if interval in cluster_center_intervals:
-                    section_centers = np.asarray(cluster_centers[interval])
-                    section_center_std = np.asarray(cluster_std[interval])
-
-            else:
-                section_clusters = np.concatenate([section_clusters, np.asarray(clusters[interval])])
-                if interval in cluster_center_intervals:
-                    section_centers = np.concatenate([section_centers, np.asarray(cluster_centers[interval])])
-                    section_center_std =  np.concatenate([section_center_std, np.asarray(cluster_std[interval])])
-
-        if nearest_point:
-            # mark the samples we're keeping as Exclude? = False, and the rest as Exclude? = True
-            # don't change samples that didn't have data for the downsampled proxy anyway
-            sample_df_downsampled['Exclude?'][(sample_df_downsampled['section'] == section) & (~np.isnan(sample_df_downsampled[proxy]))] = True
-            sample_df_downsampled['Exclude?'].loc[closest_df_idx] = False
-            sample_df_downsampled['Exclude?'].loc[no_downsample_idx] = False
-            sample_df_downsampled['cluster'].loc[section_df.index.tolist()] = section_clusters
-
-        else:
-            # mark all the samples in section as Exclude? = True, unless they don't have data for the downsampled proxy
-            sample_df_downsampled['Exclude?'][(sample_df_downsampled['section'] == section) & (~np.isnan(sample_df_downsampled[proxy]))] = True
-            sample_df_downsampled['Exclude?'].loc[no_downsample_idx] = False
-            sample_df_downsampled['Exclude?'].loc[cluster_center_idx] = False # this only applies to clusters that only contain 1 data point
-            sample_df_downsampled['cluster'].loc[section_df.index.tolist()] = section_clusters
-
-            # if depositional age is present, save in dataframe (if not, set to nan)
-            if str(interval_dep_age) != 'nan':
-                dep_age_vec = [interval_dep_env] * section_centers.shape[0]
-            else:
-                dep_age_vec = [np.nan] * section_centers.shape[0]
-
-            # add cluster centers to DataFrame
-            downsampled_section_df = pd.DataFrame({'section': [section] * section_centers.shape[0],
-                                               'height': section_centers[:, 1],
-                                               proxy: section_centers[:, 0],
-                                               proxy + '_std': section_center_std,
-                                               'superposition?': [True] * section_centers.shape[0],
-                                               'depositional age': dep_age_vec,
-                                                'Exclude?': [False] * section_centers.shape[0],
-                                                'Depositional Environment': [interval_dep_env] * section_centers.shape[0],
-                                                  'cluster': cluster_numbers})
+    boundary_heights = remove_extra_bounds(heights, boundary_heights)
 
 
+    return boundary_heights
 
-            sample_df_downsampled = pd.concat([sample_df_downsampled, downsampled_section_df], ignore_index = True)
-
-    sample_df_downsampled.sort_values(by = ['section', 'height'], inplace = True)
-
-    sample_df_downsampled['Exclude?'] = sample_df_downsampled['Exclude?'].astype(bool)
-
-    sample_df_downsampled.reset_index(inplace = True, drop = True)
-
-    return sample_df_downsampled
-
-def check_convergence(proxy, heights, pvalue_thresh = 0.05):
+def get_centroids(proxy, heights, bounds):
     """
-    Helper function for :py:meth:`downsample() <stratmc.data.downsample>`; checks whether a group of samples meets the downsampling criteria.
+    Helper function for :py:meth:`downsample() <stratmc.data.downsample>`; calculate the centroid for a group of samples.
 
     Parameters
     ----------
-    proxy: pandas.Series
-        Proxy values for the group.
+    proxy: numpy.array
+        array containing proxy values for samples in group
 
-    heights: pandas.Series
-        Heights corresponding to proxy values.
+    height: pandas.DataFrame
+        array containing heights for samples in group
 
-    pvalue_thresh: float in (0, 1), optional
-        Threshold p-value (associated the two-sample Kolmogorov-Smirnov test :py:func:`scipy.stats.ks_2samp() <scipy.stats.ks_2samp>`) below which to further downsample proposed group of samples. A higher p-value threshold favors more splitting, while a lower vale favors lumping. Defalts to 0.05.
+    bounds: np.array
+        array containing heights of boundaries between groups
 
     Returns
     -------
-    meets_criteria: bool
-        ``True`` if the group meets the downsampling criteria (and should be kept); ``False`` if the group fails to meet the criteria (and should be further downsampled).
+    centroid: np.array
+        Array containing centroid coordinates: [proxy_center, height_center]
 
     """
 
-    lower_proxy, lower_heights, upper_proxy, upper_heights = split_data(proxy, heights)
+    centroids = np.ones((len(bounds) - 2 + 1, 2)) * np.nan
+    centroid_std = np.ones(len(bounds) - 2 + 1) * np.nan
+    for interval, boundary_height in enumerate(bounds[:-1]):
 
-    # if only 2-3 samples, split up if the standard deviation is > 0.5 (other criteria may not work well)
-    if (len(lower_proxy) == 1) or (len(upper_proxy) == 1):
-        if np.std(np.concatenate([lower_proxy, upper_proxy])) > 0.5:
-            meets_criteria = False
+        above = heights >= boundary_height
+        below = heights < bounds[interval + 1]
 
-        else:
-            meets_criteria = True
+        centroids[interval, 0] = np.mean(proxy[above & below])
+        centroids[interval, 1] = np.mean(heights[above & below])
 
-    # if superposition between samples in the current segment is unknown, place all in the same group
-    elif len(np.unique(np.concatenate([lower_heights, upper_heights]))) == 1:
+        centroid_std[interval] = np.std(proxy[above & below])
 
-        meets_criteria = True
-
-    else:
-        if (len(upper_proxy) > 2) and (len(lower_proxy) > 2):
-            # check if samples from upper/lower halves of group are drawn from the same underlying distribution
-            _, pvalue = ks_2samp(lower_proxy, upper_proxy, alternative = 'two-sided')
-
-        else:
-            if (np.abs(np.mean(upper_proxy) - np.mean(lower_proxy)) > 1):
-                pvalue = 0
-            else:
-                pvalue = 1
-
-        # check slopes of upper/lower halves
-        if (len(lower_proxy) > 1) and (len(upper_proxy) > 1) and (len(np.unique(upper_heights) > 1)) and (len(np.unique(lower_heights) > 1)):
-            # fit lines through the upper and lower groups of samples
-            upper_p = np.polyfit(np.arange(len(upper_heights)), upper_proxy, deg = 1)
-            lower_p = np.polyfit(np.arange(len(lower_heights)), lower_proxy, deg = 1)
-
-            upper_p_sign = np.sign(upper_p[0])
-            lower_p_sign = np.sign(lower_p[0])
-
-            # if signs don't match (and it isn't basically a flat line), need to split again --> manually set the p-value to 0
-            # and (np.abs(upper_p[0]) > 0.2) and (np.abs(lower_p[0]) > 0.2):
-            if (upper_p_sign != lower_p_sign) or (np.abs(np.abs(upper_p[0]) - np.abs(lower_p[0])) > 0.2):
-                pvalue = 0
-
-        # calculate slope with x = sample number (instead of height) -- less sensitive to total section thickness
-        if len(np.concatenate([lower_heights, upper_heights])) > 2:
-            total_p = np.polyfit(np.arange(len(lower_heights) + len(upper_heights)), np.concatenate([lower_proxy, upper_proxy]), deg = 1)
-            residual_autocorr = pd.Series(np.concatenate([lower_proxy, upper_proxy]) -  (np.arange(len(lower_heights) + len(upper_heights)) * total_p[0] + total_p[1])).autocorr()
-
-            if residual_autocorr > 0.5:
-                pvalue = 0
-
-            # if total number of samples in group is <=3, tests may not work well -- split if the standard deviation is >0.5
-
-        if (pvalue < pvalue_thresh):# or (pvalue_means < pvalue_thresh):
-            meets_criteria = False
-
-        else:
-            meets_criteria = True
-
-    return meets_criteria
+        if len(heights[above & below]) == 0:
+            print('no samples in interval, fix boundaries')
 
 
-def split_data(proxy, heights):
+    return centroids, centroid_std
+
+def remove_extra_bounds(heights, boundaries):
     """
-    Helper function for :py:meth:`downsample() <stratmc.data.downsample>` and :py:meth:`check_convergence() <stratmc.data.check_convergence>`; splits a group of proxy values and heights into upper and lower halves. For groups with an odd number of samples, the lower half will contain 1 more sample than the upper half.
+    Helper function for :py:meth:`downsample() <stratmc.data.downsample>`; removes duplicate or extraneous boundaries from list of candidate cluster boundaries.
 
     Parameters
     ----------
-    proxy: pandas.Series
-        Proxy values for the group.
+    proxy: numpy.array
+        array containing proxy values for samples in group
 
-    heights: pandas.Series
-        Heights corresponding to proxy values.
+    height: pandas.DataFrame
+        array containing heights for samples in group
+
+    bounds: np.array
+        array containing heights of boundaries between groups
 
     Returns
     -------
-    lower_proxy: pandas.Series
-        Proxy values for samples in the lower half of the group.
-
-    lower_heights: pandas.Series
-        Heights of samples in the lower half of the group.
-
-    upper_proxy: pandas.Series
-        Proxy values for samples in the upper half of the group.
-
-    upper_heights: pandas.Series
-        Heights of samples in the upper half of the group.
-
-
+    centroid: np.array
+        Array containing centroid coordinates: [proxy_center, height_center]
 
     """
 
-    sort_idx = np.argsort(heights.values)
-    lower_idx = sort_idx[0:int(np.ceil(len(heights)/2))]
-    upper_idx = sort_idx[int(np.ceil(len(heights)/2)):]
+    # check that there are samples between all boundaries. if not, get rid of the upper boundary
 
-    lower_heights = heights.iloc[lower_idx]
-    lower_proxy = proxy.iloc[lower_idx]
+    boundaries = list(boundaries)
 
-    upper_heights = heights.iloc[upper_idx]
-    upper_proxy = proxy.iloc[upper_idx]
+    finished = False
+    while not finished:
+        for interval, height in enumerate(boundaries[:-1]):
+            above = heights >= height
+            below = heights < boundaries[interval + 1]
 
-    # keep track of where to put cluster assignments using pandas series indices
-    return lower_proxy, lower_heights, upper_proxy, upper_heights
+            if len(heights[above & below]) == 0:
+                # remove the current boundary if there aren't any samples in interval
+                # note -- if we remove the upper boundary, may end up w/ >1 sample in group b/c the upper boundary is non-inclusive
+                boundaries.remove(boundaries[interval])
+                break
+
+            if interval == len(boundaries) - 2:
+                finished = True
+
+    return np.array(boundaries)
+
+def get_powers(proxy, height):
+    # proxy_grid_detrend = detrend(proxy_grid)
+
+    N = len(proxy)
+    dh = np.diff(height)[0]
+
+    yf = fft(proxy)
+
+    # xf, powers = power_freq(yf, N, dh)
+
+    freq = fftfreq(N, dh)[:N//2]
+    powers = 2.0/N * np.abs(yf[1:N//2])
+
+    return freq, powers
+
+
+def get_height_grid(heights):
+    """
+    Helper function for :py:meth:`downsample() <stratmc.data.downsample>`; returns an evenly spaced grid of heights spanning the same range as the input heights. Spacing is equal to half of the minimum height between samples.
+
+    Parameters
+    ----------
+    heights: numpy.array
+        Array containing sample heights for a single section.
+
+    Returns
+    -------
+    height_grid: np.array
+        Array of evenly spaced heights spanning the range in ``heights``.
+
+    """
+
+    dy = np.diff(heights)
+    dy = dy[(dy > 0)]
+
+    # spacing = minimum distance between samples
+    # could also divide this by 2, just more computationally expensive
+    min_dy = np.min(dy)/2
+
+    height_grid = np.arange(np.min(heights), np.max(heights) + min_dy, min_dy).ravel()
+
+    return height_grid
+
+
+def get_proxy_grid(proxy, height, height_grid):
+    """
+    Helper function for :py:meth:`downsample() <stratmc.data.downsample>`. Interpolates proxy values for a given section to the new heights specified in ``height_grid`` (from :py:meth:`get_height_grid() <stratmc.data.get_height_grid>`.)
+
+    Parameters
+    ----------
+    proxy: numpy.array
+        Array containing proxy values corresponding to the heights in ``heights``.
+
+    heights: numpy.array
+        Array containing sample heights for a single section.
+
+    height_grid: numpy.array
+        Array containing heights at which to interpolate the proxy values.
+
+    Returns
+    -------
+    proxy_grid: np.array
+        Array of interpolated proxy values corresponding to the heights in ``height_grid``.
+
+    """
+
+    proxy_grid = np.interp(height_grid, height, proxy)
+
+    return proxy_grid
+
+
+def get_candidate_boundaries(heights, required_boundary_heights):
+    """
+    Helper function for :py:meth:`downsample() <stratmc.data.downsample>`; returns list of potential cluster boundaries.
+
+    Parameters
+    ----------
+    heights: numpy.array
+        Array containing sample heights for a single section.
+
+    required_boundary_heights: numpy.array
+        Array containing heights of required boundaries (from :py:meth:`get_boundaries() <bayestrat.data.get_boundaries>`)
+
+    Returns
+    -------
+    candidate_boundaries: np.array
+        Array of potential cluster boundaries (excluding required boundaries from ``required_boundary_heights``).
+
+    """
+
+    # note -- when building groups, the lower boundary is inclusive, and the upper boundary is non-inclusive: [lower, upper)
+    # candidate boundaries = every sample height, except the bottom/top samples, and any heights that are already in required_boundary_heights
+
+    candidate_boundaries = list(heights)
+
+    # remove bottom sample (nothing below), but keep top sample (required to make it a separate cluster since lower bound is inclusive)
+    candidate_boundaries = candidate_boundaries[1:]
+
+    # remove boundaries that are already in our 'required' list:
+
+    for h in required_boundary_heights:
+        if h in candidate_boundaries:
+            candidate_boundaries.remove(h)
+
+    return candidate_boundaries

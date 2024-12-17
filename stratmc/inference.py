@@ -192,7 +192,7 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
         # delete the temporary backup
         os.remove("traces/temp/" + str(name) + '_' + tstamp + ".nc")
 
-    bad_chains = check_inference(full_trace, sample_df, ages_df, quiet = True, sections = sections)
+    bad_chains, _ = check_inference(full_trace, sample_df, ages_df, quiet = True, sections = sections)
     if len(bad_chains) > 0:
         warnings.warn(f"Superposition violated in chains {str(bad_chains)}. These chains were removed from the trace; the original trace (with the bad chains) is saved in the `traces` folder. To investigate the cause of the superposition violation, load the original trace and run the functions in the `stratmc.tests` module with `quiet = False`.")
 

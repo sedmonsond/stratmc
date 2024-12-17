@@ -698,7 +698,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                     above = section_df['height']>=age_heights[interval]
                     below = section_df['height']<age_heights[interval+1]
                     interval_df = section_df[above & below]
-                    interval_samples = interval_df[proxy].values
+                    # interval_samples = interval_df[proxy].values
                     interval_superposition = interval_df['superposition?'].values
                     interval_heights = interval_df['height'].values
 
@@ -713,7 +713,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                     # if there are samples in the current interval
                     # if interval = 0, and the current section is in the superposition dictionary, then use the minimum age from sections that must be older as the maximum age for the current section
                     # note: if appropriate, make sure that the overlying age constraint is shared between the sections to avoid potential superposition issues
-                    if len(interval_samples) > 0:
+                    if len(interval_heights) > 0:
 
                         if section in list(superposition_dict.keys()):
                             base_age_dist = pm.math.concatenate([section_age_dist[older_section] for older_section in superposition_dict[section]]).min()
@@ -723,10 +723,10 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                         observed_age_diff = pm.Deterministic(label + 'obs_age_diff', base_age_dist - radiometric_age_tensor[interval+1])
 
                         # sort random draws if >1 sample
-                        if len(interval_samples) > 1:
+                        if len(interval_heights) > 1:
                             shuffle_heights = np.unique(interval_heights[~interval_superposition])
 
-                            random_sample_ages_unsorted = pm.Uniform(label + 'unsorted_random_ages', lower = 0, upper = 1, size = len(interval_samples))
+                            random_sample_ages_unsorted = pm.Uniform(label + 'unsorted_random_ages', lower = 0, upper = 1, size = len(interval_heights))
 
                             # if superposition is known for all samples, sort random ages
                             if all(interval_superposition):
@@ -801,7 +801,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
 
                         # skip sorting if interval only contains 1 sample
                         else:
-                            random_sample_ages =  pm.Uniform(label + 'random_ages', lower = 0, upper = 1, size = len(interval_samples))
+                            random_sample_ages =  pm.Uniform(label + 'random_ages', lower = 0, upper = 1, size = len(interval_heights))
 
                         # scaled age parameterization
                         scaling_factor_1 = pm.Uniform(label + 'scaling_factor_1', lower = 0, upper = 1, size = 1)
@@ -982,8 +982,6 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                         count += 1
 
                 section_age_dist[section] = pm.Deterministic(label+'ages', section_age_tensor)
-
-
 #
 # shared_ages = ages_df[ages_df['shared?']==True]
 
@@ -1255,6 +1253,543 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
 
     return model, gp
 
+def build_prior_age_model(sample_df, ages_df, proxies = ['d13c'], **kwargs):
+    """
+    Create a prior age model for each section.
+
+    Parameters
+    ----------
+    sample_df: pandas.DataFrame
+        :class:`pandas.DataFrame` containing proxy data for all sections. Load from .csv file using :py:meth:`load_data() <stratmc.data.load_data>` in :py:mod:`stratmc.data`.
+
+    ages_df: pandas.DataFrame
+        :class:`pandas.DataFrame` containing age constraints for all sections. Load from .csv file using :py:meth:`load_data() <stratmc.data.load_data>` in :py:mod:`stratmc.data`.
+
+    proxies: str or list(str), optional
+        Column or columns containing proxy data in ``sample_df``. Defaults to 'd13c'.
+
+    sections:: list(str) or numpy.array(str), optional
+        List of sections to include in the inference model. Defaults to all sections in ``sample_df``.
+
+
+    Returns
+    -------
+    prior_age_model: PyMC model
+        :class:`pymc.model.core.Model` object.
+    """
+
+    if 'sections' in kwargs:
+        sections = list(kwargs['sections'])
+    else:
+        sections = list(np.unique(sample_df['section']))
+
+    if 'superposition_dict' in kwargs:
+        superposition_dict = kwargs['superposition_dict']
+    else:
+        superposition_dict = {}
+
+    for section in list(superposition_dict.keys()):
+        for older_section in superposition_dict[section]:
+            sections.remove(older_section)
+            sections.insert(0, older_section)
+
+    ## instead of removing samples from dataframe if they don't have any proxy observations, mark as excluded (so the model will still keep track of age at that height)
+    # note - samples whose age shouldn't be tracked should simply be removed from the dataframe prior to running the inversion
+    # for sample_df, 'exclude' now means exclude from the likelihood calculation, but keep track of age at that height
+    sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)
+
+    # ignore sections that have no observations included in the inference (samples w/ no observations were marked `Exclude? = True` in clean_data)
+    data_sections = list(np.unique(sample_df[~sample_df['Exclude?']]['section']))
+
+    for section in list(sections):
+        if section not in data_sections:
+            sections.remove(section)
+
+    # clean again (avoids issues w/ offset and noise groups)
+    sample_df, ages_df = clean_data(sample_df, ages_df, proxies, sections)
+
+    # check that for all constraints with 'shared == True', the constraint actually is used >1 time (if not, set shared = False)
+    for shared_age_name in ages_df[ages_df['shared?']==True]['name']:
+        if ages_df[(ages_df['shared?'] == True) & (ages_df['name']==shared_age_name)].shape[0] < 2:
+            idx = ages_df[(ages_df['shared?'] == True) & (ages_df['name']==shared_age_name)].index
+            ages_df.loc[idx, 'shared?'] = False
+
+    with pm.Model() as prior_age_model:
+
+        ages_all = []
+
+        # create distribution objects for each unique shared constraint
+        # in this implementation, constraints should only be labeled as 'shared?' if diachronous behavior is not allowed -- constraints that are the same (e.g.,
+        # a fossil first appearanace date), but that may be diachronous between sections, should be set to shared = False
+        shared_constraints = {}
+        shared_ages = ages_df[ages_df['shared?']==True]
+
+        if len(shared_ages) > 0:
+            unique_shared_constraints = np.unique(shared_ages['name'])
+
+            for constraint in unique_shared_constraints:
+                constraint = str(constraint)
+                constraint_df = shared_ages[shared_ages['name']==constraint]
+                dist = np.unique(constraint_df['distribution_type'])
+                dist_age = np.unique(constraint_df['age'])
+                dist_age_std = np.unique(constraint_df['age_std'])
+
+                if (len(dist) > 1) or (len(dist_age) > 1) or (len(dist_age_std) > 1):
+                    sys.exit(f"Initialization of shared age constraint {constraint} is inconsistent. Check that distribution type and parameters are the same for each section.")
+
+                dist = dist[0]
+
+                if dist == 'Normal':
+                    shared_constraints[constraint] = pm.Normal(constraint, mu = dist_age[0], sigma = dist_age_std[0])
+
+                else:
+                     # if not implemented, throw error
+                    if dist not in DIST_DICT.keys():
+                        sys.exit(f"{dist} distribution not implemented. Add to DIST_DICT or choose a different distribution.")
+
+                    dist_args = {}
+                    param_1 = constraint_df['param_1'].values[0]
+                    param_1_name = constraint_df['param_1_name'].values[0]
+                    param_2 = constraint_df['param_2'].values[0]
+                    param_2_name = constraint_df['param_2_name'].values[0]
+
+                    if not pd.isna(param_1):
+                        dist_args[param_1_name] = param_1
+
+                    if not pd.isna(param_2):
+                        dist_args[param_2_name] = param_2
+
+                    shared_constraints[constraint] = DIST_DICT[dist](constraint, **dist_args)
+
+        # dictionary to store sample age distributions for each section -- required for superposition between sections
+        section_age_dist = {}
+
+        for section in sections:
+            intervals = []
+            ages = []
+
+            section_df = sample_df[sample_df['section']==section]
+
+            # separate dataframes for intermediate detrital or intrusive constraints and depositional age constraints
+            section_age_df = ages_df[(ages_df['section']==section) & (~ages_df['intermediate detrital?']) & (~ages_df['intermediate intrusive?'])  & (~ages_df['depositional?'])]
+            intermediate_detrital_section_ages_df = ages_df[(ages_df['section']==section) & (ages_df['intermediate detrital?'])]
+            intermediate_intrusive_section_ages_df =  ages_df[(ages_df['section']==section) & (ages_df['intermediate intrusive?'])]
+            depositional_section_ages_df =  ages_df[(ages_df['section']==section) & (ages_df['depositional?'])]
+
+
+            section_ages = section_age_df['age'].values
+            section_ages_unc = section_age_df['age_std'].values
+
+            heights = section_df['height'].values
+            age_heights = section_age_df['height'].values
+
+            # grab list of depositional age constraint names for current section (must match name of age in ages_df)
+            depositional_age_names = section_df['depositional age'].dropna().unique()
+
+            # create age constraint distributions
+            if len(age_heights) == 0:
+                print(str(section) + ' has no age constraints')
+
+            else:
+                ages = {}
+                label = str(section) +'_'
+
+                # the input ages (the means) need to be in stratigraphic superposition, but ordered transform is still used so that the posteriors cannot be out of superposition due to 2sigma uncertainty -- avoids potentially bad initialization
+
+                # biuld distributions if all age constraint priors are Gaussian and not shared
+                if all(section_age_df['distribution_type']=='Normal') and all(section_age_df['shared?']==False):
+                    # for initvals, using np.sort instead of np.flip to account for scenario where means of reported ages are out of superposition
+                    radiometric_age_flip = pm.Normal(label + 'flip_radiometric_age',
+                                                     mu = np.flip(section_ages),
+                                                     sigma = np.flip(section_ages_unc),
+                                                     shape = section_ages.shape,
+                                                     transform = tr.Ordered(),
+                                                     initval = np.sort(section_ages))
+
+                    radiometric_age_tensor = pm.Deterministic(label + 'radiometric_age', np.flip(radiometric_age_flip))
+
+
+                else:
+                    print('Using radiometric age priors specified in ages_df for section ' + str(section))
+                    radiometric_age = {}
+                    age_dist_names = []
+
+                    for i in np.arange(len(section_ages)):
+                        label = str(section) + '_' + str(i) + '_'
+                        dist = section_age_df['distribution_type'].values[i]
+
+                        constraint_shared = section_age_df['shared?'].values[i]
+
+                        # for shared constraints, link to existing distribution
+                        if constraint_shared == True:
+                            shared_constraint_name = section_age_df['name'].values[i]
+                            radiometric_age[i] = shared_constraints[shared_constraint_name]
+                            age_dist_names.append(shared_constraint_name)
+
+                        # if the constraint is not shared, build a new distribution
+                        else:
+                            if dist == 'Normal':
+                                radiometric_age[i] = pm.Normal(label + 'radiometric_age', mu = section_ages[i], sigma = section_ages_unc[i])
+                                age_dist_names.append(label  + 'radiometric_age')
+
+                            else:
+                                # if not implemented, throw error
+                                if dist not in DIST_DICT.keys():
+                                    sys.exit(f"{dist} distribution not implemented. Add to DIST_DICT or choose a different distribution.")
+
+                                dist_args = {}
+                                param_1 = section_age_df['param_1'].values[i]
+                                param_1_name = section_age_df['param_1_name'].values[i]
+                                param_2 = section_age_df['param_2'].values[i]
+                                param_2_name = section_age_df['param_2_name'].values[i]
+
+                                if not pd.isna(param_1):
+                                    dist_args[param_1_name] = param_1
+
+                                if not pd.isna(param_2):
+                                    dist_args[param_2_name] = param_2
+
+                                radiometric_age[i] = DIST_DICT[dist](label + 'radiometric_age', **dist_args)
+
+                                age_dist_names.append(label + 'radiometric_age')
+
+                    # make a vector of all the radiometric ages for superposition function
+                    radiometric_age_tensor = at.zeros((len(section_ages),))
+                    for i in np.arange(len(section_ages)):
+                        radiometric_age_tensor = at.set_subtensor(radiometric_age_tensor[i], radiometric_age[i])
+
+                    label = str(section) +'_'
+                    radiometric_age_tensor = pm.Deterministic(label + 'radiometric_age', radiometric_age_tensor)
+
+                    superposition(radiometric_age_tensor, age_dist_names, prior_age_model, section_age_df, section)
+
+                # if there are samples below the basal age constraint, throw an error
+                if (heights[0] < age_heights[0]):
+                    sys.exit(f"Section {section} does not have a basal age constraint. Add a maximum section age to ages_df.")
+
+                # if the section has no upper age constraint, throw an error
+                if heights[-1] >= age_heights[-1]:
+                    sys.exit(f"Section {section} does not have an upper age constraint. Add a minimum section age to ages_df.")
+
+                # create sample age distributions for section (by interval)
+                for interval in np.arange(0, len(age_heights)-1).tolist():
+                    label = str(section)+'_'+ str(interval) +'_'
+                    above = section_df['height']>=age_heights[interval]
+                    below = section_df['height']<age_heights[interval+1]
+                    interval_df = section_df[above & below]
+                    # interval_samples = interval_df[proxy].values
+                    interval_superposition = interval_df['superposition?'].values
+                    interval_heights = interval_df['height'].values
+
+                    above = intermediate_detrital_section_ages_df['height']>age_heights[interval]
+                    below = intermediate_detrital_section_ages_df['height']<age_heights[interval+1]
+                    detrital_interval_df = intermediate_detrital_section_ages_df[above & below]
+
+                    above = intermediate_intrusive_section_ages_df['height']>age_heights[interval]
+                    below = intermediate_intrusive_section_ages_df['height']<age_heights[interval+1]
+                    intrusive_interval_df = intermediate_intrusive_section_ages_df[above & below]
+
+                    # if there are samples in the current interval
+                    # if interval = 0, and the current section is in the superposition dictionary, then use the minimum age from sections that must be older as the maximum age for the current section
+                    # note: if appropriate, make sure that the overlying age constraint is shared between the sections to avoid potential superposition issues
+                    if len(interval_heights) > 0:
+
+                        if section in list(superposition_dict.keys()):
+                            base_age_dist = pm.math.concatenate([section_age_dist[older_section] for older_section in superposition_dict[section]]).min()
+                        else:
+                            base_age_dist = radiometric_age_tensor[interval]
+
+                        observed_age_diff = pm.Deterministic(label + 'obs_age_diff', base_age_dist - radiometric_age_tensor[interval+1])
+
+                        # sort random draws if >1 sample
+                        if len(interval_heights) > 1:
+                            shuffle_heights = np.unique(interval_heights[~interval_superposition])
+
+                            random_sample_ages_unsorted = pm.Uniform(label + 'unsorted_random_ages', lower = 0, upper = 1, size = len(interval_heights))
+
+                            # if superposition is known for all samples, sort random ages
+                            if all(interval_superposition):
+                                random_sample_ages = pm.Deterministic(label + 'random_ages', at.sort(random_sample_ages_unsorted))
+
+                            # if there's no superposition information for any samples, skip sorting
+                            elif (all(~interval_superposition)) and (len(shuffle_heights) == 1):
+                                random_sample_ages = pm.Deterministic(label + 'random_ages', random_sample_ages_unsorted)
+
+                            # if only some samples are missing superposition information, only sort samples w/ superposition = True
+                            else:
+                                sorted_idx = at.argsort(random_sample_ages_unsorted)
+
+                                # create a dictionary to store lists of indices to shuffle (one list per stratigraphic horizon)
+                                shuffle_group_idx = {}
+
+                                for h in shuffle_heights:
+                                    shuffle_group_idx[h] = []
+
+                                # grab indices for each group of unsorted samples
+                                for i, h in enumerate(interval_heights):
+                                    if h in shuffle_heights:
+                                        shuffle_group_idx[h].append(i)
+
+                                # sort all of the ages
+                                random_sample_ages = at.sort(random_sample_ages_unsorted)
+
+                                # unsort each group of samples without superposition information (base to top)
+                                for i, h in enumerate(shuffle_heights):
+                                    # replace w/ another set of random draws from Uniform(0, 1), then scale between bounding samples
+                                    # note - not possible to re-shuffle the original draws (permutations not allowed in logp graph)
+                                    interval_shuffled_random_ages = pm.Uniform('shuffled_ages_' + str(section) + '_' + str(h),
+                                                                               lower = 0,
+                                                                               upper = 1,
+                                                                               size = len(shuffle_group_idx[h])
+                                                                              )
+
+                                    # get indices of samples below and above the shuffled range
+                                    start_shuffle_idx = np.max([0, shuffle_group_idx[h][0]-1])
+                                    stop_shuffle_idx = np.min([len(interval_heights) - 1, shuffle_group_idx[h][-1] + 1])
+
+                                    shuffle_base_age = random_sample_ages[start_shuffle_idx]
+                                    shuffle_top_age = random_sample_ages[stop_shuffle_idx]
+
+                                    # check if the starting index is also from a previously shuffled interval. if yes, reset base age to youngest sample in that group
+                                    # don't need to worry about the overlying interval, because it hasn't been reset yet
+                                    if i != 0:
+                                        start_shuffle_height = interval_heights[start_shuffle_idx]
+                                        # if the underlying sample was also shuffled, find the youngest sample in its group, and use it as the new 'base age'
+                                        if start_shuffle_height in shuffle_heights[:i]:
+                                            under_shuffle_idx = shuffle_group_idx[start_shuffle_height]
+
+                                            # note: because of how the scaled ages are calculated (age = base - unscaled age), the youngest sample will have the highest value in [0, 1]
+                                            shuffle_base_age = at.max(random_sample_ages[under_shuffle_idx])
+
+                                    # calculate (unscaled) total time spanned by the shuffled interval
+                                    # observed_shuffle_age_diff = random_sample_ages[stop_shuffle_idx] - random_sample_ages[start_shuffle_idx]
+                                    # note: ages still flipped s.t. larger values = younger
+                                    observed_shuffle_age_diff = shuffle_top_age - shuffle_base_age
+
+                                    # scale the shuffled [0, 1] ages s.t. the values fall in between the (sorted) values for over/underlying samples
+                                    # scaling: max - (random * observed diff)
+                                    interval_shuffled_scaled_random_ages = pm.Deterministic('shuffled_scaled_ages_' + str(section) + '_' + str(h),
+                                                                                            shuffle_top_age - (interval_shuffled_random_ages * observed_shuffle_age_diff))
+
+
+                                    # insert unsorted random ages in tensor
+                                    random_sample_ages = at.set_subtensor(random_sample_ages[shuffle_group_idx[h]], interval_shuffled_scaled_random_ages)
+
+                                # store final random age tensor in deterministic
+                                random_sample_ages = pm.Deterministic(label + 'random_ages', random_sample_ages)
+
+                        # skip sorting if interval only contains 1 sample
+                        else:
+                            random_sample_ages =  pm.Uniform(label + 'random_ages', lower = 0, upper = 1, size = len(interval_heights))
+
+                        # scaled age parameterization
+                        scaling_factor_1 = pm.Uniform(label + 'scaling_factor_1', lower = 0, upper = 1, size = 1)
+                        scaling_factor_2 = pm.Uniform(label + 'scaling_factor_2', lower = 0, upper = 1, size = 1)
+
+                        # scaled_ages = max - random_ages * age_range * sf1 - (1 - sf2) * age_range
+                        ages[interval] = pm.Deterministic(label + 'ages', base_age_dist - (random_sample_ages * observed_age_diff * scaling_factor_1) - (1 - scaling_factor_2) * observed_age_diff * (1 - scaling_factor_1))
+
+                        intervals.append(interval)
+
+                        # if there are intermediate detrital ages in the section, check if they're inside the current interval (iterate over constraints)
+                        if detrital_interval_df.shape[0] > 0:
+                            for i in np.arange(detrital_interval_df.shape[0]):
+                                # if there are overlying samples in interval, enforce maximum age
+                                if len(interval_df[interval_df['height']>=detrital_interval_df['height'].values[i]]['height'].values)>0:
+                                    # construct DZ age prior
+                                    dist = detrital_interval_df['distribution_type'].values[i]
+                                    constraint_shared = detrital_interval_df['shared?'].values[i]
+
+                                    if constraint_shared == True:
+                                        shared_constraint_name = detrital_interval_df['name'].values[i]
+                                        intermediate_detrital_age = shared_constraints[shared_constraint_name]
+                                        intermediate_detrital_age_dist_name = shared_constraint_name
+
+                                    else:
+                                        if dist == 'Normal':
+                                            intermediate_detrital_age = pm.Normal(label + 'detrital_age_' + str(i),
+                                                                           mu = detrital_interval_df['age'].values[i],
+                                                                           sigma = detrital_interval_df['age_std'].values[i])
+                                            intermediate_detrital_age_dist_name = label + 'detrital_age_' + str(i)
+
+                                        else:
+                                            # if distribution not implemented, throw error
+                                            if dist not in DIST_DICT.keys():
+                                                sys.exit(f"{dist} distribution not implemented. Add to DIST_DICT or choose a different distribution.")
+
+                                            dist_args = {}
+                                            param_1 = detrital_interval_df['param_1'].values[i]
+                                            param_1_name = detrital_interval_df['param_1_name'].values[i]
+                                            param_2 = detrital_interval_df['param_2'].values[i]
+                                            param_2_name = detrital_interval_df['param_2_name'].values[i]
+
+                                            if not pd.isna(param_1):
+                                                dist_args[param_1_name] = param_1
+
+                                            if not pd.isna(param_2):
+                                                dist_args[param_2_name] = param_2
+
+                                            intermediate_detrital_age = DIST_DICT[dist](label + 'detrital_age_' + str(i), **dist_args)
+
+                                            intermediate_detrital_age_dist_name = label + 'detrital_age_' + str(i)
+
+                                    # enforce detrital age with pm.Potential
+                                    if all(section_age_df['distribution_type']=='Normal') and all(section_age_df['shared?']==False):
+                                        # THESE WILL BE UPSIDE DOWN -- inside of the DZ potential, use this name, but flip the initial values
+                                        # with np.flip() THEN index with [interval] and [interval+1]
+                                        base_age_dist_name = str(section) +'_' + 'flip_radiometric_age'
+                                        upper_age_dist_name = str(section) +'_' + 'flip_radiometric_age'
+                                        shared_radiometric_age_dist = True
+
+                                    else:
+                                        base_age_dist_name = age_dist_names[interval]
+                                        upper_age_dist_name = age_dist_names[interval + 1]
+                                        shared_radiometric_age_dist = False
+
+                                    intermediate_detrital_potential(intermediate_detrital_age,
+                                                                    intermediate_detrital_age_dist_name,
+                                                                    base_age_dist_name,
+                                                                    upper_age_dist_name,
+                                                                    ages[interval],
+                                                                    random_sample_ages_unsorted,
+                                                                    label + 'unsorted_random_ages',
+                                                                    interval_df['height'].values,
+                                                                    detrital_interval_df['height'].values[i],
+                                                                    prior_age_model,
+                                                                    section,
+                                                                    interval,
+                                                                    sf1_name = label + 'scaling_factor_1',
+                                                                    sf2_name = label + 'scaling_factor_2',
+                                                                    shared_radiometric_age_dist = shared_radiometric_age_dist
+                                                                    )
+
+                                    # variables:
+                                    # dz age: intermediate_detrital_age
+                                    # dz age name: intermediate_detrital_age_dist_name
+                                    # sample ages (unsorted random draws U[0, 1]): random_sample_ages_unsorted
+                                    # sample age dist name: label + 'unsorted_random_ages'
+                                    # base age dist name: see above
+                                    # upper age dist name: see above
+                                    # scaling factor 1 name: label + 'scaling_factor_1'
+                                    # scaling factor 2 name: label + 'scaling_factor_2'
+
+                        # if there are intermediate intrusive ages in section, check if they're inside this interval
+                        if intrusive_interval_df.shape[0] > 0:
+                            for i in np.arange(intrusive_interval_df.shape[0]):
+                                # if there are underlying samples in interval, enforce maximum age
+                                if len(interval_df[interval_df['height']<=intrusive_interval_df['height'].values[i]]['height'].values)>0:
+                                    # construct intrusive age prior
+                                    dist = intrusive_interval_df['distribution_type'].values[i]
+                                    constraint_shared = intrusive_interval_df['shared?'].values[i]
+
+                                    if constraint_shared == True:
+                                        shared_constraint_name = intrusive_interval_df['name'].values[i]
+                                        intermediate_intrusive_age = shared_constraints[shared_constraint_name]
+                                        intermediate_intrusive_age_dist_name = shared_constraint_name
+
+                                    else:
+                                        if dist == 'Normal':
+                                            intermediate_intrusive_age = pm.Normal(label + 'intrusive_age_' + str(i),
+                                                                           mu = intrusive_interval_df['age'].values[i],
+                                                                           sigma = intrusive_interval_df['age_std'].values[i])
+                                            intermediate_intrusive_age_dist_name = label + 'intrusive_age_' + str(i)
+
+                                        else:
+                                            # if distribution not implemented, throw error
+                                            if dist not in DIST_DICT.keys():
+                                                sys.exit(f"{dist} distribution not implemented. Add to DIST_DICT or choose a different distribution.")
+
+                                            dist_args = {}
+                                            param_1 = intrusive_interval_df['param_1'].values[i]
+                                            param_1_name = intrusive_interval_df['param_1_name'].values[i]
+                                            param_2 = intrusive_interval_df['param_2'].values[i]
+                                            param_2_name = intrusive_interval_df['param_2_name'].values[i]
+
+                                            if not pd.isna(param_1):
+                                                dist_args[param_1_name] = param_1
+
+                                            if not pd.isna(param_2):
+                                                dist_args[param_2_name] = param_2
+
+                                            intermediate_intrusive_age = DIST_DICT[dist](label + 'intrusive_age_' + str(i), **dist_args)
+
+                                            intermediate_intrusive_age_dist_name = label + 'intrusive_age_' + str(i)
+
+                                    # enforce intermediate age with pm.Potential
+                                    if all(section_age_df['distribution_type']=='Normal') and all(section_age_df['shared?']==False):
+                                        # THESE WILL BE UPSIDE DOWN -- inside of the intrusive potential, use this name, but flip the initial values
+                                        # with np.flip() THEN index with [interval] and [interval+1]
+                                        base_age_dist_name = str(section) +'_' + 'flip_radiometric_age'
+                                        upper_age_dist_name = str(section) +'_' + 'flip_radiometric_age'
+                                        shared_radiometric_age_dist = True
+
+                                    else:
+                                        base_age_dist_name = age_dist_names[interval]
+                                        upper_age_dist_name = age_dist_names[interval + 1]
+                                        shared_radiometric_age_dist = False
+
+
+                                    intermediate_intrusive_potential(intermediate_intrusive_age,
+                                                                    intermediate_intrusive_age_dist_name,
+                                                                    base_age_dist_name,
+                                                                    upper_age_dist_name,
+                                                                    ages[interval],
+                                                                    random_sample_ages_unsorted,
+                                                                    label + 'unsorted_random_ages',
+                                                                    interval_df['height'].values,
+                                                                    intrusive_interval_df['height'].values[i],
+                                                                    prior_age_model,
+                                                                    section,
+                                                                    interval,
+                                                                    sf1_name = label + 'scaling_factor_1',
+                                                                    sf2_name = label + 'scaling_factor_2',
+                                                                    shared_radiometric_age_dist = shared_radiometric_age_dist
+                                                                    )
+
+
+                label = str(section) + '_'
+
+                # concatenate ages from all intervals in section
+                ages = [ages[interval] for interval in intervals]
+
+                section_age_tensor = at.zeros((len(heights),))
+
+                count = 0
+                for age_sub in ages:
+                    for i in np.arange(0, age_sub.shape.eval()[0]):
+                        section_age_tensor = at.set_subtensor(section_age_tensor[count], age_sub[i])
+                        count += 1
+
+                section_age_dist[section] = pm.Deterministic(label+'ages', section_age_tensor)
+
+                ## for samples with depositional ages, enforce with a likelihood function
+                if len(depositional_age_names) > 0:
+                    for constraint in depositional_age_names:
+                        print(f'Adding depositional age likelihood term for section {section}: {constraint}')
+
+                        age_mu = np.unique(depositional_section_ages_df[depositional_section_ages_df['name'] == constraint]['age'])
+                        age_std = np.unique(depositional_section_ages_df[depositional_section_ages_df['name'] == constraint]['age_std'])
+
+                        if (len(age_mu) > 1) or (len(age_std) > 1):
+                            sys.exit(f"Initialization of depositional age constraint {constraint} is inconsistent. Check that the mean and standard deviation are the same for each instance in the ages DataFrame.")
+
+                        elif (len(age_mu) == 0) or (len(age_std) == 0):
+                            sys.exit(f"Depositional age constraint {constraint} not included in age constraint DataFrame for section {section}. Check that the constraint name in ages_df matches the name in sample_df, and that the constraint has not been excluded.")
+
+                        else:
+                            # grab indices of samples with the current depositional age
+                            dep_constraint_idx = np.where(section_df['depositional age'] == constraint)[0]
+                            # likelihood function: mean = modeled sample age, sigma = depositioanl age constraint standard deviation, observed = depositional age constraint mean
+                            dep_age_dist = pm.Normal(str(section) + '_depositional_age_likelihood_' + constraint,
+                                                     mu = section_age_dist[section][dep_constraint_idx],
+                                                     sigma = list([age_std[0]]) * len(dep_constraint_idx),
+                                                     observed = list([age_mu[0]]) * len(dep_constraint_idx)
+                                                     )
+
+
+                ages_all = np.append(ages_all, ages)
+
+    return prior_age_model
 
 
 def superposition(age_dist, age_dist_names, model, section_age_df, section):
