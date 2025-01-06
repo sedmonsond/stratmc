@@ -620,6 +620,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
             # separate dataframes for intermediate detrital or intrusive constraints and depositional age constraints
             section_age_df = ages_df[(ages_df['section']==section) & (~ages_df['intermediate detrital?']) & (~ages_df['intermediate intrusive?'])  & (~ages_df['depositional?'])]
             intermediate_detrital_section_ages_df = ages_df[(ages_df['section']==section) & (ages_df['intermediate detrital?'])]
+
             intermediate_intrusive_section_ages_df =  ages_df[(ages_df['section']==section) & (ages_df['intermediate intrusive?'])]
             depositional_section_ages_df =  ages_df[(ages_df['section']==section) & (ages_df['depositional?'])]
 
@@ -752,7 +753,9 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                         if len(interval_heights) > 1:
                             shuffle_heights = np.unique(interval_heights[~interval_superposition])
 
-                            random_sample_ages_unsorted = pm.Uniform(label + 'unsorted_random_ages', lower = 0, upper = 1, size = len(interval_heights))
+                            random_sample_ages_unsorted_unscaled = pm.Uniform(label + 'unsorted_random_ages', lower = 0, upper = 1e6, size = len(interval_heights))
+
+                            random_sample_ages_unsorted = pm.Deterministic(label + 'unsorted_random_ages_scaled', random_sample_ages_unsorted_unscaled/1e6)
 
                             # if superposition is known for all samples, sort random ages
                             if all(interval_superposition):
@@ -839,9 +842,12 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                         intervals.append(interval)
 
                         # if there are intermediate detrital ages in the section, check if they're inside the current interval (iterate over constraints)
+                        detrital_age_dist_names = []
                         if detrital_interval_df.shape[0] > 0:
+                            # enforce detrital ages -- note that initial values will be set base --> top
                             for i in np.arange(detrital_interval_df.shape[0]):
                                 # if there are overlying samples in interval, enforce maximum age
+
                                 if len(interval_df[interval_df['height']>=detrital_interval_df['height'].values[i]]['height'].values)>0:
                                     # construct DZ age prior
                                     dist = detrital_interval_df['distribution_type'].values[i]
@@ -880,34 +886,15 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
 
                                             intermediate_detrital_age_dist_name = label + 'detrital_age_' + str(i)
 
+                                    detrital_age_dist_names.append(intermediate_detrital_age_dist_name)
+
                                     # enforce detrital age with pm.Potential
-                                    if all(section_age_df['distribution_type']=='Normal') and all(section_age_df['shared?']==False):
-                                        # THESE WILL BE UPSIDE DOWN -- inside of the DZ potential, use this name, but flip the initial values
-                                        # with np.flip() THEN index with [interval] and [interval+1]
-                                        base_age_dist_name = str(section) +'_' + 'flip_radiometric_age'
-                                        upper_age_dist_name = str(section) +'_' + 'flip_radiometric_age'
-                                        shared_radiometric_age_dist = True
-
-                                    else:
-                                        base_age_dist_name = age_dist_names[interval]
-                                        upper_age_dist_name = age_dist_names[interval + 1]
-                                        shared_radiometric_age_dist = False
-
                                     intermediate_detrital_potential(intermediate_detrital_age,
                                                                     intermediate_detrital_age_dist_name,
-                                                                    base_age_dist_name,
-                                                                    upper_age_dist_name,
                                                                     ages[interval],
-                                                                    random_sample_ages_unsorted,
-                                                                    label + 'unsorted_random_ages',
                                                                     interval_df['height'].values,
                                                                     detrital_interval_df['height'].values[i],
-                                                                    model,
-                                                                    section,
-                                                                    interval,
-                                                                    sf1_name = label + 'scaling_factor_1',
-                                                                    sf2_name = label + 'scaling_factor_2',
-                                                                    shared_radiometric_age_dist = shared_radiometric_age_dist
+                                                                    section
                                                                     )
 
                                     # variables:
@@ -921,7 +908,10 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                                     # scaling factor 2 name: label + 'scaling_factor_2'
 
                         # if there are intermediate intrusive ages in section, check if they're inside this interval
+                        intrusive_age_dist_names = []
                         if intrusive_interval_df.shape[0] > 0:
+
+                            # enforce intrusive ages -- note that initial values will be set base --> top
                             for i in np.arange(intrusive_interval_df.shape[0]):
                                 # if there are underlying samples in interval, enforce maximum age
                                 if len(interval_df[interval_df['height']<=intrusive_interval_df['height'].values[i]]['height'].values)>0:
@@ -962,37 +952,45 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
 
                                             intermediate_intrusive_age_dist_name = label + 'intrusive_age_' + str(i)
 
+                                    intrusive_age_dist_names.append(intermediate_intrusive_age_dist_name)
+
                                     # enforce intermediate age with pm.Potential
-                                    if all(section_age_df['distribution_type']=='Normal') and all(section_age_df['shared?']==False):
+
+                                    intermediate_intrusive_potential(intermediate_intrusive_age,
+                                                                    intermediate_intrusive_age_dist_name,
+                                                                    ages[interval],
+                                                                    interval_df['height'].values,
+                                                                    intrusive_interval_df['height'].values[i],
+                                                                    section,
+                                                                    )
+
+                        if (intrusive_interval_df.shape[0] > 0) or (detrital_interval_df.shape[0] > 0):
+                            if all(section_age_df['distribution_type']=='Normal') and all(section_age_df['shared?']==False):
                                         # THESE WILL BE UPSIDE DOWN -- inside of the intrusive potential, use this name, but flip the initial values
                                         # with np.flip() THEN index with [interval] and [interval+1]
                                         base_age_dist_name = str(section) +'_' + 'flip_radiometric_age'
                                         upper_age_dist_name = str(section) +'_' + 'flip_radiometric_age'
                                         shared_radiometric_age_dist = True
 
-                                    else:
-                                        base_age_dist_name = age_dist_names[interval]
-                                        upper_age_dist_name = age_dist_names[interval + 1]
-                                        shared_radiometric_age_dist = False
+                            else:
+                                base_age_dist_name = age_dist_names[interval]
+                                upper_age_dist_name = age_dist_names[interval + 1]
+                                shared_radiometric_age_dist = False
 
-
-                                    intermediate_intrusive_potential(intermediate_intrusive_age,
-                                                                    intermediate_intrusive_age_dist_name,
-                                                                    base_age_dist_name,
-                                                                    upper_age_dist_name,
-                                                                    ages[interval],
-                                                                    random_sample_ages_unsorted,
-                                                                    label + 'unsorted_random_ages',
-                                                                    interval_df['height'].values,
-                                                                    intrusive_interval_df['height'].values[i],
-                                                                    model,
-                                                                    section,
-                                                                    interval,
-                                                                    sf1_name = label + 'scaling_factor_1',
-                                                                    sf2_name = label + 'scaling_factor_2',
-                                                                    shared_radiometric_age_dist = shared_radiometric_age_dist
-                                                                    )
-
+                            get_valid_initial_ages(detrital_age_dist_names,
+                                                   intrusive_age_dist_names,
+                                                   base_age_dist_name,
+                                                   upper_age_dist_name,
+                                                   label + 'unsorted_random_ages',
+                                                   interval_df['height'].values,
+                                                   detrital_interval_df['height'].values,
+                                                   intrusive_interval_df['height'].values,
+                                                   model,
+                                                   section,
+                                                   interval,
+                                                   sf1_name = label + 'scaling_factor_1',
+                                                   sf2_name = label + 'scaling_factor_2',
+                                                   shared_radiometric_age_dist = shared_radiometric_age_dist)
 
                 label = str(section) + '_'
 
@@ -1296,7 +1294,6 @@ def build_prior_age_model(sample_df, ages_df, proxies = ['d13c'], **kwargs):
 
     sections:: list(str) or numpy.array(str), optional
         List of sections to include in the inference model. Defaults to all sections in ``sample_df``.
-
 
     Returns
     -------
@@ -1618,9 +1615,12 @@ def build_prior_age_model(sample_df, ages_df, proxies = ['d13c'], **kwargs):
                         intervals.append(interval)
 
                         # if there are intermediate detrital ages in the section, check if they're inside the current interval (iterate over constraints)
+                        detrital_age_dist_names = []
                         if detrital_interval_df.shape[0] > 0:
+                            # enforce detrital ages -- note that initial values will be set base --> top
                             for i in np.arange(detrital_interval_df.shape[0]):
                                 # if there are overlying samples in interval, enforce maximum age
+
                                 if len(interval_df[interval_df['height']>=detrital_interval_df['height'].values[i]]['height'].values)>0:
                                     # construct DZ age prior
                                     dist = detrital_interval_df['distribution_type'].values[i]
@@ -1659,34 +1659,15 @@ def build_prior_age_model(sample_df, ages_df, proxies = ['d13c'], **kwargs):
 
                                             intermediate_detrital_age_dist_name = label + 'detrital_age_' + str(i)
 
+                                    detrital_age_dist_names.append(intermediate_detrital_age_dist_name)
+
                                     # enforce detrital age with pm.Potential
-                                    if all(section_age_df['distribution_type']=='Normal') and all(section_age_df['shared?']==False):
-                                        # THESE WILL BE UPSIDE DOWN -- inside of the DZ potential, use this name, but flip the initial values
-                                        # with np.flip() THEN index with [interval] and [interval+1]
-                                        base_age_dist_name = str(section) +'_' + 'flip_radiometric_age'
-                                        upper_age_dist_name = str(section) +'_' + 'flip_radiometric_age'
-                                        shared_radiometric_age_dist = True
-
-                                    else:
-                                        base_age_dist_name = age_dist_names[interval]
-                                        upper_age_dist_name = age_dist_names[interval + 1]
-                                        shared_radiometric_age_dist = False
-
                                     intermediate_detrital_potential(intermediate_detrital_age,
                                                                     intermediate_detrital_age_dist_name,
-                                                                    base_age_dist_name,
-                                                                    upper_age_dist_name,
                                                                     ages[interval],
-                                                                    random_sample_ages_unsorted,
-                                                                    label + 'unsorted_random_ages',
                                                                     interval_df['height'].values,
                                                                     detrital_interval_df['height'].values[i],
-                                                                    prior_age_model,
-                                                                    section,
-                                                                    interval,
-                                                                    sf1_name = label + 'scaling_factor_1',
-                                                                    sf2_name = label + 'scaling_factor_2',
-                                                                    shared_radiometric_age_dist = shared_radiometric_age_dist
+                                                                    section
                                                                     )
 
                                     # variables:
@@ -1700,7 +1681,10 @@ def build_prior_age_model(sample_df, ages_df, proxies = ['d13c'], **kwargs):
                                     # scaling factor 2 name: label + 'scaling_factor_2'
 
                         # if there are intermediate intrusive ages in section, check if they're inside this interval
+                        intrusive_age_dist_names = []
                         if intrusive_interval_df.shape[0] > 0:
+
+                            # enforce intrusive ages -- note that initial values will be set base --> top
                             for i in np.arange(intrusive_interval_df.shape[0]):
                                 # if there are underlying samples in interval, enforce maximum age
                                 if len(interval_df[interval_df['height']<=intrusive_interval_df['height'].values[i]]['height'].values)>0:
@@ -1741,36 +1725,46 @@ def build_prior_age_model(sample_df, ages_df, proxies = ['d13c'], **kwargs):
 
                                             intermediate_intrusive_age_dist_name = label + 'intrusive_age_' + str(i)
 
+                                    intrusive_age_dist_names.append(intermediate_intrusive_age_dist_name)
+
                                     # enforce intermediate age with pm.Potential
-                                    if all(section_age_df['distribution_type']=='Normal') and all(section_age_df['shared?']==False):
+
+                                    intermediate_intrusive_potential(intermediate_intrusive_age,
+                                                                    intermediate_intrusive_age_dist_name,
+                                                                    ages[interval],
+                                                                    interval_df['height'].values,
+                                                                    intrusive_interval_df['height'].values[i],
+                                                                    section,
+                                                                    )
+
+                        if (intrusive_interval_df.shape[0] > 0) or (detrital_interval_df.shape[0] > 0):
+                            if all(section_age_df['distribution_type']=='Normal') and all(section_age_df['shared?']==False):
                                         # THESE WILL BE UPSIDE DOWN -- inside of the intrusive potential, use this name, but flip the initial values
                                         # with np.flip() THEN index with [interval] and [interval+1]
                                         base_age_dist_name = str(section) +'_' + 'flip_radiometric_age'
                                         upper_age_dist_name = str(section) +'_' + 'flip_radiometric_age'
                                         shared_radiometric_age_dist = True
 
-                                    else:
-                                        base_age_dist_name = age_dist_names[interval]
-                                        upper_age_dist_name = age_dist_names[interval + 1]
-                                        shared_radiometric_age_dist = False
+                            else:
+                                base_age_dist_name = age_dist_names[interval]
+                                upper_age_dist_name = age_dist_names[interval + 1]
+                                shared_radiometric_age_dist = False
 
+                            get_valid_initial_ages(detrital_age_dist_names,
+                                                   intrusive_age_dist_names,
+                                                   base_age_dist_name,
+                                                   upper_age_dist_name,
+                                                   label + 'unsorted_random_ages',
+                                                   interval_df['height'].values,
+                                                   detrital_interval_df['height'].values,
+                                                   intrusive_interval_df['height'].values,
+                                                   prior_age_model,
+                                                   section,
+                                                   interval,
+                                                   sf1_name = label + 'scaling_factor_1',
+                                                   sf2_name = label + 'scaling_factor_2',
+                                                   shared_radiometric_age_dist = shared_radiometric_age_dist)
 
-                                    intermediate_intrusive_potential(intermediate_intrusive_age,
-                                                                    intermediate_intrusive_age_dist_name,
-                                                                    base_age_dist_name,
-                                                                    upper_age_dist_name,
-                                                                    ages[interval],
-                                                                    random_sample_ages_unsorted,
-                                                                    label + 'unsorted_random_ages',
-                                                                    interval_df['height'].values,
-                                                                    intrusive_interval_df['height'].values[i],
-                                                                    prior_age_model,
-                                                                    section,
-                                                                    interval,
-                                                                    sf1_name = label + 'scaling_factor_1',
-                                                                    sf2_name = label + 'scaling_factor_2',
-                                                                    shared_radiometric_age_dist = shared_radiometric_age_dist
-                                                                    )
 
 
                 label = str(section) + '_'
@@ -1844,7 +1838,7 @@ def superposition(age_dist, age_dist_names, model, section_age_df, section):
     for i in np.arange(1, age_dist.shape.eval()[0]):
         slope = 100
         pm.Potential("superposition_"+str(section)+'_'+str(i),
-        shared(-10000) * pm.math.invlogit(slope * ((age_dist[i]) - age_dist[i-1])))
+        -10000 * pm.math.invlogit(slope * ((age_dist[i]) - age_dist[i-1])))
 
     for i in np.arange(0, len(section_age_df['height'])-1).tolist():
         lower_label = age_dist_names[i]
@@ -1854,23 +1848,23 @@ def superposition(age_dist, age_dist_names, model, section_age_df, section):
         # so we get the initial points, and then have to apply the backward transform to 'convert' them to initial values for the untransformed distributions and check if they are in superposition
         rv_var_base = model[lower_label]
 
-        base_age_initval = transformed_initval(lower_label,  model)
+        base_age_initval = untransformed_initval(lower_label,  model)
 
         rv_var_upper = model[upper_label]
 
-        upper_age_initval = transformed_initval(upper_label, model)
+        upper_age_initval = untransformed_initval(upper_label, model)
 
         age_diff = base_age_initval - upper_age_initval
 
-        # if model is starting out of superposition, make upper sample younger by 0.1; otherwise, leave as-is:
+        # if model is starting out of superposition, make upper sample younger by 1; otherwise, leave as-is:
         if age_diff > 0:
             model.set_initval(rv_var_base, base_age_initval)
             model.set_initval(rv_var_upper, upper_age_initval)
         else:
             model.set_initval(rv_var_base, base_age_initval)
-            model.set_initval(rv_var_upper, base_age_initval - shared(0.2))
+            model.set_initval(rv_var_upper, base_age_initval - 1)
 
-def intermediate_detrital_potential(detrital_age_dist, detrital_age_dist_name, maximum_age_dist_name, minimum_age_dist_name, sample_age_dist_sorted, sample_age_dist, sample_age_dist_name, sample_heights, detrital_height, model, section, interval, sf1_name, sf2_name, shared_radiometric_age_dist = True):
+def intermediate_detrital_potential(detrital_age_dist, detrital_age_dist_name, sample_age_dist_sorted, sample_heights, detrital_height, section):
     """
     Helper function for enforcing detrital age constraints (maximum age constraint for all overlying samples; no constraint on underlyig samples) in the middle of a section.
 
@@ -1926,81 +1920,10 @@ def intermediate_detrital_potential(detrital_age_dist, detrital_age_dist_name, m
     overlying_sample_idx = np.where(sample_heights >= detrital_height)[0]
 
     slope = 100
-    pm.Potential('detrital_max_'  + str(section) + '_' + str(detrital_age_dist_name), shared(-10000) * pm.math.invlogit(slope * ((sample_age_dist_sorted[overlying_sample_idx]) - detrital_age_dist)))
-
-    # get initial values for sample ages
-    rv_var_samples = model[sample_age_dist_name]
-
-    sample_age_initval = transformed_initval(sample_age_dist_name, model)
-
-    # get initial value for detrital age constraint
-    dz_age_initval = transformed_initval(detrital_age_dist_name, model)
-
-    # get initial value for underlying minimum age constraint
-    base_age_initval = transformed_initval(maximum_age_dist_name, model)
-
-    if shared_radiometric_age_dist:
-        if len(base_age_initval) > 1:
-            base_age_initval = np.flip(base_age_initval)[interval]
-
-    # get initial value for overlying minimum age constraint
-    upper_age_initval = transformed_initval(minimum_age_dist_name, model)
-
-    if shared_radiometric_age_dist:
-        if len(upper_age_initval) > 1:
-            upper_age_initval = np.flip(upper_age_initval)[interval+1]
+    pm.Potential('detrital_max_'  + str(section) + '_' + str(detrital_age_dist_name), -10000 * pm.math.invlogit(slope * ((sample_age_dist_sorted[overlying_sample_idx]) - detrital_age_dist)))
 
 
-    # set initial values for sample ages
-    # get initial values for scaling factors
-    rv_var_sf1 = model[sf1_name]
-
-    sf1_initval = transformed_initval(sf1_name, model)
-
-    rv_var_sf2 = model[sf2_name]
-
-    sf2_initval = transformed_initval(sf2_name, model)
-
-    # calculate the bounds of the current 'age box', given sf1 and sf2
-    current_max = base_age_initval - (1 - sf2_initval) * (base_age_initval - upper_age_initval) * (1 - sf1_initval)
-    current_min = base_age_initval - ((base_age_initval - upper_age_initval) * sf1_initval) - (1 - sf2_initval) * (base_age_initval - upper_age_initval) * (1 - sf1_initval)
-
-    # calculate DZ age on [0, 1] scale defined by bounds
-    scaled_dz_initval = (current_max - dz_age_initval)/(current_max - current_min)
-
-    # if ages younger than the DZ are outside of the current bounds:
-    # reset sf1 and sf2 initival values until the DZ age can be enforced, update sample age initvals
-    if scaled_dz_initval > 1:
-        while scaled_dz_initval > 1:
-            sf1_initval = np.random.uniform(0, 1, 1)
-            sf2_initval = np.random.uniform(0, 1, 1)
-
-            current_max = base_age_initval - (1 - sf2_initval) * (base_age_initval - upper_age_initval) * (1 - sf1_initval)
-            current_min = base_age_initval - ((base_age_initval - upper_age_initval) * sf1_initval) - (1 - sf2_initval) * (base_age_initval - upper_age_initval) * (1 - sf1_initval)
-
-            scaled_dz_initval = (current_max - dz_age_initval)/(current_max - current_min)
-
-        scaled_age_initial_points = np.random.uniform(scaled_dz_initval, 1, len(overlying_sample_idx))
-
-        sample_age_initval[overlying_sample_idx] = scaled_age_initial_points
-
-        model.set_initval(rv_var_sf1, sf1_initval)
-        model.set_initval(rv_var_sf2, sf2_initval)
-        model.set_initval(rv_var_samples, sample_age_initval)
-
-    # if the scaled DZ is in range, but the sample age initvals don't respect the constraint:
-    # keep sf1/sf2 initvals, but update sample age initvals
-    elif (scaled_dz_initval < 1) & (len(sample_age_initval[sample_age_initval >= scaled_dz_initval]) < len(overlying_sample_idx)):
-
-        scaled_age_initial_points = np.random.uniform(scaled_dz_initval, 1, len(overlying_sample_idx))
-
-        sample_age_initval[overlying_sample_idx] = scaled_age_initial_points
-
-        model.set_initval(rv_var_samples, sample_age_initval)
-
-
-
-def intermediate_intrusive_potential(intrusive_age_dist, intrusive_age_dist_name, maximum_age_dist_name, minimum_age_dist_name, sample_age_dist_sorted, sample_age_dist, sample_age_dist_name, sample_heights, intrusive_height, model, section, interval, sf1_name, sf2_name, shared_radiometric_age_dist = True, **kwargs):
+def intermediate_intrusive_potential(intrusive_age_dist, intrusive_age_dist_name, sample_age_dist_sorted, sample_heights, intrusive_height, section):
     """
     Helper function for enforcing intrusive age constraints (minimum age constraint for all underlying samples; no constraint on overlying samples) in the middle of a section.
 
@@ -2012,26 +1935,56 @@ def intermediate_intrusive_potential(intrusive_age_dist, intrusive_age_dist_name
     intrusive_age_dist_name: str
         Name of ``intrusive_age_dist`` in ``model``.
 
-    maximum_age_dist_name: str
-        Name of distribution for underlying maximum age constraint in ``model``.
-
-    minimum_age_dist_name: str
-        Name of distribution for overlying minimum age constraint in ``model``.
-
     sample_age_dist_sorted: pymc.distribtions
         Sorted and scaled sample age distribitions.
-
-    sample_age_dist: pymc.distributions
-        Unsorted and unscaled sample age distributions.
-
-    sample_age_dist_name: str
-        Name of ``sample_age_dist`` in the pymc.Model object.
 
     sample_heights: np.array
         Array of heights for samples in the current interval.
 
     intrusive_height: float
         Height of intrusive age constraint.
+
+    section: str
+        Name of the current section.
+
+    """
+
+    underlying_sample_idx = np.where(sample_heights <= intrusive_height)[0]
+
+    slope = 100
+    pm.Potential('intrusive_min_'  + str(section) + '_' + str(intrusive_age_dist_name), -10000 * pm.math.invlogit(slope * ((intrusive_age_dist) - sample_age_dist_sorted[underlying_sample_idx])))
+
+
+def get_valid_initial_ages(detrital_age_dist_names, intrusive_age_dist_names, maximum_age_dist_name, minimum_age_dist_name, sample_age_dist_name, sample_heights, detrital_heights, intrusive_heights, model, section, interval, sf1_name, sf2_name, shared_radiometric_age_dist):
+    """
+    Helper function that resets initial sample age values such that all detrital and intrusive age constraints are respected.
+
+    Parameters
+    ----------
+
+    detrital_age_dist_names: list(str)
+        List of names for detrital age constraint distributions in ``model``.
+
+    intrusive_age_dist_names: list(str)
+        List of names for intrusive age constraint distributions in ``model``.
+
+    maximum_age_dist_name: str
+        Name of distribution for underlying maximum age constraint in ``model``.
+
+    minimum_age_dist_name: str
+        Name of distribution for overlying minimum age constraint in ``model``.
+
+    sample_age_dist_name: str
+        Name of sample age distribution (unsorted and unscaled) in the pymc.Model object.
+
+    sample_heights: np.array
+        Array of heights for samples in the current interval.
+
+    detrital_heights: list(float)
+        Heights of detrital age constraints.
+
+    intrusive_heights: list(float)
+        Heights of intrusive age constraints.
 
     model: pymc.Model
         :class:`pymc.model.core.Model` object associated with the input distributions.
@@ -2052,29 +2005,22 @@ def intermediate_intrusive_potential(intrusive_age_dist, intrusive_age_dist_name
         Whether the radiometric age distributions are part of a single object (versus initiated as separate distributions). Defaults to ``True``.
 
     """
-
-    underlying_sample_idx = np.where(sample_heights <= intrusive_height)[0]
-
-    slope = 100
-    pm.Potential('intrusive_min_'  + str(section) + '_' + str(intrusive_age_dist_name), shared(-10000) * pm.math.invlogit(slope * ((intrusive_age_dist) - sample_age_dist_sorted[underlying_sample_idx])))
+    # step 1: reset sf1 and sf2 such that it's possible for all of the age constraints to be respected (i.e., ages that are younger than the oldest detrital age, and older than the youngest intrusive age, must be inside of the 'box' of possible ages)
 
     # get initial values for sample ages
     rv_var_samples = model[sample_age_dist_name]
 
-    sample_age_initval = transformed_initval(sample_age_dist_name, model)
-
-    # get initial value for intrusive age constraint
-    intrusive_age_initval = transformed_initval(intrusive_age_dist_name, model)
+    sample_age_initval = untransformed_initval(sample_age_dist_name, model) / 1e6
 
     # get initial value for underlying minimum age constraint
-    base_age_initval = transformed_initval(maximum_age_dist_name, model)
+    base_age_initval = untransformed_initval(maximum_age_dist_name, model)
 
     if shared_radiometric_age_dist:
         if len(base_age_initval) > 1:
             base_age_initval = np.flip(base_age_initval)[interval]
 
     # get initial value for overlying minimum age constraint
-    upper_age_initval = transformed_initval(minimum_age_dist_name, model)
+    upper_age_initval = untransformed_initval(minimum_age_dist_name, model)
 
     if shared_radiometric_age_dist:
         if len(upper_age_initval) > 1:
@@ -2084,68 +2030,177 @@ def intermediate_intrusive_potential(intrusive_age_dist, intrusive_age_dist_name
     # get initial values for scaling factors
     rv_var_sf1 = model[sf1_name]
 
-    sf1_initval = transformed_initval(sf1_name, model)
+    sf1_initval = untransformed_initval(sf1_name, model)
 
     rv_var_sf2 = model[sf2_name]
 
-    sf2_initval = transformed_initval(sf2_name, model)
+    sf2_initval = untransformed_initval(sf2_name, model)
 
     # calculate the bounds of the current 'age box', given sf1 and sf2
     current_max = base_age_initval - (1 - sf2_initval) * (base_age_initval - upper_age_initval) * (1 - sf1_initval)
     current_min = base_age_initval - ((base_age_initval - upper_age_initval) * sf1_initval) - (1 - sf2_initval) * (base_age_initval - upper_age_initval) * (1 - sf1_initval)
 
-    # calculate intrusive age on [0, 1] scale defined by bounds
-    scaled_intrusive_initval = (current_max - intrusive_age_initval)/(current_max - current_min)
+    scaled_dz_initvals = []
+    scaled_intrusive_initvals = [ ]
 
-    # if ages older than the intrusive age are outside of the current bounds:
-    # reset sf1 and sf2 initival values until the intrusive age can be enforced, update sample age initvals
-    if scaled_intrusive_initval < 0:
-        while scaled_intrusive_initval < 0:
+    # iterate over detrital ages
+    # get initial value for detrital age constraints
+    for detrital_age_dist_name in detrital_age_dist_names:
+        dz_age_initval = untransformed_initval(detrital_age_dist_name, model)
+        # calculate DZ age on [0, 1] scale defined by bounds
+        scaled_dz_initvals.append((current_max - dz_age_initval)/(current_max - current_min))
+
+    # iterate over intrusive ages
+    for intrusive_age_dist_name in intrusive_age_dist_names:
+        intrusive_age_initval = untransformed_initval(intrusive_age_dist_name, model)
+        # calculate intrusive age on [0, 1] scale defined by bounds
+        scaled_intrusive_initvals.append((current_max - intrusive_age_initval)/(current_max - current_min))
+
+    scaled_dz_initvals  = np.array(scaled_dz_initvals)
+    scaled_intrusive_initvals = np.array(scaled_intrusive_initvals)
+
+    # step 2: check that the initial sample ages satisfy all of the limiting age constraints. if not, re-draw so they do
+
+    # if any limiting age constraints are precluded by the current scale and shift parameters, reset until all age constraints can be respected
+    if (any(scaled_dz_initvals > 1)) or (any(scaled_intrusive_initvals < 0)):
+        # print('resetting scale/shift')
+        while (any(scaled_dz_initvals > 1)) or (any(scaled_intrusive_initvals < 0)):
             sf1_initval = np.random.uniform(0, 1, 1)
             sf2_initval = np.random.uniform(0, 1, 1)
 
             current_max = base_age_initval - (1 - sf2_initval) * (base_age_initval - upper_age_initval) * (1 - sf1_initval)
             current_min = base_age_initval - ((base_age_initval - upper_age_initval) * sf1_initval) - (1 - sf2_initval) * (base_age_initval - upper_age_initval) * (1 - sf1_initval)
 
-            scaled_intrusive_initval = (current_max - intrusive_age_initval)/(current_max - current_min)
+            for i, detrital_age_dist_name in enumerate(detrital_age_dist_names):
+                dz_age_initval = untransformed_initval(detrital_age_dist_name, model)
+                scaled_dz_initvals[i] = (current_max - dz_age_initval)/(current_max - current_min)
 
-        # if scaled initival value is <1, use it to truncate the age box
-        # scaled initial value could be >1, which means all the values in the age box already respect the constraint --> do nothing (initial values will already respect constraint)
-        if scaled_intrusive_initval < 1:
-            scaled_age_initial_points = np.random.uniform(0, scaled_intrusive_initval, len(underlying_sample_idx))
+            for i, intrusive_age_dist_name in enumerate(intrusive_age_dist_names):
+                intrusive_age_initval = untransformed_initval(intrusive_age_dist_name, model)
+                scaled_intrusive_initvals[i] = (current_max - intrusive_age_initval)/(current_max - current_min)
 
-            sample_age_initval[underlying_sample_idx] = scaled_age_initial_points
+        # re-calculate in case while statement was satisfied partway through recalculating initial values
+        for i, detrital_age_dist_name in enumerate(detrital_age_dist_names):
+            dz_age_initval = untransformed_initval(detrital_age_dist_name, model)
+            scaled_dz_initvals[i] = (current_max - dz_age_initval)/(current_max - current_min)
+
+        for i, intrusive_age_dist_name in enumerate(intrusive_age_dist_names):
+            intrusive_age_initval = untransformed_initval(intrusive_age_dist_name, model)
+            scaled_intrusive_initvals[i] = (current_max - intrusive_age_initval)/(current_max - current_min)
 
         model.set_initval(rv_var_sf1, sf1_initval)
         model.set_initval(rv_var_sf2, sf2_initval)
-        model.set_initval(rv_var_samples, sample_age_initval)
 
-    # if the scaled intrusive is in range, but the sample age initvals don't respect the constraint:
-    # keep sf1/sf2 initvals, but update sample age initvals
-    elif (scaled_intrusive_initval > 0) & (len(sample_age_initval[sample_age_initval <= scaled_intrusive_initval]) < len(underlying_sample_idx)):
+    # step 3: make sure initial sample age values respect all limiting age constraints
 
-        # scaled_intrusive_initval should always be >0 and <1 if the above condition is true
-        scaled_age_initial_points =np.random.uniform(0, scaled_intrusive_initval, len(underlying_sample_idx))
+    # only detrital ages: set initial values in the usual way, oldest to youngest
+    # note - oldest to youngest should always be base top top (otherwise, higher/older DZ would be useless)
+    if (len(detrital_age_dist_names) > 0) and (len(intrusive_age_dist_names) == 0):
+        for i, detrital_age_dist_name in enumerate(detrital_age_dist_names):
+            overlying_sample_idx = np.where(sample_heights >= detrital_heights[i])[0]
 
-        sample_age_initval[underlying_sample_idx] = scaled_age_initial_points
+            # if scaled initial value is > 0, use to truncate the age box
+            # is scaled initial value is <= 0, then all samples already must be younger than the detrital age --> do nothing
+            if (scaled_dz_initvals[i] > 0):
+                if (len(sample_age_initval[sample_age_initval >= scaled_dz_initvals[i]]) < len(overlying_sample_idx)):
+                    scaled_age_initial_points = np.random.uniform(scaled_dz_initvals[i], 1, len(overlying_sample_idx))
 
-        model.set_initval(rv_var_samples, sample_age_initval)
+                    sample_age_initval[overlying_sample_idx] = scaled_age_initial_points
+
+    # only intrusive ages: set initial values in the usual way, youngest to oldest
+    # note - youngest to oldest should always be top to base (otherwise, lower/younger intrusive would be useless)
+    elif (len(detrital_age_dist_names) == 0) and (len(intrusive_age_dist_names) > 0):
+
+        for i, intrusive_age_dist_name in enumerate(np.flip(intrusive_age_dist_names)):
+            underlying_sample_idx = np.where(sample_heights <= np.flip(intrusive_heights)[i])[0]
+
+            # if scaled initival value is <1, use it to truncate the age box
+            # scaled initial value could be >=1, which means all the values in the age box already respect the constraint --> do nothing (initial values will already respect constraint)
+            if np.flip(scaled_intrusive_initvals)[i] < 1:
+                if (len(sample_age_initval[sample_age_initval <= np.flip(scaled_intrusive_initvals)[i]]) < len(underlying_sample_idx)):
+                    scaled_age_initial_points = np.random.uniform(0, np.flip(scaled_intrusive_initvals)[i], len(underlying_sample_idx))
+
+                    sample_age_initval[underlying_sample_idx] = scaled_age_initial_points
+
+    # combination of detrital and an intrusive ages:
+    elif (len(detrital_age_dist_names) > 0) and (len(intrusive_age_dist_names) > 0):
+        # iterate over detrital ages that are stratigraphically higher than the uppermost (youngest) intrusive age. these initial values can be set in the same way as the 'dz-only' samples (set initial values base --> top)
+        detrital_only_idx = np.where(detrital_heights > np.max(intrusive_heights))[0]
+
+        for idx in detrital_only_idx:
+            overlying_sample_idx = np.where(sample_heights >= detrital_heights[idx])[0]
+
+            # print(f'high detrital age: {scaled_dz_initvals[idx]}')
+            # if scaled initial value is > 0, use to truncate the age box
+            # is scaled initial value is <= 0, then all samples already must be younger than the detrital age --> do nothing
+            if scaled_dz_initvals[idx] > 0:
+                # print(scaled_dz_initvals[idx])
+                if (len(sample_age_initval[sample_age_initval >= scaled_dz_initvals[idx]]) < len(overlying_sample_idx)):
+                    scaled_age_initial_points = np.random.uniform(scaled_dz_initvals[idx],
+                                                                  1,
+                                                                  len(overlying_sample_idx))
+
+                    sample_age_initval[overlying_sample_idx] = scaled_age_initial_points
+
+            # print(sample_age_initval[overlying_sample_idx])
+
+        # iterate over intrusive ages that are stratigraphically lower than the lowermost (oldest) detrital age. these initial values can be set in the same way as the 'intrusive only' samples (set initial values top --> base)
+        intrusive_only_idx = np.where(intrusive_heights < np.min(detrital_heights))[0]
+        for idx in np.flip(intrusive_only_idx):
+            underlying_sample_idx = np.where(sample_heights <= intrusive_heights[idx])[0]
+
+            # print(f'low intrusive age: {scaled_intrusive_initvals[idx]}')
+            # if scaled initival value is <1, use it to truncate the age box
+            # scaled initial value could be >=1, which means all the values in the age box already respect the constraint --> do nothing (initial values will already respect constraint)
+            if scaled_intrusive_initvals[idx] < 1:
+                if (len(sample_age_initval[sample_age_initval <= scaled_intrusive_initvals[idx]]) < len(underlying_sample_idx)):
+                    scaled_age_initial_points = np.random.uniform(0,
+                                                                  scaled_intrusive_initvals[idx],
+                                                                  len(underlying_sample_idx))
+                    sample_age_initval[underlying_sample_idx] = scaled_age_initial_points
+
+            # print(sample_age_initval[underlying_sample_idx])
+
+        # samples that are bracketed by detrital and intrusive ages:
+        # start with the top intrusive age, and look down. split underlying samples into groups using all underlying detrital ages, and set the initial values for each group using np.random.uniform(detriatal, intrusive, len(group))
+
+        # grab intrusive ages that are above the lowest detrital age (already dealt with above)
+        intrusive_idx = np.where(intrusive_heights >= np.min(detrital_heights))[0]
+        # top to base
+        for idx in np.flip(intrusive_idx):
+            detrital_idx = np.where(detrital_heights <= intrusive_heights[idx])[0]
+
+            # base to top
+            for d_idx in detrital_idx:
+                # print(intrusive_heights[idx])
+                # print(detrital_heights[d_idx])
+
+                sample_idx = np.where((sample_heights <= intrusive_heights[idx]) & (sample_heights >= detrital_heights[d_idx]))[0]
+                scaled_age_initial_points = np.random.uniform(np.max(np.concatenate([scaled_dz_initvals[d_idx], np.array([0])])),
+                                                              np.min(np.concatenate([scaled_intrusive_initvals[idx], np.array([1])])),
+                                                              len(sample_idx))
+
+                sample_age_initval[sample_idx] = scaled_age_initial_points
+                # print(f'detrital: {scaled_dz_initvals[d_idx]}')
+                # print(f'intrusive: {scaled_intrusive_initvals[idx]}')
+                # print(sample_age_initval[sample_idx])
+
+    # print(sample_age_initval)
+    model.set_initval(rv_var_samples, sample_age_initval * 1e6)
 
 
-
-def transformed_initval(var_name, model):
+def untransformed_initval(var_name, model):
 
     """
-    Helper function to retrieve the transformed initial values for a random variable in a :class:`pymc.model.core.Model` object.
+    Helper function to retrieve the untransformed initial values for a random variable in a :class:`pymc.model.core.Model` object. Applies backward transform to the transformed initial values.
 
     Parameters
     ----------
     var_name: str
-        Name of variable to be transformed (as specified in ``model``).
+        Name of variable (untransformed, as specified in ``model``).
 
     model: PyMC model
         :class:`pymc.model.core.Model` object that contains the target random variable.
-
 
     """
 

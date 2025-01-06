@@ -146,20 +146,29 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
 
     with model:
         if sampler == 'numpyro':
-            full_trace = pm.sampling.jax.sample_numpyro_nuts(draws, tune=tune, chains=chains, target_accept=target_accept, postprocessing_vectorize='scan', postprocessing_backend = postprocessing_backend, random_seed = seed, idata_kwargs = idata_kwargs, nuts_kwargs = nuts_kwargs)
+            full_trace = pm.sampling.jax.sample_numpyro_nuts(draws, tune=tune, chains=chains, target_accept=target_accept, postprocessing_vectorize='scan', postprocessing_backend = postprocessing_backend, random_seed = seed, idata_kwargs = idata_kwargs, nuts_kwargs = nuts_kwargs,
+            jitter = False)
 
         elif sampler == 'blackjax':
-            full_trace = pm.sampling.jax.sample_blackjax_nuts(draws, tune=tune, chains=chains, target_accept=target_accept, postprocessing_vectorize='scan', postprocessing_backend = postprocessing_backend, random_seed = seed, idata_kwargs = idata_kwargs, nuts_kwargs = nuts_kwargs)
+            full_trace = pm.sampling.jax.sample_blackjax_nuts(draws, tune=tune, chains=chains, target_accept=target_accept, postprocessing_vectorize='scan', postprocessing_backend = postprocessing_backend, random_seed = seed, idata_kwargs = idata_kwargs, nuts_kwargs = nuts_kwargs,
+            jitter = False)
 
         elif sampler == 'nutpie':
             nuts_kwargs['target_accept'] = target_accept
 
-            full_trace = pm.sample(draws=draws, tune=tune, chains=chains,
-                      nuts_sampler = 'nutpie',
-                      nuts=nuts_kwargs,
-                      idata_kwargs = idata_kwargs,
-                      random_seed = seed,
-                      )
+            nutpie_kwargs = dict(backend="numba",  # numba or jax  --
+                     gradient_backend="pytensor") # jax or pytensor --
+
+
+            full_trace = pm.sample(draws=draws,
+                                   tune=tune,
+                                   chains=chains,
+                                    nuts_sampler = 'nutpie',
+                                    nuts=nuts_kwargs,
+                                    compile_kwargs = nutpie_kwargs,
+                                    idata_kwargs = idata_kwargs,
+                                    random_seed = seed,
+                                    )
 
 
         if save:
@@ -198,7 +207,7 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
 
     bad_chains, _, _ = check_inference(full_trace, sample_df, ages_df, quiet = True, sections = sections)
     if len(bad_chains) > 0:
-        warnings.warn(f"Superposition violated in chains {str(bad_chains)}. These chains were removed from the trace; the original trace (with the bad chains) is saved in the `traces` folder. To investigate the cause of the superposition violation, load the original trace and run the functions in the `stratmc.tests` module with `quiet = False`.")
+        warnings.warn(f"Superposition violated in chains {bad_chains}. These chains were removed from the trace; the original trace (with the bad chains) is saved in the `traces` folder. To investigate the cause of the superposition violation, load the original trace and run the functions in the `stratmc.tests` module with `quiet = False`.")
 
         full_trace = drop_chains(full_trace, bad_chains)
 
@@ -207,6 +216,38 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
             full_trace.to_netcdf("traces/" + 'clean_' + str(name) + '_' + tstamp + ".nc")
 
     return full_trace
+
+def make_initial_values_per_chain(model, chains):
+    """
+    Generate initial values for MCMC chains.
+
+    Parameters
+    ----------
+    full_trace: arviz.InferenceData
+        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
+
+    sample_df: pandas.DataFrame
+        :class:`pandas.DataFrame` with proxy data used during the inference step (as input to :py:meth:`build_model() <stratmc.model.build_model>` in :py:mod:`stratmc.model`).
+
+    ages_df: pandas.DataFrame
+        :class:`pandas.DataFrame` containing age constraints used during the inference step (as input to :py:meth:`build_model() <stratmc.model.build_model>` in :py:mod:`stratmc.model`).
+
+    new_proxies: str or list(str)
+        New proxy(s) to construct age models for.
+
+    new_proxy_df: pandas.DataFrame, optional
+        :class:`pandas.DataFrame` containing new proxy observations. Optional; if not provided, uses ``sample_df`` (assumes that observations for the new proxy are in the same DataFrame as the original proxy observations).
+
+    sections: list(str) or numpy.array(str), optional
+        List of sections included in the inference; only required if not all sections in ``sample_df`` were included.
+
+    Returns
+    -------
+    initvals: pandas.DataFrame
+        :class:`pandas.DataFrame` with interpolated age draws and sample age summary statistics (maximum likelihood estimate, median, and 68% and 95% confidence intervals) for each new proxy observation.
+    """
+
+    print('not implemented')
 
 
 def extend_age_model(full_trace, sample_df, ages_df, new_proxies, new_proxy_df = None, **kwargs):

@@ -56,7 +56,7 @@ def check_inference(full_trace, sample_df, ages_df, mode = 'posterior', quiet = 
 
     bad_chains_1, bad_draws_1, bad_draws_per_section_1 = check_superposition(full_trace, sample_df, ages_df, sections = sections, mode = mode, proxies = proxies, quiet = quiet)
     bad_chains_2, bad_draws_2, bad_draws_per_section_2 = check_detrital_ages(full_trace, sample_df, ages_df, sections = sections, mode = mode, proxies = proxies, quiet = quiet)
-    bad_chains_3, bad_draws_3, bad_draws_per_section_3 = check_intrusive_ages(full_trace, sample_df, ages_df,sections = sections, mode = mode, proxies = proxies, squiet = quiet)
+    bad_chains_3, bad_draws_3, bad_draws_per_section_3 = check_intrusive_ages(full_trace, sample_df, ages_df,sections = sections, mode = mode, proxies = proxies, quiet = quiet)
 
     bad_chains = np.concatenate([bad_chains_1, bad_chains_2, bad_chains_3])
 
@@ -298,25 +298,30 @@ def check_detrital_ages(full_trace, sample_df, ages_df, quiet = True, mode = 'po
                 below = intermediate_detrital_section_ages_df['height']<age_heights[interval+1]
                 detrital_interval_df = intermediate_detrital_section_ages_df[above & below]
 
+                above = section_df['height']>=age_heights[interval]
+                below = section_df['height']<age_heights[interval+1]
+                interval_df = section_df[above & below]
+
                 for height, shared, name, i in zip (detrital_interval_df['height'], detrital_interval_df['shared?'], detrital_interval_df['name'], np.arange(detrital_interval_df['height'].shape[0])):
                     sample_idx = section_df['height'] > height
 
-                    # check that all the posterior ages for overlying samples are younger than the detrital age during each draw
-                    if shared:
-                        detrital_age_posterior = full_trace[mode][name].values[c, :]
-                    else:
-                        dist_name = str(section)+'_'+ str(interval) +'_' + 'detrital_age_' + str(i)
-                        detrital_age_posterior = full_trace[mode][dist_name].values[c, :]
+                    if len(interval_df[interval_df['height']>=detrital_interval_df['height'].values[i]]['height'].values)>0:
+                        # check that all the posterior ages for overlying samples are younger than the detrital age during each draw
+                        if shared:
+                            detrital_age_posterior = full_trace[mode][name].values[c, :]
+                        else:
+                            dist_name = str(section)+'_'+ str(interval) +'_' + 'detrital_age_' + str(i)
+                            detrital_age_posterior = full_trace[mode][dist_name].values[c, :]
 
 
-                    for draw in np.arange(section_sample_ages.shape[1]):
-                        #assert all(section_sample_ages[:, draw][sample_idx] <= detrital_age_posterior[draw])
-                        if not all(section_sample_ages[:, draw][sample_idx] <= detrital_age_posterior[draw]):
-                            if not quiet:
-                                print('Detrital age constraint violated in section ' + str(section) + ', chain ' + str(chain) +  ", draw " + str(draw))
-                            bad_chains.append(chain)
-                            bad_draws[chain].append(draw)
-                            bad_draws_per_section[section][chain].append(draw)
+                        for draw in np.arange(section_sample_ages.shape[1]):
+                            #assert all(section_sample_ages[:, draw][sample_idx] <= detrital_age_posterior[draw])
+                            if not all(section_sample_ages[:, draw][sample_idx] <= detrital_age_posterior[draw]):
+                                if not quiet:
+                                    print('Detrital age constraint violated in section ' + str(section) + ', chain ' + str(chain) +  ", draw " + str(draw))
+                                bad_chains.append(chain)
+                                bad_draws[chain].append(draw)
+                                bad_draws_per_section[section][chain].append(draw)
 
             bad_draws_per_section[section][chain] = np.unique(bad_draws_per_section[section][chain])
 

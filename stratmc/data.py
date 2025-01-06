@@ -376,6 +376,9 @@ def combine_traces(trace_list):
     """
     Helper function for combining multiple :class:`arviz.InferenceData` objects (saved as NetCDF files) that contain prior and posterior samples for the same inference model (sampled with :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`). The :class:`arviz.InferenceData` objects are concatenated along the ``chain`` dimension such that if two traces with 8 chains each are concatenated, the new combined trace will have 16 chains.
 
+    .. todo::
+        Link to custom arviz concat function (default only works for combining 2 traces; version in lomagundi-dev-conda environment has been modified)
+
     Parameters
     ----------
     trace_list: list(str)
