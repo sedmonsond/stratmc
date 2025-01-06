@@ -219,7 +219,7 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
 
 def make_initial_values_per_chain(model, chains):
     """
-    Generate initial values for MCMC chains.
+    Generate (transformed) initial values for MCMC chains.
 
     Parameters
     ----------
@@ -248,6 +248,10 @@ def make_initial_values_per_chain(model, chains):
     """
 
     print('not implemented')
+
+    # step 1: draw from prior (1 draw per chain)
+
+    # step 2: store initial values for variables in model.initial_point()
 
 
 def extend_age_model(full_trace, sample_df, ages_df, new_proxies, new_proxy_df = None, **kwargs):

@@ -753,9 +753,9 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                         if len(interval_heights) > 1:
                             shuffle_heights = np.unique(interval_heights[~interval_superposition])
 
-                            random_sample_ages_unsorted_unscaled = pm.Uniform(label + 'unsorted_random_ages', lower = 0, upper = 1e6, size = len(interval_heights))
+                            random_sample_ages_unsorted = pm.Uniform(label + 'unsorted_random_ages', lower = 0, upper = 1, size = len(interval_heights))
 
-                            random_sample_ages_unsorted = pm.Deterministic(label + 'unsorted_random_ages_scaled', random_sample_ages_unsorted_unscaled/1e6)
+                            # random_sample_ages_unsorted = pm.Deterministic(label + 'unsorted_random_ages_scaled', random_sample_ages_unsorted_unscaled/1e6)
 
                             # if superposition is known for all samples, sort random ages
                             if all(interval_superposition):
@@ -1816,6 +1816,9 @@ def superposition(age_dist, age_dist_names, model, section_age_df, section):
     """
     Helper function for explicitly enforcing stratigraphic superposition (any given sample must be younger than the underlying sample) for a group of radiometric age constraints.
 
+    .. todo::
+        vectorize pm.potential with pt.diff?
+
     Parameters
     ----------
     age_dist: pymc.distribtions
@@ -1834,7 +1837,7 @@ def superposition(age_dist, age_dist_names, model, section_age_df, section):
         Name of the section containing the radiometric age constraints.
 
     """
-    ## TODO: vectorize with pt.diff?
+
     for i in np.arange(1, age_dist.shape.eval()[0]):
         slope = 100
         pm.Potential("superposition_"+str(section)+'_'+str(i),
@@ -1860,6 +1863,7 @@ def superposition(age_dist, age_dist_names, model, section_age_df, section):
         if age_diff > 0:
             model.set_initval(rv_var_base, base_age_initval)
             model.set_initval(rv_var_upper, upper_age_initval)
+
         else:
             model.set_initval(rv_var_base, base_age_initval)
             model.set_initval(rv_var_upper, base_age_initval - 1)
@@ -1957,7 +1961,7 @@ def intermediate_intrusive_potential(intrusive_age_dist, intrusive_age_dist_name
 
 def get_valid_initial_ages(detrital_age_dist_names, intrusive_age_dist_names, maximum_age_dist_name, minimum_age_dist_name, sample_age_dist_name, sample_heights, detrital_heights, intrusive_heights, model, section, interval, sf1_name, sf2_name, shared_radiometric_age_dist):
     """
-    Helper function that resets initial sample age values such that all detrital and intrusive age constraints are respected.
+    Helper function that resets the initial sample age values (in ``Model.initial_point()``) such that all detrital and intrusive age constraints are respected.
 
     Parameters
     ----------
@@ -2010,7 +2014,7 @@ def get_valid_initial_ages(detrital_age_dist_names, intrusive_age_dist_names, ma
     # get initial values for sample ages
     rv_var_samples = model[sample_age_dist_name]
 
-    sample_age_initval = untransformed_initval(sample_age_dist_name, model) / 1e6
+    sample_age_initval = untransformed_initval(sample_age_dist_name, model)
 
     # get initial value for underlying minimum age constraint
     base_age_initval = untransformed_initval(maximum_age_dist_name, model)
@@ -2186,7 +2190,7 @@ def get_valid_initial_ages(detrital_age_dist_names, intrusive_age_dist_names, ma
                 # print(sample_age_initval[sample_idx])
 
     # print(sample_age_initval)
-    model.set_initval(rv_var_samples, sample_age_initval * 1e6)
+    model.set_initval(rv_var_samples, sample_age_initval)
 
 
 def untransformed_initval(var_name, model):
