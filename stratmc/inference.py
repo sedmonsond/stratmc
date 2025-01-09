@@ -372,8 +372,17 @@ def get_valid_initvals_per_chain(initval_dict, sample_df, ages_df, sections):
 
         age_heights = section_age_df['height'].values
 
-        # build distributions if all age constraint priors are Gaussian and not shared
-        if not (all(section_age_df['distribution_type']=='Normal') and all(section_age_df['shared?']==False)):
+        # if all age constraint priors are Gaussian and not shared
+        if all(section_age_df['distribution_type']=='Normal') and all(section_age_df['shared?']==False):
+
+            label = str(section) +'_'
+
+            ordered_age_dist_name = label + 'flip_radiometric_age'
+
+            # ensures that radiometric ages are in order -- ordered transform not applied during forward (i.e., prior predictive) sampling
+            initval_dict = ordered_transform_in_prior(initval_dict, ordered_age_dist_name)
+
+        else:
             age_dist_names = []
 
             for i in np.arange(len(section_ages)):
@@ -504,6 +513,31 @@ def get_valid_initvals_per_chain(initval_dict, sample_df, ages_df, sections):
                                                                             sf1_name = label + 'scaling_factor_1',
                                                                             sf2_name = label + 'scaling_factor_2',
                                                                             shared_radiometric_age_dist = shared_radiometric_age_dist)
+
+    return initval_dict
+
+def ordered_transform_in_prior(initval_dict, ordered_dist_name):
+    """
+    Helper function to enforces ordered transform in dictionary of prior draws.
+
+    Parameters
+    ----------
+    initval_dict:  dict
+        Dictionary of proposed initial values.
+
+    ordered_dist_name:
+        Names of distribution with ordered transform in model.
+
+    Returns
+    -------
+    initval_dict: dict
+        Dictionary with sorted (increasing) initial values for ``ordered_dist_name``.
+
+    """
+
+    if not all(np.diff(initval_dict[ordered_dist_name]) >= 0):
+
+        initval_dict[ordered_dist_name] = np.sort(initval_dict[ordered_dist_name])
 
     return initval_dict
 
