@@ -215,6 +215,7 @@ def clean_data(sample_df, ages_df, proxies, sections):
 
         sample_df = sample_df[sample_df['section'].isin(sections)]
 
+
         sample_df = sample_df.sort_values(by = ['section', 'height'])
 
         sample_df = sample_df.reset_index(inplace = False, drop = True)

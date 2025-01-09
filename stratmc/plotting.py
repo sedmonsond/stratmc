@@ -1558,7 +1558,7 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
     elif ((noise_type != 'none') and (offset_type != 'none')):
         n_rows = 5
 
-    sample_df, ages_df = clean_data(sample_df, ages_df, proxies, list(section))
+    sample_df, ages_df = clean_data(sample_df, ages_df, proxies, [section])
 
     fig, ax = plt.subplots(n_rows, 1, figsize = figsize, constrained_layout=True, gridspec_kw={'height_ratios': [1, 1, 1.5] + [0.5] * (n_rows - 3)})
 
@@ -2318,7 +2318,7 @@ def sample_ages(full_trace, sample_df, section, plot_excluded_samples = False, c
     for var in variables:
         proxies.append(var[6:])
 
-    sample_df, _ = clean_data(sample_df, None, proxies, list(section))
+    sample_df, _ = clean_data(sample_df, None, proxies, [section])
 
     vals = az.extract(full_trace.posterior)[str(section)+'_ages'].values
     prior_vals = az.extract(full_trace.prior)[str(section)+'_ages'].values
@@ -2445,16 +2445,15 @@ def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_pr
     for var in variables:
         proxies.append(var[6:])
 
-    sample_df, _ = clean_data(sample_df, None, proxies, list(section))
-
+    sample_df, _ = clean_data(sample_df, None, proxies, [section])
 
     # chains x draws x samples
     vals = full_trace.posterior[str(section)+'_ages'].values
-
     if chains is None:
         chains = np.arange(vals.shape[0])
 
     prior_vals = az.extract(full_trace.prior)[str(section)+'_ages'].values
+
 
     if not plot_excluded_samples:
         included_idx = ~sample_df['Exclude?'].values.astype(bool)

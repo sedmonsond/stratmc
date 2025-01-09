@@ -78,7 +78,6 @@ def check_inference(full_trace, sample_df, ages_df, mode = 'posterior', quiet = 
 
     return np.unique(bad_chains), bad_draws, bad_draws_per_section
 
-
 def check_superposition(full_trace, sample_df, ages_df, mode = 'posterior', quiet = True, **kwargs):
     """
     Check that stratigraphic superposition between all age constriants and samples is respected in the posterior.
@@ -288,15 +287,23 @@ def check_detrital_ages(full_trace, sample_df, ages_df, quiet = True, mode = 'po
 
         post_section_ages = full_trace[mode][section + '_ages'].values
 
+        # shape = chains x draws x ages
+        post_section_radio_ages = full_trace[mode][section + '_radiometric_age'].values
+
         for c, chain in enumerate(chains):
             bad_draws_per_section[section][chain] = []
+            # shape: samples x draws
             section_sample_ages = np.swapaxes(post_section_ages[c, :, :], 0, 1)
+
+            # shape: age constraints x draws
+            section_radio_ages = np.swapaxes(post_section_radio_ages[c, :, :], 0, 1)
 
             for interval in np.arange(0, len(age_heights)-1).tolist():
 
                 above = intermediate_detrital_section_ages_df['height']>age_heights[interval]
                 below = intermediate_detrital_section_ages_df['height']<age_heights[interval+1]
                 detrital_interval_df = intermediate_detrital_section_ages_df[above & below]
+
 
                 above = section_df['height']>=age_heights[interval]
                 below = section_df['height']<age_heights[interval+1]
@@ -323,7 +330,17 @@ def check_detrital_ages(full_trace, sample_df, ages_df, quiet = True, mode = 'po
                                 bad_draws[chain].append(draw)
                                 bad_draws_per_section[section][chain].append(draw)
 
+                            # check superposition between each detrital age and overlying depositional age
+                            if not(section_radio_ages[interval + 1, draw] <= detrital_age_posterior[draw]):
+                                if not quiet:
+                                    print('Superposition between depositional and detrital age constraint violated in ' + str(section) + ', chain ' + str(chain) +  ", draw " + str(draw))
+                                bad_chains.append(chain)
+                                bad_draws[chain].append(draw)
+                                bad_draws_per_section[section][chain].append(draw)
+
+
             bad_draws_per_section[section][chain] = np.unique(bad_draws_per_section[section][chain])
+
 
     for chain in chains:
         bad_draws[chain] = np.unique(bad_draws[chain])
@@ -410,9 +427,17 @@ def check_intrusive_ages(full_trace, sample_df, ages_df, mode = 'posterior', qui
 
         post_section_ages = full_trace[mode][section + '_ages'].values
 
+        # shape = chains x draws x ages
+        post_section_radio_ages = full_trace[mode][section + '_radiometric_age'].values
+
         for c, chain in enumerate(chains):
             bad_draws_per_section[section][chain] = []
+
+            # shape: samples x draws
             section_sample_ages = np.swapaxes(post_section_ages[c, :, :], 0, 1)
+
+            # shape: age constraints x draws
+            section_radio_ages = np.swapaxes(post_section_radio_ages[c, :, :], 0, 1)
 
             for interval in np.arange(0, len(age_heights)-1).tolist():
 
@@ -435,6 +460,14 @@ def check_intrusive_ages(full_trace, sample_df, ages_df, mode = 'posterior', qui
                         if not all(section_sample_ages[:, draw][sample_idx] >= intrusive_age_posterior[draw]):
                             if not quiet:
                                 print('Intrusive age constraint violated in section '  + str(section) + ', chain ' + str(chain) +  ", draw " + str(draw))
+                            bad_chains.append(chain)
+                            bad_draws[chain].append(draw)
+                            bad_draws_per_section[section][chain].append(draw)
+
+                        # check superposition between each intrusive age and underlying depositional age
+                        if not(section_radio_ages[interval, draw] >= intrusive_age_posterior[draw]):
+                            if not quiet:
+                                print('Superposition between depositional and intrusive age constraint violated in ' + str(section) + ', chain ' + str(chain) +  ", draw " + str(draw))
                             bad_chains.append(chain)
                             bad_draws[chain].append(draw)
                             bad_draws_per_section[section][chain].append(draw)
