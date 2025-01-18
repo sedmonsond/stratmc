@@ -17,6 +17,8 @@ from tqdm.notebook import tqdm
 
 numpyro.enable_x64()
 
+
+# note - this flag is necessary for compiling large models on MacOS, but not linux/windows; user should add line to script/notebook if necessary
 import pytensor
 
 pytensor.config.gcc__cxxflags = '-fbracket-depth=1024'
@@ -31,7 +33,7 @@ from stratmc.data import clean_data, drop_chains
 from stratmc.tests import check_inference
 
 
-def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approximate = False, name="", chains = 8, draws = 1000, tune = 2000, prior_draws = 1000, target_accept = 0.9, sampler = 'numpyro', nuts_kwargs = None, jitter = 0.001, seed = None, save = True, postprocessing_backend = None, initvals = None, **kwargs):
+def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approximate = False, name="", chains = 8, draws = 1000, tune = 2000, prior_draws = 1000, target_accept = 0.9, sampler = 'numpyro', nuts_kwargs = None, jitter = 0.001, seed = None, save = True, postprocessing_backend = None, initvals = None, sample_predictive = True, chain_method = 'parallel', **kwargs):
     """
     Sample the prior and posterior distributions for a :class:`pymc.model.core.Model` returned by :py:meth:`build_model() <stratmc.model.build_model>` in :py:mod:`stratmc.model`. By default, uses :py:func:`pymc.sampling.jax.sample_numpyro_nuts() <pymc.sampling.jax.sample_numpyro_nuts>` to sample the posterior; change ``sampler`` to 'blackjax` to use :py:func:`pymc.sampling.jax.sample_blackjax_nuts() <pymc.sampling.jax.sample_blackjax_nuts>`.
 
@@ -156,6 +158,7 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
                                                             idata_kwargs = idata_kwargs,
                                                             nuts_kwargs = nuts_kwargs,
                                                             initvals = initvals,
+                                                            chain_method = chain_method,
                                                             jitter = False)
 
         elif sampler == 'blackjax':
@@ -169,6 +172,7 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
                                                             idata_kwargs = idata_kwargs,
                                                             nuts_kwargs = nuts_kwargs,
                                                             initvals = initvals,
+                                                            chain_method = chain_method,
                                                             jitter = False)
 
         # nutpie sampler -- slower than numpyro and blackjax because some operations in the model (custom SortOp and AdvancedSetSubtensor) don't have a nopython implementation, which causes Numba to fall back to 'object mode' (slower python implementation)
@@ -194,25 +198,26 @@ def get_trace(model, gp, ages, sample_df, ages_df, proxies = ['d13c'], approxima
             # save the trace with posterior samples -- if an error is encountered during sample_posterior_predictive, can re-load this file so we don't have to start over
             full_trace.to_netcdf("traces/temp/" + str(name) + '_' + tstamp + ".nc")
 
-        v2r = ['f_pred_' + proxy for proxy in proxies]
+        if sample_predictive:
+            v2r = ['f_pred_' + proxy for proxy in proxies]
 
-        for proxy in proxies:
-            if approximate:
-                f_pred = gp[proxy].conditional('f_pred_' + proxy, Xnew=ages)
-            else:
-                f_pred = gp[proxy].conditional('f_pred_' + proxy, Xnew=ages, jitter = jitter)
+            for proxy in proxies:
+                if approximate:
+                    f_pred = gp[proxy].conditional('f_pred_' + proxy, Xnew=ages)
+                else:
+                    f_pred = gp[proxy].conditional('f_pred_' + proxy, Xnew=ages, jitter = jitter)
 
-        posterior_predictive = pm.sample_posterior_predictive(
-            full_trace,
-            var_names=v2r,
-            return_inferencedata = True,
-            random_seed = seed
-        )
+            posterior_predictive = pm.sample_posterior_predictive(
+                full_trace,
+                var_names=v2r,
+                return_inferencedata = True,
+                random_seed = seed
+            )
 
-        prior = pm.sample_prior_predictive(random_seed = seed, draws = prior_draws)
+            prior = pm.sample_prior_predictive(random_seed = seed, draws = prior_draws)
 
-    full_trace.extend(prior)
-    full_trace.extend(posterior_predictive)
+            full_trace.extend(prior)
+            full_trace.extend(posterior_predictive)
 
     dataset = xr.Dataset()
 
@@ -372,7 +377,7 @@ def get_valid_initvals_per_chain(initval_dict, sample_df, ages_df, sections):
 
         age_heights = section_age_df['height'].values
 
-        # if all age constraint priors are Gaussian and not shared
+        # if all age constraint priors are Gaussian and not shared, then superposition was enforced with an ordered transform
         if all(section_age_df['distribution_type']=='Normal') and all(section_age_df['shared?']==False):
 
             label = str(section) +'_'
@@ -382,6 +387,7 @@ def get_valid_initvals_per_chain(initval_dict, sample_df, ages_df, sections):
             # ensures that radiometric ages are in order -- ordered transform not applied during forward (i.e., prior predictive) sampling
             initval_dict = ordered_transform_in_prior(initval_dict, ordered_age_dist_name)
 
+        # otherwise, superposition was enforced using potentials applied to a group of independent prior distributions
         else:
             age_dist_names = []
 

@@ -395,9 +395,22 @@ def combine_traces(trace_list):
     dataset = combined_trace.X_new.copy()
     X_new = combined_trace.X_new.X_new.values
 
+    # concatenating attributes manually -- arviz throws an error when the sampling time attribute (or any other attribute) has a unique value in different traces
+    combined_attrs = {}
+
+    attr_keys = list(combined_trace.attrs.keys())
+
+    for key in attr_keys:
+        combined_attrs[key] = [combined_trace.attrs[key]]
+        del combined_trace.attrs[key]
+
     del combined_trace.X_new
-    for path in trace_list[1:]:
+    for path in tqdm(trace_list[1:]):
         trace = load_trace(path)
+
+        for key in attr_keys:
+            combined_attrs[key].append(trace.attrs[key])
+            del trace.attrs[key]
 
         if not np.array_equal(trace.X_new.X_new.values.ravel(), X_new.ravel()):
             sys.exit("Traces have different X_new - check that all inferences were run with the same data and parameters")
@@ -407,6 +420,8 @@ def combine_traces(trace_list):
         az.concat([combined_trace, trace], dim = 'chain', inplace = True)
 
     combined_trace.add_groups(dataset)
+
+    combined_trace.attrs = combined_attrs
 
     return combined_trace
 
