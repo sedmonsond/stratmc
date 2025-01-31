@@ -2327,6 +2327,7 @@ def sample_ages(full_trace, sample_df, section, plot_excluded_samples = False, c
         included_idx = ~sample_df['Exclude?'].values.astype(bool)
         # shape = (samples x draws)
         vals = vals[included_idx, :]
+        prior_vals = prior_vals[included_idx, :]
 
     else:
         excluded_idx = sample_df['Exclude?'].values
@@ -2353,11 +2354,13 @@ def sample_ages(full_trace, sample_df, section, plot_excluded_samples = False, c
                 post_label = 'Posterior (excluded sample)'
                 prior_label = 'Prior (excluded sample)'
                 excluded_count += 1
+
             else:
                 linestyle = 'solid'
                 edgecolor = 'none'
                 post_label = 'Posterior'
                 prior_label = 'Prior'
+
         else:
             linestyle = 'solid'
             edgecolor = 'none'
@@ -2452,13 +2455,13 @@ def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_pr
     if chains is None:
         chains = np.arange(vals.shape[0])
 
-    prior_vals = az.extract(full_trace.prior)[str(section)+'_ages'].values
-
+    prior_vals = full_trace.prior[str(section)+'_ages'].values
 
     if not plot_excluded_samples:
         included_idx = ~sample_df['Exclude?'].values.astype(bool)
         # shape = (samples x draws)
         vals = vals[:, :, included_idx]
+        prior_vals = prior_vals[:, :, included_idx]
 
     else:
         excluded_idx = sample_df['Exclude?'].values

@@ -383,7 +383,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
             noise_sigma = {}
             for proxy in proxies:
                 if noise_type[proxy] == 'groups':
-                    noise_groups = np.array(sample_df[~np.isnan(sample_df[proxy])]['noise_group_' + proxy].unique())
+                    noise_groups = np.array(sample_df[(~np.isnan(sample_df[proxy]))  & (~sample_df['Exclude?'])]['noise_group_' + proxy].unique()).astype(str)
                     noise_sigma[proxy] = {}
                     for group in noise_groups:
                         noise_sigma[proxy][group] = temp
@@ -398,7 +398,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
 
         for proxy in proxies:
             if noise_type[proxy] == 'groups':
-                noise_groups = np.unique(sample_df[~np.isnan(sample_df[proxy])]['noise_group_' + proxy])
+                noise_groups = np.array(sample_df[(~np.isnan(sample_df[proxy])) & (~sample_df['Exclude?'])]['noise_group_' + proxy].unique()).astype(str)
                 noise_sigma[proxy] = {}
                 for group in noise_groups:
                     if sample_df[(sample_df['noise_group_' + proxy] == group) & ~(sample_df['Exclude?'])].shape[0] > 1:
@@ -569,7 +569,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
             if offset_type[proxy] == 'groups':
                 offset_group_dict[proxy] = {}
 
-                offset_groups = np.unique(sample_df['offset_group_' + proxy])
+                offset_groups = np.array(sample_df[~np.isnan(sample_df[proxy]) & (~sample_df['Exclude?'])]['offset_group_' + proxy].unique()).astype(str)
                 for group in offset_groups:
                     # if using the default laplace prior, and offset_b and offset_mu aren't superseded by parameters passed in offset_params dict
                     if (offset_prior[proxy] == 'Laplace') and (offset_params[proxy] is None):
@@ -597,7 +597,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
             if noise_type[proxy] == 'groups':
                 noise_group_dict[proxy] = {}
 
-                noise_groups = np.array(sample_df[~np.isnan(sample_df[proxy])]['noise_group_' + proxy].unique())
+                noise_groups = np.array(sample_df[(~np.isnan(sample_df[proxy]))  & (~sample_df['Exclude?'])]['noise_group_' + proxy].unique()).astype(str)
 
                 for group in noise_groups:
                     if noise_prior[proxy] == 'HalfCauchy':
@@ -651,13 +651,13 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                 if all(section_age_df['distribution_type']=='Normal') and all(section_age_df['shared?']==False):
                     # for initvals, using np.sort instead of np.flip to account for scenario where means of reported ages are out of superposition
                     radiometric_age_flip = pm.Normal(label + 'flip_radiometric_age',
-                                                     mu = np.flip(section_ages),
+                                                     mu = np.flip(section_ages), # youngest to oldest
                                                      sigma = np.flip(section_ages_unc),
                                                      shape = section_ages.shape,
                                                      transform = tr.Ordered(),
                                                      initval = np.sort(section_ages))
 
-                    radiometric_age_tensor = pm.Deterministic(label + 'radiometric_age', np.flip(radiometric_age_flip))
+                    radiometric_age_tensor = pm.Deterministic(label + 'radiometric_age', np.flip(radiometric_age_flip)) # flipping back to oldest --> youngest
 
 
                 else:
@@ -1009,12 +1009,19 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                                 # NOTE: upper_age_dist has to be flipped before using index inside of function
                                 superposition_depositional_and_limiting_ages(model, upper_age_dist_name, detrital_age_dist_names_radio, [], section, depositional_age_idx = top_age_idx)
 
+                            # TODO: this fails with 1 sample because label is 'random_ages' instead of 'unsorted_random_ages'
                             if (len(detrital_age_dist_names) > 0) or (len(intrusive_age_dist_names) > 0):
+
+                                if len(interval_heights) > 1:
+                                    age_label = 'unsorted_random_ages'
+                                else:
+                                    age_label = 'random_ages'
+
                                 get_valid_initial_ages(detrital_age_dist_names,
                                                     intrusive_age_dist_names,
                                                     base_age_dist_name,
                                                     upper_age_dist_name,
-                                                    label + 'unsorted_random_ages',
+                                                    label + age_label,
                                                     interval_df['height'].values,
                                                     detrital_interval_df['height'].values,
                                                     intrusive_interval_df['height'].values,
@@ -1818,11 +1825,17 @@ def build_prior_age_model(sample_df, ages_df, proxies = ['d13c'], **kwargs):
                                 superposition_depositional_and_limiting_ages(prior_age_model, upper_age_dist_name, detrital_age_dist_names_radio, [], section, depositional_age_idx = top_age_idx)
 
                             if (len(detrital_age_dist_names) > 0) or (len(intrusive_age_dist_names) > 0):
+
+                                if len(interval_heights) > 1:
+                                    age_label = 'unsorted_random_ages'
+                                else:
+                                    age_label = 'random_ages'
+
                                 get_valid_initial_ages(detrital_age_dist_names,
                                                     intrusive_age_dist_names,
                                                     base_age_dist_name,
                                                     upper_age_dist_name,
-                                                    label + 'unsorted_random_ages',
+                                                    label + age_label,
                                                     interval_df['height'].values,
                                                     detrital_interval_df['height'].values,
                                                     intrusive_interval_df['height'].values,
@@ -1901,9 +1914,18 @@ def superposition(age_dist, age_dist_names, model, section_age_df, section):
     """
 
     for i in np.arange(1, age_dist.shape.eval()[0]):
+
+        # version with soft edge
         slope = 100
         pm.Potential("superposition_"+str(section)+'_'+str(i),
         -10000 * pm.math.invlogit(slope * ((age_dist[i]) - age_dist[i-1])))
+
+        # version with hard edge - send likelihood to -infinity if age is violated
+        # check that lower = older (greater than) higher
+        # condition = at.ge(age_dist[i-1], age_dist[i])
+
+        # pm.Potential("superposition_"+str(section)+'_'+str(i), at.switch(condition, 0, -np.inf))
+
 
     for i in np.arange(0, len(section_age_df['height'])-1).tolist():
         lower_label = age_dist_names[i]
@@ -1973,8 +1995,16 @@ def superposition_depositional_and_limiting_ages(model, depositional_age_name, d
     for detrital_var in detrital_age_dist_names:
         rv_var_detrital = model[detrital_var]
 
+        # version with soft edge
         slope = 100
         pm.Potential('radiometric_detrital_max_'  + str(section) + '_dep_age_' + depositional_age_name + '_detrital_age_' + str(detrital_var), -10000 * pm.math.invlogit(slope * (rv_var_depositional - rv_var_detrital)))
+
+        # hard edge - send likelihood to -infinity if an age is violated
+        # check that depositional age is less than (younger than) detrital age
+        # condition = at.le(rv_var_depositional, rv_var_detrital)
+
+        # pm.Potential('radiometric_detrital_max_'  + str(section) + '_dep_age_' + depositional_age_name + '_detrital_age_' + str(detrital_var), at.switch(condition, 0, -np.inf))
+
 
         # check initval superposition for detrital age. if the detrital age is violated (i.e., the depositional age is older), set the detrital age initval to be 1 Myr older than the current depositional age initval
         # check initval superposition for intrusive age. if the intrusive age is violated (i.e., the depositional age is younger), set the intrusive age initval to be 1 Myr younger than the current depositional age initval
@@ -1988,8 +2018,15 @@ def superposition_depositional_and_limiting_ages(model, depositional_age_name, d
     for intrusive_var in intrusive_age_dist_names:
         rv_var_intrusive = model[intrusive_var]
 
-        slope = 100
+        # version with soft edge
+        slope = 100 # if using penalty of 100000, increase slope to 1000
         pm.Potential('radiometric_intrusive_min_'  + str(section) + '_dep_age_' + depositional_age_name + '_intrusive_age_' + str(intrusive_var), -10000 * pm.math.invlogit(slope * (rv_var_intrusive - rv_var_depositional)))
+
+        # hard edge - send likelihood to -infinity if age constraint is violated
+        # check that depositional age is greater than (older than) intrusive age
+        # condition = at.ge(rv_var_depositional, rv_var_intrusive)
+
+        # pm.Potential('radiometric_intrusive_min_'  + str(section) + '_dep_age_' + depositional_age_name + '_intrusive_age_' + str(intrusive_var), at.switch(condition, 0, -np.inf))
 
         # check initval superposition for intrusive age. if the intrusive age is violated (i.e., the depositional age is younger), set the intrusive age initval to be 1 Myr younger than the current depositional age initval
         intrusive_age_initval = untransformed_initval(intrusive_var, model)
@@ -2033,8 +2070,15 @@ def intermediate_detrital_potential(detrital_age_dist, detrital_age_dist_name, s
 
     overlying_sample_idx = np.where(sample_heights >= detrital_height)[0]
 
+    # version with soft edge
     slope = 100
     pm.Potential('detrital_max_'  + str(section) + '_' + str(detrital_age_dist_name), -10000 * pm.math.invlogit(slope * ((sample_age_dist_sorted[overlying_sample_idx]) - detrital_age_dist)))
+
+    # version with hard edge - sends likelihood to -infinity if constraint is violated
+    # condition = at.le((sample_age_dist_sorted[overlying_sample_idx]), detrital_age_dist)
+
+    # pm.Potential('detrital_max_'  + str(section) + '_' + str(detrital_age_dist_name), at.switch(condition, 0, -np.inf))
+
 
 
 def intermediate_intrusive_potential(intrusive_age_dist, intrusive_age_dist_name, sample_age_dist_sorted, sample_heights, intrusive_height, section):
@@ -2065,8 +2109,15 @@ def intermediate_intrusive_potential(intrusive_age_dist, intrusive_age_dist_name
 
     underlying_sample_idx = np.where(sample_heights <= intrusive_height)[0]
 
+    # version with soft edge
     slope = 100
     pm.Potential('intrusive_min_'  + str(section) + '_' + str(intrusive_age_dist_name), -10000 * pm.math.invlogit(slope * ((intrusive_age_dist) - sample_age_dist_sorted[underlying_sample_idx])))
+
+    # version with hard edge - send likelihoot to -infinity if age constraint is violated
+    # condition = at.ge(sample_age_dist_sorted[underlying_sample_idx], intrusive_age_dist)
+
+    # pm.Potential('intrusive_min_'  + str(section) + '_' + str(intrusive_age_dist_name), at.switch(condition, 0, -np.inf))
+
 
 
 def get_valid_initial_ages(detrital_age_dist_names, intrusive_age_dist_names, maximum_age_dist_name, minimum_age_dist_name, sample_age_dist_name, sample_heights, detrital_heights, intrusive_heights, model, interval, sf1_name, sf2_name, shared_radiometric_age_dist):
