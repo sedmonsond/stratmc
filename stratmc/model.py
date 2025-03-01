@@ -575,6 +575,8 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                     if (offset_prior[proxy] == 'Laplace') and (offset_params[proxy] is None):
                         offset_group_dict[proxy][group] = pm.Laplace(group + '_group_offset_' + proxy, mu = offset_mu[proxy], b = offset_b[proxy], shape = 1)
 
+                        offset_likelihood = pm.Laplace(group + '_group_offset_likelihood_' + proxy, mu = offset_group_dict[proxy][group], b = offset_b[proxy], observed = np.array([0]))
+
                     else:
                      # if not implemented, throw error
                         if offset_prior[proxy] not in DIST_DICT.keys():
@@ -592,6 +594,8 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                         if not pd.isna(param_2):
                             dist_args[param_2_name] = param_2
 
+
+                        print('offset likelihood function not implemented for custom prior distributions')
                         offset_group_dict[proxy][group] = DIST_DICT[offset_prior[proxy]](group + '_group_offset_' + proxy, **dist_args, shape = 1)
 
             if noise_type[proxy] == 'groups':
@@ -1114,6 +1118,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                         if (offset_prior[proxy] == 'Laplace') and (offset_params[proxy] is None):
                             section_offset[proxy] = pm.Laplace(label + 'section_offset_' + proxy, mu = offset_mu[proxy], b = offset_b[proxy], shape = 1)
 
+                            offset_likelihood = pm.Laplace(label + "section_offset_likelihod_" + proxy, mu = section_offset[proxy], b = offset_b[proxy], shape = 1, observed = np.array([0]))
                         else:
                             # if requested offset distribution not implemented, throw error
                             if offset_prior[proxy] not in DIST_DICT.keys():
@@ -1141,6 +1146,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                         offset_group_list = section_df['offset_group_' + proxy][include_idx[proxy]].values
                         for offset_key in offset_group_list:
                             section_offset[proxy].append(offset_group_dict[proxy][offset_key])
+
 
                         offset_all[proxy].append(section_offset[proxy])
 

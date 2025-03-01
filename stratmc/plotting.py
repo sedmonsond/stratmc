@@ -1679,7 +1679,7 @@ def section_summary(sample_df, ages_df, full_trace, section, plot_excluded_sampl
     m = ax[2].pcolormesh(xedges, yedges, H.T, cmap = 'jet')
 
     ax[2].set_yscale('log')
-    ax[2].set_ylabel('LOG (Accumulation rate [m/Myr])', fontsize = 12)
+    ax[2].set_ylabel('LOG$_{10}$ (Accumulation rate [m/Myr])', fontsize = 12)
 
     ax[2].set_xlabel('Age (Ma)', fontsize = 12)
 
@@ -2899,8 +2899,8 @@ def sadler_plot(full_trace, sample_df, ages_df, method = 'density', duration_bin
     if scale == 'log':
         ax.set_xscale('log')
         ax.set_yscale('log')
-        ax.set_xlabel('LOG (Duration [yr])', fontsize = fs)
-        ax.set_ylabel('LOG (Accumulation rate [mm/yr])', fontsize = fs)
+        ax.set_xlabel('LOG$_{10}$ (Duration [yr])', fontsize = fs)
+        ax.set_ylabel('LOG$_{10}$ (Accumulation rate [mm/yr])', fontsize = fs)
 
     else:
         ax.set_xlabel('Duration (yr)', fontsize = fs)
@@ -3035,7 +3035,7 @@ def accumulation_rate_stratigraphy(full_trace, sample_df, ages_df, age_bins = 50
 
     if rate_scale == 'log':
         ax.set_yscale('log')
-        ax.set_ylabel('LOG (Accumulation rate [m/Myr])', fontsize = fs)
+        ax.set_ylabel('LOG$_{10}$ (Accumulation rate [m/Myr])', fontsize = fs)
 
     elif rate_scale == 'linear':
         ax.set_ylabel('Accumulation rate (m/Myr)', fontsize = fs)
