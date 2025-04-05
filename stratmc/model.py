@@ -62,9 +62,6 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
 
     Note that while excluded samples (``Exclude?`` is ``True`` in ``sample_df``) do not affect the proxy signal reconstruction, their ages are passively tracked within the inference model (if other samples from the same sections are included).
 
-    .. todo:
-        make sure depositional age constraints obey limiting age constraints -- add a potential and reset the initvals before sample age initvals are set
-
     Parameters
     ----------
     sample_df: pandas.DataFrame
@@ -594,8 +591,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                         if not pd.isna(param_2):
                             dist_args[param_2_name] = param_2
 
-
-                        print('offset likelihood function not implemented for custom prior distributions')
+                        print('Note that offset likelihood function (which explicitly rewards offset = 0) is not implemented for custom prior distributions.')
                         offset_group_dict[proxy][group] = DIST_DICT[offset_prior[proxy]](group + '_group_offset_' + proxy, **dist_args, shape = 1)
 
             if noise_type[proxy] == 'groups':
@@ -630,7 +626,6 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
 
             intermediate_intrusive_section_ages_df =  ages_df[(ages_df['section']==section) & (ages_df['intermediate intrusive?'])]
             depositional_section_ages_df =  ages_df[(ages_df['section']==section) & (ages_df['depositional?'])]
-
 
             section_ages = section_age_df['age'].values
             section_ages_unc = section_age_df['age_std'].values
@@ -1013,7 +1008,6 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                                 # NOTE: upper_age_dist has to be flipped before using index inside of function
                                 superposition_depositional_and_limiting_ages(model, upper_age_dist_name, detrital_age_dist_names_radio, [], section, depositional_age_idx = top_age_idx)
 
-                            # TODO: this fails with 1 sample because label is 'random_ages' instead of 'unsorted_random_ages'
                             if (len(detrital_age_dist_names) > 0) or (len(intrusive_age_dist_names) > 0):
 
                                 if len(interval_heights) > 1:
@@ -1118,7 +1112,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                         if (offset_prior[proxy] == 'Laplace') and (offset_params[proxy] is None):
                             section_offset[proxy] = pm.Laplace(label + 'section_offset_' + proxy, mu = offset_mu[proxy], b = offset_b[proxy], shape = 1)
 
-                            offset_likelihood = pm.Laplace(label + "section_offset_likelihod_" + proxy, mu = section_offset[proxy], b = offset_b[proxy], shape = 1, observed = np.array([0]))
+                            offset_likelihood = pm.Laplace(label + "section_offset_likelihood_" + proxy, mu = section_offset[proxy], b = offset_b[proxy], shape = 1, observed = np.array([0]))
                         else:
                             # if requested offset distribution not implemented, throw error
                             if offset_prior[proxy] not in DIST_DICT.keys():
@@ -1136,6 +1130,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                             if not pd.isna(param_2):
                                 dist_args[param_2_name] = param_2
 
+                            print('Note that offset likelihood function (which explicitly rewards offset = 0) is not implemented for custom prior distributions.')
                             section_offset[proxy] = DIST_DICT[offset_prior[proxy]](label + 'section_offset_' + proxy, **dist_args, shape = 1)
 
                         # only create offset distributions for samples that will be included in the likelihood function
@@ -1896,9 +1891,6 @@ def build_prior_age_model(sample_df, ages_df, proxies = ['d13c'], **kwargs):
 def superposition(age_dist, age_dist_names, model, section_age_df, section):
     """
     Helper function for explicitly enforcing stratigraphic superposition (any given sample must be younger than the underlying sample) for a group of radiometric age constraints. Each constraint must have a unique name in model.
-
-    .. todo::
-        vectorize pm.potential with pt.diff?
 
     Parameters
     ----------
