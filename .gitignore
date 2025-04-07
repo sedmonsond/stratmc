@@ -27,3 +27,4 @@ stratmc/examples/example_docs_trace_convergence.nc
 stratmc/examples/example_docs_trace_data_density.nc
 *.afdesign
 *.afdesign~lock~
+stratmc/examples/Test data.ipynb

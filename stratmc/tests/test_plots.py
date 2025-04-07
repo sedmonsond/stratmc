@@ -37,14 +37,14 @@ warnings.filterwarnings("ignore", ".*X_new group is not defined in the Inference
 @patch("matplotlib.pyplot.show")
 def test_proxy_strat(a):
     # load data
-    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', drop_excluded_samples = False)
 
     _ = proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_excluded_samples = True)
 
 @patch("matplotlib.pyplot.show")
 def test_proxy_inference(a):
     # load data
-    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', drop_excluded_samples = False)
 
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
@@ -57,7 +57,7 @@ def test_proxy_inference(a):
 def test_interpolated_proxy_inference(a):
     # this will also test the interpolation functions
     # load data
-    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', drop_excluded_samples = False)
 
     # load trace
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
@@ -71,7 +71,7 @@ def test_interpolated_proxy_inference(a):
 
 @patch("matplotlib.pyplot.show")
 def test_age_height_model(a):
-    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', drop_excluded_samples = False)
 
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
@@ -83,7 +83,7 @@ def test_age_height_model(a):
 @patch("matplotlib.pyplot.show")
 def test_section_proxy_signal(a):
     # also tests map_ages_to_section
-    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', drop_excluded_samples = False)
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
     _ = section_proxy_signal(full_trace, sample_df, ages_df, include_radiometric_ages = True, plot_constraints = True)
@@ -101,7 +101,7 @@ def test_covariance_hyperparameters(a):
 
 @patch("matplotlib.pyplot.show")
 def test_section_summary(a):
-    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', drop_excluded_samples = False)
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
     _ = section_summary(sample_df, ages_df, full_trace, '0', plot_excluded_samples = True, plot_noise_prior = True, plot_offset_prior = True)
@@ -130,7 +130,7 @@ def test_offset_summary(a):
 
 @patch("matplotlib.pyplot.show")
 def test_section_proxy_residuals(a):
-    sample_df, _ = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    sample_df, _ = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', drop_excluded_samples = False)
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
     _ = section_proxy_residuals(full_trace, sample_df)
@@ -139,15 +139,17 @@ def test_section_proxy_residuals(a):
 
 @patch("matplotlib.pyplot.show")
 def test_sample_ages(a):
-    sample_df, _ = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    sample_df, _ = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', drop_excluded_samples = False)
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
     _ = sample_ages(full_trace, sample_df, '0', plot_excluded_samples = True)
+    _ = sample_ages(full_trace, sample_df, '0', plot_excluded_samples = True, plot_prior = False)
     _ = sample_ages(full_trace, sample_df, '0', plot_excluded_samples = False)
+    _ = sample_ages(full_trace, sample_df, '0', plot_excluded_samples = False, plot_prior = False)
 
 @patch("matplotlib.pyplot.show")
 def test_sample_ages_per_chain(a):
-    sample_df, _ = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    sample_df, _ = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', drop_excluded_samples = False)
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
     _ = sample_ages_per_chain(full_trace, sample_df, '0', plot_excluded_samples = True)
@@ -161,7 +163,7 @@ def test_age_constraints(a):
 
 @patch("matplotlib.pyplot.show")
 def test_limiting_age_constraints(a):
-    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', drop_excluded_samples = False)
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
     _ = limiting_age_constraints(full_trace, sample_df, ages_df, '2')
@@ -170,7 +172,7 @@ def test_limiting_age_constraints(a):
 def test_sadler_plot(a):
     # test with and without age constraints
     # this also tests accumulation_rate with method = 'all'
-    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', drop_excluded_samples = False)
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
     _ = sadler_plot(full_trace, sample_df, ages_df, include_age_constraints = False, scale = 'linear')
@@ -182,7 +184,7 @@ def test_sadler_plot(a):
 def test_accumulation_rate_stratigraphy(a):
     # test with and without age constraints
     # this also test accumulation_rate with method = 'successive'
-    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', drop_excluded_samples = False)
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
     _ = accumulation_rate_stratigraphy(full_trace, sample_df, ages_df, include_age_constraints = True)
@@ -191,7 +193,7 @@ def test_accumulation_rate_stratigraphy(a):
 @patch("matplotlib.pyplot.show")
 def test_section_age_range(a):
     # also tests age_range_to_height function
-    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', drop_excluded_samples = False)
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
     _ = section_age_range(full_trace, sample_df, ages_df, 125, 130, legend = True)

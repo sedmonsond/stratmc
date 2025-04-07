@@ -10,10 +10,13 @@ Functions for building a proxy signal inference model.
   :nosignatures:
 
     build_model
-    superposition
+    build_prior_age_model
+    get_valid_initial_ages
     intermediate_detrital_potential
     intermediate_intrusive_potential
-    transformed_initval
+    superposition
+    superposition_depositional_and_limiting_ages
+    untransformed_initval
 
 .. automodule:: stratmc.model
    :members:

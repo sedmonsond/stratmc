@@ -1,36 +1,38 @@
 .. _model_target:
 
 *****************************************
-Model Description *(under construction)*
+Model Description
 *****************************************
 
 .. toctree::
   :hidden:
   :maxdepth: 2
 
-This page summarizes key aspects of the inference model, with an emphasis on the geological assumptions encoded in the statistical framework. Users should refer to Edmonsond & Dyer (submitted to *Geoscientific Model Development*) for an extended technical description of the model, guidance on choosing priors for key model parameters, synthetic proof-of-concept experiments, and advice on interpreting the results.
-
-Key features
-=============
-*
-*
+Users should refer to `Edmonsond & Dyer (2025) <https://doi.org/10.5194/egusphere-2024-2579>`_ for an extended description of the model, guidance on choosing priors for key model parameters, synthetic proof-of-concept experiments, and advice on interpreting the results.
 
 The statistical model is built using the probabilistic programming package `PyMC <https://www.pymc.io/welcome.html>`_. For users who are new to Bayesian modeling, the `PyMC documentation <https://www.pymc.io/projects/docs/en/stable/learn.html>`_ includes links to useful introductory resources.
 
-Inference model structure
-===========================
+.. Key features
+.. =============
+.. *
+.. *
 
-Age constraints
-----------------
+.. The statistical model is built using the probabilistic programming package `PyMC <https://www.pymc.io/welcome.html>`_. For users who are new to Bayesian modeling, the `PyMC documentation <https://www.pymc.io/projects/docs/en/stable/learn.html>`_ includes links to useful introductory resources.
 
-Sample ages
-------------
+.. Inference model structure
+.. ===========================
 
-Proxy signal
-------------
+.. Age constraints
+.. ----------------
 
-Local influences on proxy records
-----------------------------------
+.. Sample ages
+.. ------------
 
-Sampling the posterior
------------------------
+.. Proxy signal
+.. ------------
+
+.. Local influences on proxy records
+.. ----------------------------------
+
+.. Sampling the posterior
+.. -----------------------

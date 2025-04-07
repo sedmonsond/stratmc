@@ -2,20 +2,17 @@
 Examples *(coming soon)*
 *************************
 
-.. todo::
-  Make example notebook with model construction, sampling, and basic plotting functions (single proxy example)
+An example library currently is under development. A number of example notebooks are included in the `supplementary information <https://zenodo.org/records/13119724>`_ of `Edmonsond & Dyer (2025) <https://doi.org/10.5194/egusphere-2024-2579>`_.
 
-.. todo::
-  make multiproxy example notebook
+.. Make example notebook with model construction, sampling, and basic plotting functions (single proxy example)
 
-.. todo::
-  make HSGP example notebook
+.. make multiproxy example notebook
 
-.. todo::
-  deep sea d18O inversion notebook
+.. make HSGP example notebook
 
-.. todo::
-  Link to jupyter notebooks (formatted for docs, see https://jupyterbook.org/en/stable/web/index.html) for each example
+.. deep sea d18O inversion notebook
+
+.. Link to jupyter notebooks (formatted for docs, see https://jupyterbook.org/en/stable/web/index.html) for each example
 
 .. toctree::
   :maxdepth: 1

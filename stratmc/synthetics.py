@@ -495,10 +495,16 @@ def synthetic_signal_to_df(proxy_vec, heights, section_ages, section_names, ages
     ages_df['name'] = np.nan
     ages_df['intermediate detrital?'] = False
     ages_df['intermediate intrusive?'] = False
+    ages_df['depositional?'] = False
     ages_df['Exclude?'] = False
     ages_df['distribution_type'] = 'Normal'
+    ages_df['param_1'] = np.nan
+    ages_df['param_2'] = np.nan
 
     sample_df['Exclude?'] = False
+    sample_df['superposition?'] = True
+    sample_df['depositional age'] = np.nan
+
 
     return ages_df, sample_df
 
@@ -591,13 +597,15 @@ def synthetic_observations_from_prior(age_vector, ages_df, sample_heights = None
     elif type(sample_heights) != dict:
             sys.exit(f"sample_heights must be a dictionary (keys = section names, values = array or list of sample heights)")
 
-    sample_df_columns = ['section', 'height', 'Exclude?'] + [proxy for proxy in proxies]
+    sample_df_columns = ['section', 'height', 'depositional age', 'superposition?', 'Exclude?'] + [proxy for proxy in proxies]
     sample_df = pd.DataFrame(columns = sample_df_columns)
 
     for section in sections:
         section_dict = {
         'section': [section] * len(sample_heights[section]),
         'height': sample_heights[section],
+        'depositional age': [np.nan]* len(sample_heights[section]),
+        'superposition?': [True] * len(sample_heights[section]),
         'Exclude?': [False] * len(sample_heights[section])
         }
 
@@ -612,7 +620,7 @@ def synthetic_observations_from_prior(age_vector, ages_df, sample_heights = None
         sample_df[proxy + '_std'] = sample_df[proxy + '_std'].astype(float)
 
     # make sure ages_df has all of the required columns
-    ages_df_columns = ['distribution_type', 'param_1', 'param_2', 'param_1_name', 'param_2_name', 'shared?', 'name', 'Exclude?', 'intermediate detrital?', 'intermediate intrusive?']
+    ages_df_columns = ['distribution_type', 'param_1', 'param_2', 'param_1_name', 'param_2_name', 'shared?', 'name', 'Exclude?', 'intermediate detrital?', 'intermediate intrusive?', 'depositional?']
 
     for col in ages_df_columns:
         if col not in list(ages_df):
@@ -621,6 +629,7 @@ def synthetic_observations_from_prior(age_vector, ages_df, sample_heights = None
     ages_df['shared?'] = False
     ages_df['intermediate detrital?'] = False
     ages_df['intermediate intrusive?'] = False
+    ages_df['depositional?'] = False
     ages_df['Exclude?'] = False
     ages_df['distribution_type'] = 'Normal'
 
@@ -628,6 +637,7 @@ def synthetic_observations_from_prior(age_vector, ages_df, sample_heights = None
     sections = np.unique(sample_df['section'])
 
     sample_df['Exclude?'] = sample_df['Exclude?'].astype(bool)
+    sample_df['superposition?'] = sample_df['superposition?'].astype(bool)
 
    # build a model using the synthetic data (set proxy_observed = False in build_model)
     model, gp = build_model(sample_df,

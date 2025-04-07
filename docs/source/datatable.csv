@@ -5,4 +5,6 @@
 ``proxy_std``,"1-:math:`\sigma` uncertainty of proxy measurement (in column header, **proxy** must match name of the column with the associated proxy value). If not provided, defaults to 0.1."
 ``offset_group``,"Only required if custom groups of samples share an offset term in the model (otherwise, all samples from the same section will share an offset term). Set to the same value (``string`` or ``float``) for all samples from the same group."
 ``noise_group``,"Only required if custom groups of samples share a noise term in the model (otherwise, all samples from the same section will share a noise term). Set to the same value (``string`` or ``float``) for all samples from the same group. "
+``depositional age``,Only required if sample age is directly constrained by a depositional age included in the **Age constraints** table; must match name of the constraint in **Age constraints**  (type ``string``).
+``superposition?``,Only required if superposition relationships between some samples (within a given section) are unknown. Groups of samples with unknown superposition relationships should be marked as ``False`` and assigned to the same nominal **height**. Defaults to ``True`` for all samples if not provided.
 ``Exclude?``,Whether to exclude sample from the inference (``True`` or ``False``). Optional; defaults to ``False`` if not provided.

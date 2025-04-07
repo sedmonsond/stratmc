@@ -5,37 +5,42 @@ import warnings
 import arviz as az
 import numpy as np
 import pandas as pd
+from scipy.stats import norm
+from tqdm.notebook import tqdm
 
 pd.options.mode.chained_assignment = None
 
 warnings.filterwarnings("ignore", ".*The group X_new is not defined in the InferenceData scheme.*")
 warnings.filterwarnings("ignore", ".*X_new group is not defined in the InferenceData scheme.*")
 
-def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 0.1, drop_excluded_samples = False, drop_excluded_ages = True):
+def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 0.1, drop_excluded_samples = True, drop_excluded_ages = True, combine_no_superposition = False):
     """
-    Import and pre-process proxy data and age constraints from .csv files formatted according to the :ref:`Data table formatting <datatable_target>` guidelines. To combine data from different .csv files, load each file separately and then combine the DataFrames with :py:meth:`combine_data() <stratmc.data>`.
+    Import and pre-process proxy data and age constraints from .csv files formatted according to the :ref:`Data table formatting <datatable_target>` guidelines. To combine data from different .csv files, load each file separately and then combine the DataFrames with :py:meth:`combine_data() <stratmc.data.combine_data>`.
 
-    If ``sample_file.csv`` includes multiple proxy observations from the same stratigraphic horizon (for a given proxy), then all measurements marked ``Exclude? = False`` will be combined using :py:meth:`combine_duplicates() <stratmc.data>`.
+    By default, samples marked ``Exclude? = True`` will be dropped from the data table. If ``sample_file.csv`` includes multiple proxy observations from the same stratigraphic horizon (for a given proxy), then all measurements marked ``Exclude? = False`` and ``superposition? = True ``  will be combined using :py:meth:`combine_duplicates() <stratmc.data.combine_duplicates>`. Samples marked ``superposition? = False`` will remain separate, and their order will be randomized within the inference model. These default behaviors can be modified by passing the ``drop_excluded_samples`` and ``combine_no_superposition`` arguments.
 
     Parameters
     ----------
     sample_file: str
-        Path to .csv file containing proxy data for all sections (without '.csv` extension).
+        Path to .csv file containing proxy data for all sections (without '.csv' extension).
 
     ages_file: str
-        Path to .csv file containing age constraints for all sections (without '.csv` extension).
+        Path to .csv file containing age constraints for all sections (without '.csv' extension).
 
     proxies: str or list(str), optional
-        Tracer names (must match column headers in ``sample_file.csv``); defaults to 'd13c`.
+        proxy names (must match column headers in ``sample_file.csv``); defaults to 'd13c'.
 
     proxy_sigma_default: float or dict{float}, optional
         Measurement uncertainty (:math:`1\\sigma`) to use for proxy observations if not specified in ``proxy_std`` column of ``sample_df``. To set a different value for each proxy, pass a dictionary with proxy names as keys. Defaults to 0.1.
 
     drop_excluded_samples: bool, optional
-        Whether to remove samples with ``Exclude? = True`` from the ``sample_df``; defaults to ``False``. If excluded samples are not dropped, their ages will be passively tracked within the inference model (but they will not be considered during the proxy signal reconstruction).
+        Whether to remove samples with ``Exclude? = True`` from the ``sample_df``; defaults to ``True``. If excluded samples are not dropped, their ages will be passively tracked within the inference model (but they will not be considered during the proxy signal reconstruction).
 
     drop_excluded_ages: bool, optional
         Whether to remove ages with ``Exclude? = True`` from the ``ages_df``; defaults to ``True``.
+
+    combine_no_superposition: bool, optional
+        Whether to combine samples without superposition information by averaging their proxy values; defaults to ``False``.
 
     Returns
     -------
@@ -61,6 +66,8 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
     if 'name' not in list(ages.columns):
         ages['name'] = np.nan
 
+    ages['name']=ages['name'].apply(str)
+
     if 'distribution_type' not in list(ages.columns):
         ages['distribution_type'] = 'Normal'
 
@@ -82,11 +89,20 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
     if 'intermediate intrusive?' not in list(ages.columns):
         ages['intermediate intrusive?'] = False
 
+    if 'depositional?' not in list(ages.columns):
+        ages['depositional?'] = False
+
     if 'Exclude?' not in list(ages.columns):
         ages['Exclude?'] = False
 
     if 'Exclude?' not in list(samples.columns):
         samples['Exclude?'] = False
+
+    if 'superposition?' not in list(samples.columns):
+        samples['superposition?'] = True
+
+    if 'depositional age' not in list(samples.columns):
+        samples['depositional age'] = np.nan
 
     if ('depth' in list(samples.columns)) or ('depth' in list(ages.columns)):
         sample_df, ages_df = depth_to_height(samples, ages)
@@ -101,8 +117,13 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
     if drop_excluded_ages:
         ages_df = ages_df[~ages_df['Exclude?']]
 
-    # where there's more than 1 measurement for a proxy, combine
-    sample_df = combine_duplicates(sample_df, proxies, proxy_sigma_default)
+
+    # where there's more than 1 measurement for a proxy, combine (unless superposition = False)
+    sample_df = combine_duplicates(sample_df, proxies, proxy_sigma_default, combine_no_superposition = combine_no_superposition)
+
+    ages_df.sort_values(by = ['section', 'height'], inplace = True)
+
+    ages_df.reset_index(inplace = True, drop = True)
 
     return sample_df, ages_df
 
@@ -165,7 +186,7 @@ def clean_data(sample_df, ages_df, proxies, sections):
         :class:`pandas.DataFrame` containing age constraints for all sections.
 
     proxies: str or list(str)
-        Tracers to include in the inference.
+        Proxies to include in the inference.
 
     sections: list(str) or numpy.array(str)
         List of sections to include in the inference (as named in ``sample_df`` and ``ages_df``).
@@ -200,6 +221,7 @@ def clean_data(sample_df, ages_df, proxies, sections):
 
         sample_df = sample_df[sample_df['section'].isin(sections)]
 
+
         sample_df = sample_df.sort_values(by = ['section', 'height'])
 
         sample_df = sample_df.reset_index(inplace = False, drop = True)
@@ -219,7 +241,7 @@ def clean_data(sample_df, ages_df, proxies, sections):
 
     return sample_df, ages_df
 
-def combine_duplicates(sample_df, proxies, proxy_sigma_default = 0.1):
+def combine_duplicates(sample_df, proxies, proxy_sigma_default = 0.1, combine_no_superposition = False):
     """
     Helper function for combining multiple proxy measurements from the same stratigraphic horizon. For each horizon with multiple proxy values, replaces the proxy value with the mean, and replaces the standard deviation with the combined uncertainty (``proxy_std`` values summed in quadrature) for all measurements. The standard deviation of the population of proxy values for each horizon is stored in the ``proxy_population_std`` column of ``sample_df`` (in :py:meth:`build_model() <stratmc.model.build_model>`, the uncertainty of each proxy observation is modeled as the ``proxy_std`` and ``proxy_population_std`` values summed in quadrature).
 
@@ -233,6 +255,9 @@ def combine_duplicates(sample_df, proxies, proxy_sigma_default = 0.1):
 
     proxy_sigma_default: float or dict{float}, optional
         Measurement uncertainty (:math:`1\\sigma`) to use for proxy observations if not specified in ``proxy_std`` column of ``sample_df``. To set a different value for each proxy, pass a dictionary with proxy names as keys. Defaults to 0.1.
+
+    combine_no_superposition: bool, optional
+        Whether to combine samples without superposition information by averaging their proxy values; defaults to ``False``.
 
     Returns
     -------
@@ -261,7 +286,13 @@ def combine_duplicates(sample_df, proxies, proxy_sigma_default = 0.1):
 
     # don't consider excluded samples when averaging observations from same height -- remove from dataframe and add back later
     excluded_sample_df = sample_df[sample_df['Exclude?']]
-    sample_df = sample_df[~sample_df['Exclude?'].values.astype(bool)]
+
+    if combine_no_superposition:
+        sample_df = sample_df[(~sample_df['Exclude?'].values.astype(bool))]
+    else:
+        no_superposition_sample_df = sample_df[~sample_df['superposition?']]
+        no_superposition_sample_df.reset_index(inplace = True, drop = True)
+        sample_df = sample_df[(~sample_df['Exclude?'].values.astype(bool)) & (sample_df['superposition?'].values.astype(bool))]
 
     excluded_sample_df.reset_index(inplace = True, drop = True)
     sample_df.reset_index(inplace = True, drop = True)
@@ -301,17 +332,23 @@ def combine_duplicates(sample_df, proxies, proxy_sigma_default = 0.1):
             for key in list(duplicate_dict.keys()):
                 duplicate_dict[key] = [duplicate_dict[key]]
 
-            # removes the duplicate samples from sample_df
+            # remove the duplicate samples from sample_df
             sample_df.drop(index = duplicate_sub_idx, inplace = True)
 
             duplicate_dicts.append(duplicate_dict)
 
+    # add combined data to dataframe
     for duplicate in duplicate_dicts:
         sample_df = pd.concat([sample_df, pd.DataFrame.from_dict(duplicate)], ignore_index = True)
 
     # put the excluded samples back
     if excluded_sample_df.shape[0] > 0:
         sample_df = pd.concat([sample_df, excluded_sample_df], ignore_index = True)
+
+    # put samples w/out superposition information back
+    if (not combine_no_superposition):
+        if no_superposition_sample_df.shape[0] > 0:
+            sample_df = pd.concat([sample_df, no_superposition_sample_df], ignore_index = True)
 
     # sort and reset indexing
     sample_df.sort_values(by = ['section', 'height'], inplace = True)
@@ -364,9 +401,22 @@ def combine_traces(trace_list):
     dataset = combined_trace.X_new.copy()
     X_new = combined_trace.X_new.X_new.values
 
+    # concatenating attributes manually -- arviz throws an error when the sampling time attribute (or any other attribute) has a unique value in different traces
+    combined_attrs = {}
+
+    attr_keys = list(combined_trace.attrs.keys())
+
+    for key in attr_keys:
+        combined_attrs[key] = [combined_trace.attrs[key]]
+        del combined_trace.attrs[key]
+
     del combined_trace.X_new
-    for path in trace_list[1:]:
+    for path in tqdm(trace_list[1:]):
         trace = load_trace(path)
+
+        for key in attr_keys:
+            combined_attrs[key].append(trace.attrs[key])
+            del trace.attrs[key]
 
         if not np.array_equal(trace.X_new.X_new.values.ravel(), X_new.ravel()):
             sys.exit("Traces have different X_new - check that all inferences were run with the same data and parameters")
@@ -376,6 +426,8 @@ def combine_traces(trace_list):
         az.concat([combined_trace, trace], dim = 'chain', inplace = True)
 
     combined_trace.add_groups(dataset)
+
+    combined_trace.attrs = combined_attrs
 
     return combined_trace
 
@@ -446,10 +498,10 @@ def save_trace(trace, path):
     ----------
 
     trace: arviz.InferenceData
-        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`build_model() <stratmc.model>` in :py:mod:`stratmc.model` (the output of :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`).
+        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`build_model() <stratmc.model.build_model>` in :py:mod:`stratmc.model` (the output of :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`).
 
     path: str
-        Location (including the file name, without '.nc` extension) to save ``trace``.
+        Location (including the file name, without '.nc' extension) to save ``trace``.
 
     """
 
@@ -466,7 +518,7 @@ def save_object(var, path):
         Variable to be saved.
 
     path: str
-        Location (including the file name, without '.pkl` extension) to save ``var``.
+        Location (including the file name, without '.pkl' extension) to save ``var``.
 
     """
 
@@ -481,7 +533,7 @@ def load_trace(path):
     Parameters
     ----------
     path: str
-        Path to saved NetCDF file (without the '.nc` extension).
+        Path to saved NetCDF file (without the '.nc' extension).
 
     Returns
     -------
@@ -501,7 +553,7 @@ def load_object(path):
     Parameters
     ----------
     path: str
-        Path to saved .pkl file (without the '.pkl` extension).
+        Path to saved .pkl file (without the '.pkl' extension).
 
     Returns
     -------
@@ -517,7 +569,7 @@ def accumulation_rate(full_trace, sample_df, ages_df, method = 'all', age_model 
     """
     Calculate apparent sediment accumulation rate between successive samples (if ``method = 'successive'``) or every possible sample pairing (``method = 'all'``).
 
-    Note that if ``method = 'all'``, rate is returned in mm/year, and duration is returned in years. If ``method = 'successive'``, rate is returned in m/Myr, and duration is returned in Myr. Input data are assumed to have units of meters and millions of years. Used as input to :py:meth:`sadler_plot() <stratmc.plotting>` and :py:meth:`accumulation_rate_stratigraphy() <stratmc.plotting>` in :py:mod:`stratmc.plotting`.
+    Note that if ``method = 'all'``, rate is returned in mm/year, and duration is returned in years. If ``method = 'successive'``, rate is returned in m/Myr, and duration is returned in Myr. Input data are assumed to have units of meters and millions of years. Used as input to :py:meth:`sadler_plot() <stratmc.plotting.sadler_plot>` and :py:meth:`accumulation_rate_stratigraphy() <stratmc.plotting.accumulation_rate_stratigraphy>` in :py:mod:`stratmc.plotting`.
 
     Parameters
     ----------
@@ -531,10 +583,10 @@ def accumulation_rate(full_trace, sample_df, ages_df, method = 'all', age_model 
         :class:`pandas.DataFrame` containing age constraints from all sections.
 
     method: str, optional
-        Whether to calculate accumulation rates between every possible sample pairing ('all`), or between successive samples ('successive`); defaults to 'all`.
+        Whether to calculate accumulation rates between every possible sample pairing ('all'), or between successive samples ('successive'); defaults to 'all'.
 
     age_model: str, optional
-        Whether to calculate accumulation rates using the the posterior or prior age model for each section; defaults to 'posterior`.
+        Whether to calculate accumulation rates using the the posterior or prior age model for each section; defaults to 'posterior'.
 
     include_age_constraints: bool, optional
         Whether to include radiometric age constraints in accumulation rate calculations; defaults to ``True``.
@@ -712,3 +764,427 @@ def accumulation_rate(full_trace, sample_df, ages_df, method = 'all', age_model 
             rate_df = pd.concat([rate_df.astype(section_rate_df.dtypes), section_rate_df], ignore_index = True)
 
     return rate_df
+
+def downsample(sample_df, ages_df, N = 5000, likelihood_ratio_min = 0.5, proxy = 'd13c', keep = 'best', keep_seed = None, resample_with_lowest_n = True, flexible_n = True, best_criteria = 'corr_coef', **kwargs):
+    """
+    Subsample a set of proxy observations. Calculates the likelihood of the original stratigraphic signal given the subsampled signal and uncertainty in the data. Returns the solution that meets the mean likelihood ratio minimum with the lowest number of downsampled data points. See input parameter descriptions for additional details.
+
+    Parameters
+    ----------
+    sample_df: pandas.DataFrame
+        :class:`pandas.DataFrame` containing proxy data for all sections.
+
+    ages_df: pandas.DataFrame
+        :class:`pandas.DataFrame` containing age constraints for all sections.
+
+    N: int
+        Number of random sample groupings to test. Defaults to 5,000.
+
+    likelihood_ratio_min: float or dict{float}, optional
+        Minimum acceptable likelihood ratio. For each section, the algorithm selects the smallest downsampled data set that meets this threshold. If multiple solutions with this minimum number of data points exist, then the solution with the highest correlation coefficient is selected if ``keep`` is 'best', while a random one of these solutions is selected if ``keep`` is 'random'. Must be in ``[0, 1]``; defaults to 0.5. Pass as a dictionary to specify a different value for each section.
+
+    keep: str
+        If there are multiple solutions that satisfy ``likelihood_ratio_min`` using the minimum possible number of data points, whether to return the best one of these solutions ('best'), or a random solution ('random'). Defaults to 'best'.
+
+    flexible_n: bool
+        Whether to consider solutions with 1 more data point than the minimum. Defaults to ``True``.
+
+    resample_with_lowest_n: bool
+        Whether to generate another N random solutions with the minimum number of data points required to staisfy ``likelihood_ratio_min`` (or one more than the minimum number of data points, if ``flexible_n = True``). Improves exploration of the solution space. Defaults to ``True``.
+
+    best_criteria: str
+        Which metric to use to identify the best solution among the candidate solutions that meet or exceed ``likelihood_ratio_min`` (if ``mode`` is 'best'). Either 'likelihood_ratio' (mean likelihood ratio) or 'corr_coef' (maximum Pearson correlation coefficient); defalts to 'corr_coef'.
+
+    proxy: str, optional
+        Proxy to downsample. Defaults to 'd13c'.
+
+    sections: list(str) or numpy.array(str), optional
+        List of sections to downsample. Defaults to all sections in ``sample_df``.
+
+
+    Returns
+    -------
+    downsampled_data: pandas.DataFrame
+        :class:`pandas.DataFrame` containing downsampled proxy data. All samples are still included in the DataFrame, but samples that were excluded during downsampling are marked ``Exclude? = True``.
+
+    solution_likelihood_ratios: dict
+        Dictionary with the mean likelihood ratio for chosen solutions; keys are section names.
+
+    solution_corr_coefs: dict
+        Dictionary with the correlation coefficients for chosen solutions; keys are section names.
+
+
+    """
+
+    sample_df_downsampled = sample_df.copy()
+    sample_df_downsampled['cluster'] = np.nan
+
+    if 'sections' in kwargs:
+            sections = list(kwargs['sections'])
+    else:
+        sections = np.unique(sample_df_downsampled['section'])
+
+    if type(likelihood_ratio_min) != dict:
+        temp = likelihood_ratio_min
+        likelihood_ratio_min = {}
+        for section in sections:
+            likelihood_ratio_min[section] = temp
+
+    solution_likelihood_ratios = {}
+    solution_corr_coefs = {}
+
+
+    for section in tqdm(sections):
+        print(f'Downsampling {section}')
+
+        section_df = sample_df[(sample_df['section']==section) & (~sample_df['Exclude?'].astype(bool))].dropna(subset = proxy)
+
+        heights = section_df['height'].values
+        proxy_vec = section_df[proxy].values
+        proxy_std_vec = section_df[proxy + '_std'].values
+
+        if len(heights) > 2:
+            # grab required boundaries (changes in depositional environment, superposition, depositional ages)
+            required_boundaries = get_boundaries(sample_df, ages_df, proxy, section)
+
+            # make height grid to evaluate likelihood at original heights
+            height_grid = heights
+
+            # make proxy grid to evaluate likelihood at original heights
+            proxy_grid = proxy_vec
+            proxy_std_grid = proxy_std_vec
+
+            min_n_data = len(required_boundaries) - 2 + 1
+            max_n_data = len(heights)
+
+            # calculate the likelihood of the original signal, assuming we keep all data points (need for likelihood ratio calculation)
+            max_signal_log_prob = np.ones_like(proxy_grid) * np.nan
+            for i in range(len(proxy_grid)):
+                max_signal_log_prob[i] = norm.logpdf(proxy_grid[i], proxy_grid[i], proxy_std_grid[i]) # mean_proxy_std
+
+            random_data_idx = {}
+            corr_coef = np.ones(N) * np.nan
+            mean_likelihood_ratio = np.ones(N) * np.nan
+            n_data_points = np.ones(N) * np.nan
+
+            for i in tqdm(np.arange(N)):
+                rng = np.random.default_rng(seed = i)
+
+                random_data_idx[i] = []
+                n_data_points[i] = rng.choice(np.arange(np.max([min_n_data, 2]), max_n_data + 1), 1)[0]
+
+                candidate_idx = section_df.index.tolist()
+
+                # first, select 1 data point each from w/in each 'required' interval -- this ensures that all age constraints and depositional environments are represented
+                for interval, boundary_height in enumerate(required_boundaries[:-1]):
+                    above = heights >= boundary_height
+                    below = heights < required_boundaries[interval + 1]
+
+                    cluster_idx = np.array(section_df.index.tolist())[above & below]
+
+                    random_data_idx[i].append(rng.choice(cluster_idx, 1)[0])
+
+                    # remove the chosen sample from the list of candidate data points
+                    candidate_idx.remove(random_data_idx[i][-1])
+
+                # calculate how many additional data points we need to reach target number
+                n_remaining = n_data_points[i] - len(random_data_idx[i])
+
+                random_data_idx[i] += list(rng.choice(candidate_idx, int(n_remaining), replace = False))
+
+                random_data_idx[i].sort()
+
+                interp_proxy = np.interp(height_grid, section_df['height'].loc[random_data_idx[i]], section_df[proxy].loc[random_data_idx[i]])
+
+                # calculate likelihood of original signal, given interpolated signal and average proxy std dev
+                signal_log_prob = np.ones_like(proxy_grid) * np.nan
+                for j in range(len(proxy_grid)):
+                    # use standard deviation of the measured value, instead of the mean
+                    signal_log_prob[j] = norm.logpdf(interp_proxy[j], proxy_grid[j],  proxy_std_grid[j]) # mean_proxy_std
+
+                mean_likelihood_ratio[i] = np.mean(np.exp(signal_log_prob - max_signal_log_prob))
+
+                corr_coef[i] = np.corrcoef(proxy_grid, interp_proxy)[0, 1]
+
+            above = (mean_likelihood_ratio >= likelihood_ratio_min[section])
+
+            keep_idx_list = np.argwhere(above)
+
+            # minimum number of data points in list
+            min_n_data = int(np.min(n_data_points[keep_idx_list]))
+
+            # NOTE -- this can rarely cause problems if it doesn't re-find the solution from the previous part w/ the sufficiently high correlation coeficient. in this case, either try re-running w/ higher N, or run with flexible size so that solutions with N+1 samples are also evaluated
+            if resample_with_lowest_n:
+                print(f'Resampling {section}')
+                for i in tqdm(np.arange(N)):
+
+                    rng = np.random.default_rng(seed = i)
+
+                    random_data_idx[i] = []
+
+                    if flexible_n:
+                        if min_n_data < len(heights):
+                            n_data_points[i] = rng.choice([min_n_data, min_n_data + 1], 1)[0]
+                        else:
+                            n_data_points[i] = min_n_data
+                    else:
+                        n_data_points[i] = min_n_data
+
+                    candidate_idx = section_df.index.tolist()
+
+                    # first, select 1 data point each from w/in each 'required' interval -- this ensures that all age constraints and depositional environments are represented
+                    for interval, boundary_height in enumerate(required_boundaries[:-1]):
+                        above = heights >= boundary_height
+                        below = heights < required_boundaries[interval + 1]
+
+                        cluster_idx = np.array(section_df.index.tolist())[above & below]
+
+                        random_data_idx[i].append(rng.choice(cluster_idx, 1)[0])
+
+                        # remove the chosen sample from the list of candidate data points
+                        candidate_idx.remove(random_data_idx[i][-1])
+
+                    # calculate how many additional data points we need to reach target number
+                    n_remaining = n_data_points[i] - len(random_data_idx[i])
+
+                    random_data_idx[i] += list(rng.choice(candidate_idx, int(n_remaining), replace = False))
+
+                    random_data_idx[i].sort()
+
+                    interp_proxy = np.interp(height_grid, section_df['height'].loc[random_data_idx[i]], section_df[proxy].loc[random_data_idx[i]])
+
+                    # calculate likelihood of original signal, given interpolated signal and average proxy std dev
+                    signal_log_prob = np.ones_like(proxy_grid) * np.nan
+
+                    for j in range(len(proxy_grid)):
+                        signal_log_prob[j] = norm.logpdf(interp_proxy[j], proxy_grid[j], proxy_std_grid[j]) # mean_proxy_std
+
+                    mean_likelihood_ratio[i] = np.mean(np.exp(signal_log_prob - max_signal_log_prob))
+
+                    corr_coef[i] = np.corrcoef(proxy_grid, interp_proxy)[0, 1]
+
+                above = (mean_likelihood_ratio >= likelihood_ratio_min[section])
+
+                # solutions that meet minimum criteria
+                keep_idx_list = np.argwhere(above)
+
+                if len(keep_idx_list) == 0:
+                    print('Try running with higher N; no viable solutions found after resampling')
+
+                # if size can be flexible (+1 larger than the minimum) (applies for both 'best' and 'random' modes)
+                if flexible_n:
+                    n_data_idx = np.where((n_data_points[keep_idx_list] == min_n_data) | (n_data_points[keep_idx_list] == min_n_data + 1))[0]
+
+                else:
+                    # get indices (within candidate list) where number of clusters is equal to the minimum
+                    n_data_idx = np.where(n_data_points[keep_idx_list] == min_n_data)[0]
+
+                # use user-specified criteria (either corr coef or mean likelihood ratio) to pick the best solution
+                if (keep == 'best') or (len(n_data_idx) == 1):
+                    # out of the viable solutions, choose the one with the highest correlation coefficient
+                    if best_criteria == 'corr_coef':
+                        best_idx_temp = np.nanargmax(corr_coef[keep_idx_list][n_data_idx])
+
+                    # out of the viable solutions, choose the one with the lowest (mean) residuals between the interpolated signal and the excluded data points
+                    elif best_criteria == 'likelihood_ratio':
+                        best_idx_temp = np.argmax(mean_likelihood_ratio[keep_idx_list][n_data_idx])
+
+                    best_idx = keep_idx_list[n_data_idx[best_idx_temp]][0]
+
+                elif (keep == 'random') and (len(n_data_idx) > 1):
+                    keep_rng = np.random.default_rng(seed = keep_seed)
+
+                    best_idx_temp = keep_rng.choice(n_data_idx, 1)[0]
+
+                    best_idx = keep_idx_list[best_idx_temp][0]
+
+            #solution_corr_coefs[section] = corr_coef[best_idx]
+            solution_likelihood_ratios[section] = mean_likelihood_ratio[best_idx]
+            solution_corr_coefs[section] = corr_coef[best_idx]
+
+            # mark the samples we're keeping as Exclude? = False, and the rest as Exclude? = True
+            # don't change samples that didn't have data for the downsampled proxy anyway
+            sample_df_downsampled.loc[(sample_df_downsampled['section'] == section) & (~np.isnan(sample_df_downsampled[proxy])), 'Exclude?'] = True
+            sample_df_downsampled.loc[random_data_idx[best_idx], 'Exclude?'] = False
+
+
+    sample_df_downsampled['Exclude?'] = sample_df_downsampled['Exclude?'].astype(bool)
+
+    return sample_df_downsampled, solution_likelihood_ratios, solution_corr_coefs
+
+
+def get_boundaries(sample_df, ages_df, proxy, section, environment = True, depositional_ages = True, superposition = True):
+    """
+    Helper function for :py:meth:`downsample() <stratmc.data.downsample>`. Returns list of height boundaries where the target section must be split into different groups. By default, inserts breaks between samples from different depositional environments, around groups of samples with the same depositional age, and around groups of samples without superposition information.
+
+    Parameters
+    ----------
+    sample_df: pandas.DataFrame
+        :class:`pandas.DataFrame` containing all proxy data.
+
+    ages_df: pandas.DataFrame
+        :class:`pandas.DataFrame` containing age constraints from all sections.
+
+    proxy: str
+        Name of proxy to be downsampled.
+
+    section: str
+        Name of target section.
+
+    environment: bool
+        Whether to insert breaks between different depositional environments.
+
+    depositional_ages: bool
+        Whether to insert breaks around groups of samples with the same depositional age constraint.
+
+    superposition:
+        Whether to insert breaks around groups of samples without superposition information.
+
+    Returns
+    -------
+    boundary_heights: numpy.array
+        Array containing required cluster boundaries.
+
+    """
+
+    section_df = sample_df[(sample_df['section']==section) & (~sample_df['Exclude?'].astype(bool))].dropna(subset = proxy)
+    section_ages_df = ages_df[(ages_df['section']==section)  & (~ages_df['depositional?'])]
+
+    heights = section_df['height'].values
+    age_heights = section_ages_df['height'].values
+
+    # create a list of interval boundary heights: 1) age constraint, 2) change in 'superposition?' boolean, 3) change in depositional environment
+    boundary_heights = list(age_heights)
+
+    section_unique_dep_env = section_df['Depositional Environment'].unique()
+    section_dep_env = section_df['Depositional Environment'].values
+    section_superposition = section_df['superposition?'].values
+    section_dep_ages = section_df['depositional age'].values
+    section_unique_dep_ages = list(section_df['depositional age'].astype(str).unique())
+
+    if 'nan' in section_unique_dep_ages:
+        section_unique_dep_ages.remove('nan')
+
+    if superposition:
+        # if there's a change in superposition boolean within the interval, need to split into a separate interval (w/ same lower and upper bound -- just add the height twice)
+        if not (all(section_superposition)) or (all(~section_superposition)):
+            # grab heights of samples without superposition
+            super_heights = np.unique(section_df[~section_df['superposition?']]['height'])
+
+            for h in super_heights:
+                if h not in boundary_heights:
+                    # append the height
+                    boundary_heights += [h]
+                    top_h_idx = np.where(section_df['height'] == h)[0][-1]
+
+                # bound with height of overlying sample, if not already done or at top of section
+                if (h != np.max(heights)):
+                    if heights[top_h_idx + 1] not in super_heights:
+                        boundary_heights.append(heights[top_h_idx + 1])
+
+    if depositional_ages:
+        # add boundaries around groups of samples with the same depositional age
+        for dep_age in section_unique_dep_ages:
+            # print(f'splitting depositional ages for section {section}')
+            dep_age_idx = np.where(section_dep_ages == dep_age)[0]
+
+            # assuming all the ages are in 1 chunk, add the base and the overlying sample
+            if all(np.diff(dep_age_idx) == 1):
+
+                # only add base if chunk isn't at base of section
+                if dep_age_idx[0] != 0:
+                    boundary_heights.append(heights[dep_age_idx[0]])
+
+                # only add overlying sample if not at top of section (already bounded by another age constraint)
+                if dep_age_idx[-1] != len(heights) - 1:
+                    boundary_heights.append(heights[dep_age_idx[-1] + 1])
+
+            else:
+                print(f'samples with depositional age {dep_age} in section {section} are not in a continuous chunk - check that depositional age assignment is correct')
+                if (len(dep_age_idx) > 1):
+                        switch_idx = np.where(np.diff(dep_age_idx) != 1)[0]
+
+                        boundary_heights += list(heights[dep_age_idx[switch_idx] + 1])
+
+                        # add boundary above the uppermost chunk, unless it's the top of the secion  (in which case there should already be an age constraint)
+                        if dep_age_idx[-1] != len(heights) - 1:
+                            boundary_heights += list([heights[dep_age_idx[-1] + 1]])
+
+    # add boundaries between different depositional environments
+    if environment:
+        if len(section_unique_dep_env) > 1:
+            for env in section_unique_dep_env:
+                env_idx = np.where(section_dep_env == env)[0]
+
+                # add base of lowermost group, unless we're at the bottom of the section
+                if env_idx[0] != 0:
+                    boundary_heights.append(heights[env_idx[0]])
+
+                # if all samples from this environment are in 1 chunk, just add the top boundary
+                if (len(env_idx)) >= 1 and (all(np.diff(env_idx) == 1)):
+                    # don't add to list if chunk is at top of the section (already bounded by an age constraint)
+                    if (env_idx[-1] != len(heights) - 1):
+                        boundary_heights.append(heights[env_idx[-1] + 1])
+
+                else:
+                    # if there's more than one sample from this environment (scenario with only 1 is covered above)
+                    if (len(env_idx) > 1):
+                        switch_idx = np.where(np.diff(env_idx) != 1)[0]
+
+                        boundary_heights += list(heights[env_idx[switch_idx] + 1])
+
+                        # add boundary above the uppermost chunk, unless it's the top of the secion  (in which case there should already be an age constraint)
+                        if env_idx[-1] != len(heights) - 1:
+                            boundary_heights += list([heights[env_idx[-1] + 1]])
+
+    # sort interval boundaries, and get rid of any duplicate boundaries
+    boundary_heights = np.sort(np.unique(boundary_heights))
+
+    boundary_heights = remove_extra_bounds(heights, boundary_heights)
+
+
+    return boundary_heights
+
+
+def remove_extra_bounds(heights, boundaries):
+    """
+    Helper function for :py:meth:`downsample() <stratmc.data.downsample>`; removes duplicate or extraneous boundaries from list of candidate cluster boundaries.
+
+    Parameters
+    ----------
+    proxy: numpy.array
+        array containing proxy values for samples in group
+
+    height: pandas.DataFrame
+        array containing heights for samples in group
+
+    bounds: np.array
+        array containing heights of boundaries between groups
+
+    Returns
+    -------
+    centroid: np.array
+        Array containing centroid coordinates: [proxy_center, height_center]
+
+    """
+
+    # check that there are samples between all boundaries. if not, get rid of the upper boundary
+
+    boundaries = list(boundaries)
+
+    finished = False
+    while not finished:
+        for interval, height in enumerate(boundaries[:-1]):
+            above = heights >= height
+            below = heights < boundaries[interval + 1]
+
+            if len(heights[above & below]) == 0:
+                # remove the current boundary if there aren't any samples in interval
+                # note -- if we remove the upper boundary, may end up w/ >1 sample in group b/c the upper boundary is non-inclusive
+                boundaries.remove(boundaries[interval])
+                break
+
+            if interval == len(boundaries) - 2:
+                finished = True
+
+    return np.array(boundaries)

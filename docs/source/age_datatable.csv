@@ -1,12 +1,13 @@
-``section``,Name of the **section** this data belongs to (type ``string``). Must match the corresponding section in the **Chemostratigraphic Data** table.
+``section``,Name of the **section** this data belongs to (type ``string``). Must match the corresponding section in the **Stratigraphic proxy data** table.
 ``height``,"Height of age constraint in section (in meters). For sections where stratigraphic position instead is described by **depth**, leave blank."
 ``depth``,"Depth of age constraint in core (in meters). For sections where stratigraphic position instead is described by **height**, leave blank."
 ``age``,Age (in Myr).
 ``age_std``,1-:math:`\sigma` age uncertainty (in Myr).
-``name``,Name of age constraint (type ``string``). Only required if one of ``shared?`` is ``True``.
+``name``,"Name of age constraint (type ``string``). Only required if ``shared?`` is ``True``, and for depositional age constraints linked to proxy obsevations in ``Stratigraphic proxy data``. "
 ``shared?``,"Whether the age constraint is shared between multiple sections (and should have the same age in all sections where it is present -- i.e., a correlative age constraint) (``True`` or ``False``). Shared constraints must have the same ``name``. Optional; defaluts to ``False``. "
 ``intermediate detrital?``,"Whether the age constraint is an intermediate (i.e., in the middle of a section) detrital age, which provides a maximum age for all overlying samples but does not constrain the age of underlying samples (``True`` or ``False``. Optional; defaults to ``False``."
 ``intermediate intrusive?``,"Whether the age constraint is an intermediate (i.e., in the middle of a section) intrusive age, which provides a minimum age for all underlying samples but does not constrain the age of overlying samples (``True`` or ``False``). Optional; defaults to ``False``.  "
+``depositional?``,Whether the age constraint directly dates the age of a sample in the **Stratigraphic proxy data** table (rather than constraining its minimum or maximum age). Must match the name of the age constraint in the **depositional age** column of the **Stratigraphic proxy data** table.
 ``distribution_type``,Probability distribution used to model age constraint; must correspond to the name of a continuous :class:`pymc.distributions` object (type ``string``). Optional; defaults to `Normal`.
 ``param_1_name``,"Name of parameter for custom distribution; only required if using a distribution other than ``Normal``. If the custom distribution has no parameters, leave blank."
 ``param_1``,"Value of parameter for custom distribution; only required if using a distribution other than ``Normal``. If the custom distribution has no parameters, leave blank."

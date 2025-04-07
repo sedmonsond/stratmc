@@ -31,7 +31,7 @@ dependencies = [
     "matplotlib<=3.9.0",
     "netCDF4",
     "numpyro",
-    "pymc>=5.16.2",
+    "pymc>=5.19",
     "scikit-learn",
     "scipy",
     "seaborn",

@@ -2,7 +2,7 @@
 Tests and checks
 *****************
 
-Functions for checking that the inference model is working correctly.
+Functions for checking that the inference model is working correctly. Run automatically during sampling.
 
 .. currentmodule:: stratmc.tests
 

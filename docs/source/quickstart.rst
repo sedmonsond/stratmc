@@ -25,17 +25,16 @@ Here, we provide a basic example of importing data and running the inference mod
 
       model, gp = build_model(sample_data, age_data, proxies = ['d13c'])
 
-4. Sample the model posterior using a JAX-assisted MCMC sampling algorithm with :py:meth:`get_trace(model, gp, ages) <stratmc.inference.build_model>`.
+4. Sample the model posterior using a JAX-assisted MCMC sampling algorithm with :py:meth:`get_trace(model, gp, ages, sample_data, age_data) <stratmc.inference.get_trace>`.
 
     .. code-block:: python
 
-      import pymc as pm
       from stratmc.inference import get_trace
 
       # array of ages at which to sample the posterior proxy curve
       predict_ages = np.linspace(lower_age, upper_age, number_ages)
 
-      trace = get_trace(model, gp, predict_ages)
+      trace = get_trace(model, gp, predict_ages, sample_data, age_data)
 
 5. Plot and analyze the results with the :py:mod:`stratmc.plotting` library.
 
