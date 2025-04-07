@@ -1480,11 +1480,8 @@ def count_samples(full_trace, time_grid = None):
     sample_counts: np.array
         Number of observations in each time bin, summed over all posterior draws such that the average number of observations is ``sample_counts/n``.
 
-    grid_centers: np.array
-        Time bin centers.
-
-    grid_widths: np.array
-        Time bin widths.
+    time_grid: np.array
+        Time bin edges.
 
     n: int
         Number of posterior draws in ``full_trace``.
@@ -1495,20 +1492,11 @@ def count_samples(full_trace, time_grid = None):
     if time_grid is None:
         time_grid = full_trace.X_new.X_new.values
 
-    # for each grid point
-    sample_counts = np.zeros(len(time_grid) - 1)
-    grid_centers = np.diff(time_grid)/2 + time_grid[:-1]
-    grid_widths = np.diff(time_grid)
-
-    print('Counting data in time bins')
-    for i in tqdm(np.arange(len(time_grid) - 1)):
-        for j in np.arange(sample_ages_post.shape[1]):
-            n_overlap =  np.argwhere(((sample_ages_post[:, j] >= time_grid[i]) & (sample_ages_post[:, j] < time_grid[i + 1]))).shape[0]
-            sample_counts[i] += n_overlap
+    sample_counts, time_grid = np.histogram(sample_ages_post, bins = time_grid)
 
     n = sample_ages_post.shape[1]
 
-    return sample_counts, grid_centers, grid_widths, n
+    return sample_counts, time_grid, n
 
 def find_gaps(full_trace, time_grid = None):
     """

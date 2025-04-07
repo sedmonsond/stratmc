@@ -8,7 +8,7 @@ from stratmc.model import build_model
 
 def test_custom_priors():
     # load data
-    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', proxies = ['d13c', 'd18o', 'd34s'], proxy_sigma_default = {'d13c': 0.1, 'd18o': 0.25, 'd34s': 0.5})
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', proxies = ['d13c', 'd18o', 'd34s'], proxy_sigma_default = {'d13c': 0.1, 'd18o': 0.25, 'd34s': 0.5}, drop_excluded_samples = False)
 
     # for this test, remove the d18o_std column to make sure that it's filled in w/in build_model if necessary
     sample_df['d18o_std'] = np.nan
@@ -56,7 +56,7 @@ def test_custom_priors():
 
 def test_sample_numpyro():
     # load data
-    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', proxies = ['d13c', 'd18o', 'd34s'], proxy_sigma_default = {'d13c': 0.1, 'd18o': 0.25, 'd34s': 0.5})
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', proxies = ['d13c', 'd18o', 'd34s'], proxy_sigma_default = {'d13c': 0.1, 'd18o': 0.25, 'd34s': 0.5}, drop_excluded_samples = False)
 
     age_min = np.min(ages_df['age'])
     age_max = np.max(ages_df['age'])
@@ -73,6 +73,7 @@ def test_sample_numpyro():
                         ls_lambda = 15, # lambda of Wald distribution used as RBF kernel lengthscale prior
                         offset_type = 'section', # per-section offset with default prior
                         noise_type = 'section', # per-section noise with default prior
+                        noise_prior = {'d13c': 'HalfCauchy', 'd18o': 'HalfNormal'}
                         )
 
     _ = get_trace(model,
@@ -82,17 +83,18 @@ def test_sample_numpyro():
                         ages_df,
                         proxies = ['d13c', 'd18o'],
                         chains = 2,
-                            tune = 2,
-                            draws = 2,
-                            prior_draws = 2,
+                        tune = 2,
+                        draws = 2,
+                        prior_draws = 2,
                         target_accept = 0.9,
                         save = False,
+                        save_custom_initvals = False,
                         sampler = 'numpyro'
                         )
 
 def test_sample_blackjax():
     # load data
-    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', proxies = ['d13c', 'd18o', 'd34s'], proxy_sigma_default = {'d13c': 0.1, 'd18o': 0.25, 'd34s': 0.5})
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', proxies = ['d13c', 'd18o', 'd34s'], proxy_sigma_default = {'d13c': 0.1, 'd18o': 0.25, 'd34s': 0.5}, drop_excluded_samples = False)
 
     age_min = np.min(ages_df['age'])
     age_max = np.max(ages_df['age'])
@@ -123,6 +125,7 @@ def test_sample_blackjax():
                             prior_draws = 2,
                         target_accept = 0.9,
                         save = False,
+                        save_custom_initvals = False,
                         sampler = 'blackjax'
                         )
 
@@ -162,6 +165,7 @@ def test_hsgp():
                             prior_draws = 2,
                         target_accept = 0.9,
                         save = False,
+                        save_custom_initvals = False,
                         sampler = 'blackjax',
                         approximate = True
                         )

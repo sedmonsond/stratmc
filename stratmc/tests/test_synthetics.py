@@ -177,7 +177,7 @@ def test_quantify_signal_recovery():
     assert all(~np.isnan(d13c_signal_recovery))
 
 def test_sample_age_recovery():
-    sample_df, _ = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    sample_df, _ = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', drop_excluded_samples = False)
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
     age_likelihoods = sample_age_recovery(full_trace, sample_df, mode = 'posterior')
@@ -192,7 +192,7 @@ def test_sample_age_recovery():
     assert all(~np.isnan(prior_age_likelihoods))
 
 def test_sample_age_residuals():
-    sample_df, _ = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df')
+    sample_df, _ = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', drop_excluded_samples = False)
     full_trace = load_trace(str(PROJECT_ROOT) + '/examples/traces/test_trace_1')
 
     age_residuals = sample_age_residuals(full_trace, sample_df, mode = 'posterior')

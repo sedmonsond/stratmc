@@ -5,4 +5,4 @@ import stratmc.plotting
 import stratmc.synthetics
 import stratmc.tests
 
-__version__ = "0.1.1b"
+__version__ = "1.0.0"

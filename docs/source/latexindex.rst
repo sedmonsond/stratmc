@@ -10,7 +10,7 @@ Package Overview
 
 StratMC is a statistical framework for reconstructing past Earth system change using sediment-hosted proxy data. It is built on the Python probabilistic programming library `PyMC <https://www.pymc.io/welcome.html>`_, which provides a flexible toolbox for constructing Bayesian models and sampling their posteriors using Markov chain Monte Carlo (MCMC) methods.
 
-Using geochemical proxy observations and geological age constraints from multiple stratigraphic sections, StratMC simultaneously infers the global proxy signal recorded by all sections and builds an age model for each section. For a complete description of the model, see Edmonsond & Dyer (submitted to *Geoscientific Model Development*).
+Using geochemical proxy observations and geological age constraints from multiple stratigraphic sections, StratMC simultaneously infers the global proxy signal recorded by all sections and builds an age model for each section. For a complete description of the model, see `Edmonsond & Dyer (2025) <https://doi.org/10.5194/egusphere-2024-2579>`_.
 
 The StratMC Python package can be :doc:`installed <installation>` from `PyPI <https://pypi.org/project/stratmc/>`_ using the `pip package installer <https://packaging.python.org/en/latest/guides/tool-recommendations/>`_. The :doc:`API Reference <api>` catalogs built-in functions for processing data, running the inference model, and plotting the results. For example notebooks, refer to the online `package documentation <https://stratmc.readthedocs.io/>`_ (https://stratmc.readthedocs.io/).
 

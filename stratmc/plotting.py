@@ -168,8 +168,7 @@ def proxy_strat(sample_df, ages_df, proxy = 'd13c', plot_constraints = True, plo
                                           ages_df['distribution_type'][(ages_df['section']==section) & (ages_df['Exclude?'] != True) & (~ages_df['depositional?'])],
                                           ages_df['param_1'][(ages_df['section']==section) & (ages_df['Exclude?'] != True) & (~ages_df['depositional?'])],
                                           ages_df['param_2'][(ages_df['section']==section) & (ages_df['Exclude?'] != True) & (~ages_df['depositional?'])]):
-                # print(np.isnan(height))
-                # print(section)
+
                 if dist_type == 'Normal':
                     ax.text(xl[0] + x_range * 0.05, # 0.45
                             height + y_range * 0.01,
@@ -338,7 +337,7 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
 
         for section in sections:
             section_df = sample_df[sample_df['section']==section]
-            proxy_idx = (~np.isnan(section_df[proxy])) & (~section_df['Exclude?'].values.astype(bool))
+            proxy_idx = (~np.isnan(section_df[proxy]))
             excluded_idx = (~np.isnan(section_df[proxy])) & (section_df['Exclude?'])
 
             sec_ages = az.extract(full_trace.posterior)[str(section)+'_ages'].values
@@ -357,8 +356,8 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                 label = '_nolegend_'
 
             if vertical:
-                ax.scatter(section_df[proxy][proxy_idx],
-                           max_like[proxy_idx],
+                ax.scatter(section_df[proxy][proxy_idx & ~excluded_idx],
+                           max_like[proxy_idx & ~excluded_idx],
                            #np.mean(sec_ages, axis = 1),
                            s = marker_size,
                            color = cs[section],
@@ -375,8 +374,8 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                     else:
                         excluded_label = '_nolegend'
 
-                    ax.scatter(section_df[proxy][excluded_idx],
-                           max_like[excluded_idx],
+                    ax.scatter(section_df[proxy][excluded_idx & proxy_idx],
+                           max_like[excluded_idx & proxy_idx],
                            s = marker_size,
                            color = 'none',
                            label = excluded_label,
@@ -387,8 +386,8 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
                     plotted_excluded = True
 
             if horizontal:
-                ax.scatter(max_like[proxy_idx],
-                           section_df[proxy][proxy_idx],
+                ax.scatter(max_like[proxy_idx & ~excluded_idx],
+                           section_df[proxy][proxy_idx & ~excluded_idx],
                            s = marker_size,
                            color = cs[section],
                            label = label,
@@ -398,14 +397,14 @@ def proxy_inference(sample_df, ages_df, full_trace, legend = True, plot_constrai
 
                 plotted_data = True
 
-                if (plot_excluded_samples) and (len(section_df[proxy][excluded_idx]) > 0):
+                if (plot_excluded_samples) and (len(section_df[proxy][proxy_idx & excluded_idx]) > 0):
                     if not plotted_excluded:
                         excluded_label = 'Excluded samples'
                     else:
                         excluded_label = '_nolegend'
 
-                    ax.scatter(max_like[excluded_idx],
-                           section_df[proxy][excluded_idx],
+                    ax.scatter(max_like[excluded_idx & proxy_idx],
+                           section_df[proxy][excluded_idx & proxy_idx],
                            s = marker_size,
                            color = 'none',
                            label = excluded_label,
@@ -2266,7 +2265,7 @@ def section_proxy_residuals(full_trace, sample_df, legend = True, cmap = 'Spectr
 
     return fig
 
-def sample_ages(full_trace, sample_df, section, plot_excluded_samples = False, cmap = 'viridis'):
+def sample_ages(full_trace, sample_df, section, plot_excluded_samples = False, plot_prior = True, cmap = 'viridis'):
     """
     Plot sample age prior and posterior distributions for a given section. Each subplot contains posterior distributions for a different sample.
 
@@ -2287,7 +2286,7 @@ def sample_ages(full_trace, sample_df, section, plot_excluded_samples = False, c
     Parameters
     ----------
     full_trace: arviz.InferenceData
-        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
+        An :class:`arviz.InferenceData` object containing the full set of posterior and prior samples from :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`.
 
     sample_df: pandas.DataFrame
         :class:`pandas.DataFrame` containing proxy data for all sections.
@@ -2297,6 +2296,9 @@ def sample_ages(full_trace, sample_df, section, plot_excluded_samples = False, c
 
     plot_excluded_samples: bool, optional
         Plot age distributions for proxy observations that were excluded from the inference (``Exclude?`` is ``True`` in ``sample_df``). Defaults to ``False``.
+
+    plot_prior: bool, optional
+        Plot prior distributions for sample ages. Defaults to ``True``.
 
     cmap: str, optional
         Name of seaborn color palette to use for age distributions. Defaults to 'viridis'.
@@ -2322,6 +2324,9 @@ def sample_ages(full_trace, sample_df, section, plot_excluded_samples = False, c
 
     vals = az.extract(full_trace.posterior)[str(section)+'_ages'].values
     prior_vals = az.extract(full_trace.prior)[str(section)+'_ages'].values
+
+    print(vals.shape)
+    print(prior_vals.shape)
 
     if not plot_excluded_samples:
         included_idx = ~sample_df['Exclude?'].values.astype(bool)
@@ -2369,8 +2374,10 @@ def sample_ages(full_trace, sample_df, section, plot_excluded_samples = False, c
 
         sns.kdeplot(vals[i,:].ravel(),
                     label = post_label, fill = True, color = pal[i], edgecolor=edgecolor, linestyle = linestyle, alpha = 0.3, ax = ax, cut = 0)
-        sns.kdeplot(prior_vals[i,:].ravel(),
-                label = prior_label, fill = False, color = pal[i], ax = ax, cut = 0)
+
+        if plot_prior:
+            sns.kdeplot(prior_vals[i,:].ravel(),
+                    label = prior_label, fill = False, color = pal[i], ax = ax, cut = 0)
 
         ax.tick_params(bottom = True, top = True, left = False, right = False, direction = 'in', labelsize = 12)
         ax.set_ylabel('')
@@ -2462,6 +2469,7 @@ def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_pr
         # shape = (samples x draws)
         vals = vals[:, :, included_idx]
         prior_vals = prior_vals[:, :, included_idx]
+        excluded_idx = np.array([False] * vals.shape[2])
 
     else:
         excluded_idx = sample_df['Exclude?'].values
@@ -2481,21 +2489,15 @@ def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_pr
     excluded_count = 0
 
     for i in range(samples):
+
         ax = fig.add_subplot(gs[i])
 
-        if plot_excluded_samples:
-            if excluded_idx[i]:
-                linestyle = 'dashed'
-                post_label = 'Posterior (excluded sample)'
-                prior_label = 'Prior (excluded sample)'
-                excluded_count += 1
-                lw = 1
-            else:
-                lw = 0
-                linestyle = 'solid'
-                post_label = 'Posterior'
-                prior_label = 'Prior'
-
+        if excluded_idx[i]:
+            linestyle = 'dashed'
+            post_label = 'Posterior (excluded sample)'
+            prior_label = 'Prior (excluded sample)'
+            excluded_count += 1
+            lw = 1
         else:
             lw = 0
             linestyle = 'solid'
@@ -2508,8 +2510,9 @@ def sample_ages_per_chain(full_trace, sample_df, section, chains = None, plot_pr
             sns.kdeplot(vals[chains[m], :, i].ravel(),
                         label = post_label + ', chain ' + str(chains[m]), fill = True, color = cs[m], alpha = 0.3, ax = ax, lw = lw, linestyle = linestyle, cut = 0)
 
+        # assumes only 1 prior chain
         if plot_prior:
-            sns.kdeplot(prior_vals[i,:].ravel(),
+            sns.kdeplot(prior_vals[:, :, i].ravel(),
                         label = prior_label, fill = False, color = 'k', ax = ax, cut = 0)
 
         ax.tick_params(bottom = True, top = True, left = False, right = False, direction = 'in', labelsize = 12)
@@ -3268,6 +3271,7 @@ def proxy_data_density(full_trace, time_grid = None, figsize = (6, 3.5), **kwarg
     -------
     fig: matplotlib.pyplot.figure
         Figure with bar plot of mean number of observations in each time bin.
+
     """
 
     if 'fontsize' in kwargs:
@@ -3278,13 +3282,15 @@ def proxy_data_density(full_trace, time_grid = None, figsize = (6, 3.5), **kwarg
     if time_grid is None:
         time_grid = full_trace.X_new.X_new.values
 
-    sample_counts, grid_centers, grid_widths, n =  count_samples(full_trace, time_grid = time_grid)
+    sample_counts, grid_edges, n =  count_samples(full_trace, time_grid = time_grid)
+
+    grid_widths = np.diff(grid_edges)
 
     fig = plt.figure(figsize = figsize)
 
     ax = fig.gca()
 
-    ax.bar(grid_centers, height = sample_counts/n, width = grid_widths, color = 'lightgray', edgecolor = 'k', lw = 0.5)
+    ax.bar(grid_edges[:-1], height = sample_counts/n, width = grid_widths, align = 'edge', color = 'lightgray', edgecolor = 'k', lw = 0.5)
 
     ax.set_ylabel('Average # observations', fontsize = fs)
     ax.set_xlabel('Age (Ma)', fontsize = fs)
@@ -3398,7 +3404,7 @@ def lengthscale_stability(full_trace, figsize = (5, 3.5), **kwargs):
 
         full_trace = load_trace('examples/example_docs_trace')
 
-        lengthscale_stability(full_trace)
+        lengthscale_stability(full_trace, fontsize = 10)
 
         plt.show()
 

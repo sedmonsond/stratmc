@@ -13,11 +13,11 @@ pd.options.mode.chained_assignment = None
 warnings.filterwarnings("ignore", ".*The group X_new is not defined in the InferenceData scheme.*")
 warnings.filterwarnings("ignore", ".*X_new group is not defined in the InferenceData scheme.*")
 
-def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 0.2, drop_excluded_samples = True, drop_excluded_ages = True, combine_no_superposition = False):
+def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 0.1, drop_excluded_samples = True, drop_excluded_ages = True, combine_no_superposition = False):
     """
-    Import and pre-process proxy data and age constraints from .csv files formatted according to the :ref:`Data table formatting <datatable_target>` guidelines. To combine data from different .csv files, load each file separately and then combine the DataFrames with :py:meth:`combine_data() <stratmc.data>`.
+    Import and pre-process proxy data and age constraints from .csv files formatted according to the :ref:`Data table formatting <datatable_target>` guidelines. To combine data from different .csv files, load each file separately and then combine the DataFrames with :py:meth:`combine_data() <stratmc.data.combine_data>`.
 
-    If ``sample_file.csv`` includes multiple proxy observations from the same stratigraphic horizon (for a given proxy), then all measurements marked ``Exclude? = False`` and ``superposition? = True ``  will be combined using :py:meth:`combine_duplicates() <stratmc.data>`. Samples marked ``superposition? = False`` will remain separate, and their order will be randomized within the inference model.
+    By default, samples marked ``Exclude? = True`` will be dropped from the data table. If ``sample_file.csv`` includes multiple proxy observations from the same stratigraphic horizon (for a given proxy), then all measurements marked ``Exclude? = False`` and ``superposition? = True ``  will be combined using :py:meth:`combine_duplicates() <stratmc.data.combine_duplicates>`. Samples marked ``superposition? = False`` will remain separate, and their order will be randomized within the inference model. These default behaviors can be modified by passing the ``drop_excluded_samples`` and ``combine_no_superposition`` arguments.
 
     Parameters
     ----------
@@ -38,6 +38,9 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
 
     drop_excluded_ages: bool, optional
         Whether to remove ages with ``Exclude? = True`` from the ``ages_df``; defaults to ``True``.
+
+    combine_no_superposition: bool, optional
+        Whether to combine samples without superposition information by averaging their proxy values; defaults to ``False``.
 
     Returns
     -------
@@ -85,6 +88,9 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
 
     if 'intermediate intrusive?' not in list(ages.columns):
         ages['intermediate intrusive?'] = False
+
+    if 'depositional?' not in list(ages.columns):
+        ages['depositional?'] = False
 
     if 'Exclude?' not in list(ages.columns):
         ages['Exclude?'] = False
@@ -250,6 +256,9 @@ def combine_duplicates(sample_df, proxies, proxy_sigma_default = 0.1, combine_no
     proxy_sigma_default: float or dict{float}, optional
         Measurement uncertainty (:math:`1\\sigma`) to use for proxy observations if not specified in ``proxy_std`` column of ``sample_df``. To set a different value for each proxy, pass a dictionary with proxy names as keys. Defaults to 0.1.
 
+    combine_no_superposition: bool, optional
+        Whether to combine samples without superposition information by averaging their proxy values; defaults to ``False``.
+
     Returns
     -------
     sample_df: pandas.DataFrame
@@ -376,9 +385,6 @@ def combine_traces(trace_list):
 
     """
     Helper function for combining multiple :class:`arviz.InferenceData` objects (saved as NetCDF files) that contain prior and posterior samples for the same inference model (sampled with :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`). The :class:`arviz.InferenceData` objects are concatenated along the ``chain`` dimension such that if two traces with 8 chains each are concatenated, the new combined trace will have 16 chains.
-
-    .. todo::
-        Link to custom arviz concat function (default only works for combining 2 traces; version in lomagundi-dev-conda environment has been modified)
 
     Parameters
     ----------
@@ -758,183 +764,6 @@ def accumulation_rate(full_trace, sample_df, ages_df, method = 'all', age_model 
             rate_df = pd.concat([rate_df.astype(section_rate_df.dtypes), section_rate_df], ignore_index = True)
 
     return rate_df
-
-def upsample(full_trace, downsampled_df, sample_df, ages_df, **kwargs):
-    """
-    Extend age models calculated using downsampled proxy observations from :py:meth:`downsample() <bayestrat.data.downsample>` to the full set of proxy observations.
-
-    .. todo::
-        Remove? Shouldn't be necessary since ages for excluded samples can now be tracked w/in the model
-    .. todo::
-        Check behavior with excluded samples
-
-
-    Parameters
-    ----------
-    full_trace: arviz.InferenceData
-        An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`build_model() <bayestrat.model.build_model>` in :py:mod:`bayestrat.model`.
-
-    downsampled_df: pandas.DataFrame
-        Downsampled sample DataFrame from ``bayestrat.data.downsample`` (used for the proxy inference associated with ``full_trace``).
-
-    sample_df: pandas.DataFrame
-        :class:`pandas.DataFrame` containing all proxy data.
-    ages_df: pandas.DataFrame
-        :class:`pandas.DataFrame` containing age constraints from all sections.
-
-    Returns
-    -------
-    age_model_summary: pandas.DataFrame
-        :class:`pandas.DataFrame` containing sample age summary statistics (mean, standard deviation, median, and 68% and 95% confidence intervals) for each sample.
-    """
-
-    if 'sections' in kwargs:
-        sections = list(kwargs['sections'])
-    else:
-        sections = np.unique(sample_df['section'])
-
-    # get list of proxies included in model from full_trace
-    variables = [
-            l
-            for l in list(full_trace["posterior"].data_vars.keys())
-            if f"{'gp_ls_'}" in l
-            ]
-
-    proxies = []
-    for var in variables:
-        proxies.append(var[6:])
-
-    if type(proxies) == str:
-        proxies = list([proxies])
-
-    keep_idx = np.sort(np.unique((np.concatenate([downsampled_df.index[~np.isnan(downsampled_df[proxy])] for proxy in proxies]))))
-
-    downsampled_df = downsampled_df.loc[keep_idx]
-
-    downsampled_df = downsampled_df.sort_values(by = ['section', 'height'])
-
-    keep_idx_all = np.sort(np.unique((np.concatenate([sample_df.index[~np.isnan(sample_df[proxy])] for proxy in proxies]))))
-
-    sample_df = sample_df.loc[keep_idx_all]
-
-    sample_df = sample_df.sort_values(by = ['section', 'height'])
-
-    interp_df = pd.DataFrame(columns = list(sample_df.columns) + ['interp'])
-
-    for section in sections:
-        # height of samples included in inference
-        downsampled_section_df = downsampled_df[downsampled_df['section']==section]
-        downsampled_heights = np.concatenate([downsampled_section_df[~np.isnan(downsampled_section_df[proxy])]['height'].values for proxy in proxies])
-
-        downsampled_heights = np.sort(np.unique(downsampled_heights))
-
-        # all sample + age constraint heights
-        section_df = sample_df[sample_df['section']==section]
-        sample_heights = np.concatenate([section_df[~np.isnan(section_df[proxy])]['height'].values for proxy in proxies])
-
-        sample_heights = np.unique(sample_heights)
-        sample_heights = np.sort(sample_heights)
-
-        # heights of radiometric age constraints
-        sample_ages_df = ages_df[ages_df['section']==section]
-        age_heights = sample_ages_df['height'].values
-
-        # heigts at which to interpolate age models
-        interp_heights = [h for h in sample_heights if h not in downsampled_heights]
-
-        interp_section_df = pd.DataFrame(columns = list(sample_df.columns) + ['interp'])
-        for h in interp_heights:
-            idx = sample_df[sample_df['height']==h].index.tolist()
-            interp_section_df = pd.concat([interp_section_df, sample_df.loc[idx]])
-
-        interp_section_df['interp'] = 'y'
-        interp_section_df.reset_index(inplace = True, drop = True)
-
-        # sample age posterior - shape (samples x draws)
-        sample_age_post = az.extract(full_trace.posterior)[str(section) + '_ages'].values
-
-        age_constraint_post = az.extract(full_trace.posterior)[str(section) + '_radiometric_age'].values
-
-        if sample_age_post.shape[0] != len(downsampled_heights):
-            sys.exit(f"Number of data points for {section} does not match the number of data points in the trace. Check that input data and list of proxies match.")
-
-        if age_constraint_post.shape[0] != len(age_heights):
-            sys.exit(f"Number of data points for {section} does not match the number of data points in the trace. Check that input data and list of proxies match.")
-
-
-        # combine position data for all samples + age constraints included in the inference
-        all_heights = np.concatenate([downsampled_heights, age_heights])
-        sorted_idx = np.argsort(all_heights)
-        all_heights_sort = all_heights[sorted_idx]
-
-        # construct age and height vectors for the current draw using posteriors for 1) samples in section, and 2) age constraints
-        for i in np.arange(sample_age_post.shape[1]):
-            sample_age_vec = sample_age_post[:, i]
-            constraint_age_vec = age_constraint_post[:, i]
-            age_vec = np.concatenate([sample_age_vec, constraint_age_vec])
-            age_vec_sort = age_vec[sorted_idx]
-
-            # interpolate - x is height (must be strictly increasing), y is age
-            interp_age = np.interp(interp_heights, all_heights_sort, age_vec_sort)
-            interp_age = np.asarray(interp_age).reshape(len(interp_heights), 1)
-
-            # rows = samples, columns = draws
-            if i == 0:
-                age_paths = interp_age
-
-            else:
-                age_paths = np.hstack((age_paths, interp_age))
-
-
-        downsampled_section_df['interp'] = 'n'
-        downsampled_section_df['age_draws'] = np.nan
-        downsampled_section_df['age_draws'] = downsampled_section_df['age_draws'].astype(object)
-
-        interp_section_df['age_draws'] = np.nan
-        interp_section_df['age_draws'] = interp_section_df['age_draws'].astype(object)
-        for i in interp_section_df.index.tolist():
-            interp_section_df['age_draws'].loc[i] = age_paths[i, :]
-
-        downsampled_section_df.reset_index(inplace = True, drop = True)
-        for i in downsampled_section_df.index.tolist():
-            downsampled_section_df['age_draws'].loc[i] = sample_age_post[i, :]
-
-        interp_df = pd.concat([interp_df, downsampled_section_df, interp_section_df])
-
-
-        interp_df.sort_values(by = ['section', 'height'], inplace = True)
-        interp_df.reset_index(inplace = True, drop = True)
-        interp_df['mle'] = np.nan
-        interp_df['2.5'] = np.nan
-        interp_df['16'] = np.nan
-        interp_df['50'] = np.nan
-        interp_df['84'] = np.nan
-        interp_df['97.5'] = np.nan
-
-        for i in interp_df.index.tolist():
-            current_ages = interp_df['age_draws'].loc[i]
-
-            # mle
-            dy = np.linspace(np.min(current_ages), np.max(current_ages), 2000)
-            max_like = dy[np.argmax(gaussian_kde(current_ages, bw_method = 1)(dy))]
-            interp_df['mle'].loc[i] = max_like
-
-            # median
-            interp_df['50'].loc[i] = np.percentile(current_ages, 50)
-
-            # 2.5%
-            interp_df['2.5'].loc[i] = np.percentile(current_ages, 2.5)
-
-            # 16%
-            interp_df['16'].loc[i] = np.percentile(current_ages, 16)
-
-            # 84%
-            interp_df['84'].loc[i] = np.percentile(current_ages, 84)
-
-            # 97.5%
-            interp_df['97.5'].loc[i] = np.percentile(current_ages, 97.5)
-
-    return interp_df
 
 def downsample(sample_df, ages_df, N = 5000, likelihood_ratio_min = 0.5, proxy = 'd13c', keep = 'best', keep_seed = None, resample_with_lowest_n = True, flexible_n = True, best_criteria = 'corr_coef', **kwargs):
     """

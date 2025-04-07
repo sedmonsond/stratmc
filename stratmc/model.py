@@ -56,7 +56,7 @@ DIST_DICT = {
     "PolyaGamma": pm.PolyaGamma,
 }
 
-def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.1, approximate = False,  hsgp_m = 15, hsgp_c = 1.3, ls_dist = 'Wald', ls_min = 0, ls_mu = 20, ls_lambda = 50, ls_sigma = 50, var_sigma = 10,  white_noise_sigma = 1e-1, gp_mean_mu = None, gp_mean_sigma = None, offset_type = 'section', offset_prior = 'Laplace', offset_mu = 0, offset_b = 2, noise_type = 'section', noise_prior = 'HalfNormal', noise_beta = 1, noise_sigma = None, noise_sigma_single_sample = 1, noise_sigma_studentT = 1, noise_nu = 1,  jitter = 0.001, proxy_observed = True, **kwargs):
+def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.1, approximate = False,  hsgp_m = 15, hsgp_c = 1.3, ls_dist = 'Wald', ls_min = 0, ls_mu = 20, ls_lambda = 50, ls_sigma = 50, var_sigma = 10,  white_noise_sigma = 1e-1, gp_mean_mu = None, gp_mean_sigma = None, offset_type = 'section', offset_prior = 'Laplace', offset_mu = 0, offset_b = 2, noise_type = 'section', noise_prior = 'HalfCauchy', noise_beta = 1, noise_sigma = None, noise_sigma_single_sample = 1, noise_sigma_studentT = 1, noise_nu = 1,  jitter = 0.001, proxy_observed = True, **kwargs):
     """
     Create a proxy signal (i.e., carbon isotope) :ref:`inference model <model_target>`.
 
@@ -128,9 +128,9 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
         Parameterize noise as per-section (set to ``section``) or per-group (set to ``groups``, and specify the group for each sample and proxy with a ``noise_group_proxy`` column in ``sample_df``). Defaults to ``section``. Pass as a dictionary with proxy names as keys to specify a different noise type for each proxy.
 
     noise_prior: str or dict{str}, optional
-        Type of distribution to use for the noise prior. Pass as a ``string`` to use the same prior for all proxies, or as a ``dict`` of ``string`` (with proxy names as keys) to specify a different prior distribution for each proxy. Defaults to ``HalfNormal`` (:class:`pymc.HalfNormal`) with ``sigma`` equal to the standard deviation of the data associated with each noise term. ``sigma`` can be changed by passing ``noise_sigma``. For sections with only 1 sample, the standard deviation of the noise prior is set by ``noise_sigma_single_sample`` (defaults to 1). To specify different values for each proxy and/or section or sample group, each argument must be passed as a dictionary with proxies as keys, and values as dictionaries with section or group names as keys.
+        Type of distribution to use for the noise prior. Pass as a ``string`` to use the same prior for all proxies, or as a ``dict`` of ``string`` (with proxy names as keys) to specify a different prior distribution for each proxy. Defaults to ``HalfCauchy`` (:class:`pymc.HalfCauchy`) with ``beta = 1``. ``beta`` can be changed by passing ``noise_beta``.
 
-        Other implemented priors (note that noise must be positive-only) are ``HalfCauchy`` (:class:`pymc.HalfCauchy`; defaults to ``noise_beta = 1``) and ``HalfStudentT`` (:class:`pymc.HalfStudentT`; defaults to ``noise_nu = 1`` and ``noise_sigma_studentT`` = 1).
+        Other implemented priors (note that noise must be positive-only) are``HalfStudentT`` (:class:`pymc.HalfStudentT`; defaults to ``noise_nu = 1`` and ``noise_sigma_studentT`` = 1) and ``HalfNormal`` (:class:`pymc.HalfNormal`). By default, the ``HalfNormal`` prior has ``sigma`` equal to the standard deviation of the data associated with each noise term. ``sigma`` can be changed by passing ``noise_sigma``. For sections with only 1 sample, the standard deviation of the noise prior is set by ``noise_sigma_single_sample`` (defaults to 1).
 
     superposition_dict: dict{list(str)}, optional
         Optional; dictionary specifying superposition relationships between different sections. Should only be used when superposition is not implicitly enforced by the age constraints; for example, when sections share the same minimum and maximum age constraints, but are from geological formations with a known stratigraphic relationship. Dictionary keys are section names, and the value for each key is a list of sections that must be older (stratigraphically lower).
@@ -373,7 +373,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
             idx = ages_df[(ages_df['shared?'] == True) & (ages_df['name']==shared_age_name)].index
             ages_df.loc[idx, 'shared?'] = False
 
-    # by default, set noise prior to HalfNormal with sigma equal to the standard deviation of observations from the group or section
+    # by default, set noise prior to HalfNormal with sigma equal to the standard deviation of observations from the group or section. if a noise_sigma value is passed by the user, use the specified noise prior instead
     if noise_sigma is not None:
         if type(noise_sigma) != dict:
             temp = noise_sigma
@@ -389,7 +389,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                     for section in sections:
                         noise_sigma[proxy][section] = temp
 
-    # if a noise_sigma value is passed by the user, use the specified noise prior instead
+    # calculate observation standard deviations
     else:
         noise_sigma = {}
 
@@ -398,7 +398,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                 noise_groups = np.array(sample_df[(~np.isnan(sample_df[proxy])) & (~sample_df['Exclude?'])]['noise_group_' + proxy].unique()).astype(str)
                 noise_sigma[proxy] = {}
                 for group in noise_groups:
-                    if sample_df[(sample_df['noise_group_' + proxy] == group) & ~(sample_df['Exclude?'])].shape[0] > 1:
+                    if sample_df[(sample_df['noise_group_' + proxy] == group) & ~(sample_df['Exclude?']) & ~(np.isnan(sample_df[proxy]))].shape[0] > 1:
                         noise_sigma[proxy][group] = np.nanstd(sample_df[(sample_df['noise_group_' + proxy] == group) & ~(sample_df['Exclude?'])][proxy].values)
                     # if only 1 sample, set noise_sigma equal to a prescribed constant
                     else:
@@ -407,7 +407,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
             elif noise_type[proxy] == 'section':
                 noise_sigma[proxy] = {}
                 for section in sections:
-                    if sample_df[(sample_df['section'] == section) & ~(sample_df['Exclude?'])].shape[0] > 1:
+                    if sample_df[(sample_df['section'] == section) & ~(sample_df['Exclude?']) & ~(np.isnan(sample_df[proxy]))].shape[0] > 1:
                         noise_sigma[proxy][section] = np.nanstd(sample_df[(sample_df['section'] == section) & ~(sample_df['Exclude?'])][proxy].values)
                     # if only 1 sample, set noise_sigma equal to a prescribed constant
                     else:
@@ -1045,23 +1045,9 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                         count += 1
 
                 section_age_dist[section] = pm.Deterministic(label+'ages', section_age_tensor)
-#
-# shared_ages = ages_df[ages_df['shared?']==True]
 
-#         if len(shared_ages) > 0:
-#             unique_shared_constraints = np.unique(shared_ages['name'])
 
-#             for constraint in unique_shared_constraints:
-#                 constraint = str(constraint)
-#                 constraint_df = shared_ages[shared_ages['name']==constraint]
-#                 dist = np.unique(constraint_df['distribution_type'])
-#                 dist_age = np.unique(constraint_df['age'])
-#                 dist_age_std = np.unique(constraint_df['age_std'])
-
-#                 if (len(dist) > 1) or (len(dist_age) > 1) or (len(dist_age_std) > 1):
-#                     sys.exit(f"Initialization of shared age constraint {constraint} is inconsistent. Check that distribution type and parameters are the same for each section.")
-
-                ## for samples with depositional ages, enforce with a likelihood function
+                # for samples with depositional ages, enforce with a likelihood function
                 if len(depositional_age_names) > 0:
                     for constraint in depositional_age_names:
                         print(f'Adding depositional age likelihood term for section {section}: {constraint}')
@@ -1269,11 +1255,6 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                                         shape = proxy_all[proxy][proxy_idx[proxy]].shape,
                                         observed=proxy_all[proxy][proxy_idx[proxy]])
 
-                                # print('using StudentT likelihood with no added noise or offset')
-                                # pm.StudentT(proxy + '_pred', nu = 1, mu=f.flatten(),
-                                        # sigma = proxy_quadrature_uncertainty[proxy],
-                                        # shape = proxy_all[proxy][proxy_idx[proxy]].shape,
-                                        # observed=proxy_all[proxy][proxy_idx[proxy]])
 
                     proxy_pred_mu = pm.Deterministic(proxy + '_' + '_pred_mu', f.flatten())
 
@@ -1283,11 +1264,6 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                                         shape = proxy_all[proxy][proxy_idx[proxy]].shape,
                                         observed=proxy_all[proxy][proxy_idx[proxy]])
 
-                                    # print('using StudentT likelihood with no added noise and Laplace offset')
-                                    # pm.StudentT(proxy + '_pred', nu = 1, mu=f.flatten()+ offset[proxy],
-                                    #     sigma = proxy_quadrature_uncertainty[proxy],
-                                    #     shape = proxy_all[proxy][proxy_idx[proxy]].shape,
-                                    #     observed=proxy_all[proxy][proxy_idx[proxy]])
 
                      proxy_pred_mu = pm.Deterministic(proxy + '_' + '_pred_mu', f.flatten()+ offset[proxy])
 
@@ -1321,7 +1297,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
 
 def build_prior_age_model(sample_df, ages_df, proxies = ['d13c'], **kwargs):
     """
-    Create a prior age model for each section.
+    Create a prior age model for each section. Omits the proxy signal component of the statistical model.
 
     Parameters
     ----------
