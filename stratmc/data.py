@@ -22,13 +22,13 @@ def load_data(sample_file, ages_file, proxies = ['d13c'], proxy_sigma_default = 
     Parameters
     ----------
     sample_file: str
-        Path to .csv file containing proxy data for all sections (without '.csv` extension).
+        Path to .csv file containing proxy data for all sections (without '.csv' extension).
 
     ages_file: str
-        Path to .csv file containing age constraints for all sections (without '.csv` extension).
+        Path to .csv file containing age constraints for all sections (without '.csv' extension).
 
     proxies: str or list(str), optional
-        proxy names (must match column headers in ``sample_file.csv``); defaults to 'd13c`.
+        proxy names (must match column headers in ``sample_file.csv``); defaults to 'd13c'.
 
     proxy_sigma_default: float or dict{float}, optional
         Measurement uncertainty (:math:`1\\sigma`) to use for proxy observations if not specified in ``proxy_std`` column of ``sample_df``. To set a different value for each proxy, pass a dictionary with proxy names as keys. Defaults to 0.1.
@@ -501,7 +501,7 @@ def save_trace(trace, path):
         An :class:`arviz.InferenceData` object containing the full set of prior and posterior samples from :py:meth:`build_model() <stratmc.model.build_model>` in :py:mod:`stratmc.model` (the output of :py:meth:`get_trace() <stratmc.inference.get_trace>` in :py:mod:`stratmc.inference`).
 
     path: str
-        Location (including the file name, without '.nc` extension) to save ``trace``.
+        Location (including the file name, without '.nc' extension) to save ``trace``.
 
     """
 
@@ -518,7 +518,7 @@ def save_object(var, path):
         Variable to be saved.
 
     path: str
-        Location (including the file name, without '.pkl` extension) to save ``var``.
+        Location (including the file name, without '.pkl' extension) to save ``var``.
 
     """
 
@@ -533,7 +533,7 @@ def load_trace(path):
     Parameters
     ----------
     path: str
-        Path to saved NetCDF file (without the '.nc` extension).
+        Path to saved NetCDF file (without the '.nc' extension).
 
     Returns
     -------
@@ -553,7 +553,7 @@ def load_object(path):
     Parameters
     ----------
     path: str
-        Path to saved .pkl file (without the '.pkl` extension).
+        Path to saved .pkl file (without the '.pkl' extension).
 
     Returns
     -------
@@ -583,10 +583,10 @@ def accumulation_rate(full_trace, sample_df, ages_df, method = 'all', age_model 
         :class:`pandas.DataFrame` containing age constraints from all sections.
 
     method: str, optional
-        Whether to calculate accumulation rates between every possible sample pairing ('all`), or between successive samples ('successive`); defaults to 'all`.
+        Whether to calculate accumulation rates between every possible sample pairing ('all'), or between successive samples ('successive'); defaults to 'all'.
 
     age_model: str, optional
-        Whether to calculate accumulation rates using the the posterior or prior age model for each section; defaults to 'posterior`.
+        Whether to calculate accumulation rates using the the posterior or prior age model for each section; defaults to 'posterior'.
 
     include_age_constraints: bool, optional
         Whether to include radiometric age constraints in accumulation rate calculations; defaults to ``True``.
@@ -781,10 +781,10 @@ def downsample(sample_df, ages_df, N = 5000, likelihood_ratio_min = 0.5, proxy =
         Number of random sample groupings to test. Defaults to 5,000.
 
     likelihood_ratio_min: float or dict{float}, optional
-        Minimum acceptable likelihood ratio. For each section, the algorithm selects the smallest downsampled data set that meets this threshold. If multiple solutions with this minimum number of data points exist, then the solution with the highest correlation coefficient is selected if ``keep`` is 'best`, while a random one of these solutions is selected if ``keep`` is 'random`. Must be in ``[0, 1]``; defaults to 0.5. Pass as a dictionary to specify a different value for each section.
+        Minimum acceptable likelihood ratio. For each section, the algorithm selects the smallest downsampled data set that meets this threshold. If multiple solutions with this minimum number of data points exist, then the solution with the highest correlation coefficient is selected if ``keep`` is 'best', while a random one of these solutions is selected if ``keep`` is 'random'. Must be in ``[0, 1]``; defaults to 0.5. Pass as a dictionary to specify a different value for each section.
 
     keep: str
-        If there are multiple solutions that satisfy ``likelihood_ratio_min`` using the minimum possible number of data points, whether to return the best one of these solutions ('best`), or a random solution ('random`). Defaults to 'best`.
+        If there are multiple solutions that satisfy ``likelihood_ratio_min`` using the minimum possible number of data points, whether to return the best one of these solutions ('best'), or a random solution ('random'). Defaults to 'best'.
 
     flexible_n: bool
         Whether to consider solutions with 1 more data point than the minimum. Defaults to ``True``.
@@ -793,10 +793,10 @@ def downsample(sample_df, ages_df, N = 5000, likelihood_ratio_min = 0.5, proxy =
         Whether to generate another N random solutions with the minimum number of data points required to staisfy ``likelihood_ratio_min`` (or one more than the minimum number of data points, if ``flexible_n = True``). Improves exploration of the solution space. Defaults to ``True``.
 
     best_criteria: str
-        Which metric to use to identify the best solution among the candidate solutions that meet or exceed ``likelihood_ratio_min`` (if ``mode`` is 'best`). Either 'likelihood_ratio` (mean likelihood ratio) or 'corr_coef` (maximum Pearson correlation coefficient); defalts to 'corr_coef`.
+        Which metric to use to identify the best solution among the candidate solutions that meet or exceed ``likelihood_ratio_min`` (if ``mode`` is 'best'). Either 'likelihood_ratio' (mean likelihood ratio) or 'corr_coef' (maximum Pearson correlation coefficient); defalts to 'corr_coef'.
 
     proxy: str, optional
-        Proxy to downsample. Defaults to 'd13c`.
+        Proxy to downsample. Defaults to 'd13c'.
 
     sections: list(str) or numpy.array(str), optional
         List of sections to downsample. Defaults to all sections in ``sample_df``.

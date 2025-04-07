@@ -2824,10 +2824,10 @@ def sadler_plot(full_trace, sample_df, ages_df, method = 'density', duration_bin
         Include age constraints in sedimentation rate calculations. Defaults to ``False``.
 
     density_cmap: str, optional
-        Name of matplotlib colormap to use for probability density if ``method`` is 'density`. Defaults to 'jet'.
+        Name of matplotlib colormap to use for probability density if ``method`` is 'density'. Defaults to 'jet'.
 
     section_cmap: str, optional
-        Name of seaborn color palette to use for sections if ``method`` is 'scatter`. Defaults to 'Spectral'.
+        Name of seaborn color palette to use for sections if ``method`` is 'scatter'. Defaults to 'Spectral'.
 
     Returns
     -------
@@ -3204,7 +3204,7 @@ def proxy_data_gaps(full_trace, time_grid = None, yaxis = 'percentage', figsize 
         Time bin edges; if not provided, defaults to the ``ages`` array passed to :py:meth:`get_trace() <stratmc.inference.get_trace>`.
 
     yaxis: str, optional
-        Set y-axis to percentage of posterior draws without observations ('percentage') or to the number of posterior draws without observations ('count`). Defaults to 'percentage`.
+        Set y-axis to percentage of posterior draws without observations ('percentage') or to the number of posterior draws without observations ('count'). Defaults to 'percentage'.
 
     Returns
     -------

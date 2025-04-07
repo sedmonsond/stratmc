@@ -104,7 +104,7 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
         Scale parameter (`sigma`) of the :class:`pymc.gp.cov.ExpQuad` lengthscale hyperparameter prior if ``ls_dist = `HalfNormal```. Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 50.
 
     var_sigma: float or dict{float}, optional
-        Scale parameter (`sigma`) of the covariance kernel variance hyperparameter prior, which is a :class:`pymc.HalfNormal` distribution. Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 10.
+        Scale parameter ('sigma') of the covariance kernel variance hyperparameter prior, which is a :class:`pymc.HalfNormal` distribution. Pass as a dictionary with proxy names as keys to specify a different value for each proxy. Defaults to 10.
 
     white_noise_sigma: float or dict{float}, optional
         Amplitude of white noise component of GP covariance function. Defaults to 0.1. Should be equal to or less than the proxy measurement uncertainty; use a smaller value for proxies with low-amplitude signals (e.g., Sr isotopes). Pass as a dictionary with proxy names as keys to specify a different value for each proxy.
