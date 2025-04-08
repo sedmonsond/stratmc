@@ -765,7 +765,7 @@ def accumulation_rate(full_trace, sample_df, ages_df, method = 'all', age_model 
 
     return rate_df
 
-def downsample(sample_df, ages_df, N = 5000, likelihood_ratio_min = 0.5, proxy = 'd13c', keep = 'best', keep_seed = None, resample_with_lowest_n = True, flexible_n = True, best_criteria = 'corr_coef', **kwargs):
+def downsample(sample_df, ages_df, N = 5000, likelihood_ratio_min = 0.5, proxy = 'd13c', keep = 'best', keep_seed = None, resample_with_lowest_n = True, flexible_n = True, best_criteria = 'corr_coef', split_environments = True, **kwargs):
     """
     Subsample a set of proxy observations. Calculates the likelihood of the original stratigraphic signal given the subsampled signal and uncertainty in the data. Returns the solution that meets the mean likelihood ratio minimum with the lowest number of downsampled data points. See input parameter descriptions for additional details.
 
@@ -794,6 +794,9 @@ def downsample(sample_df, ages_df, N = 5000, likelihood_ratio_min = 0.5, proxy =
 
     best_criteria: str
         Which metric to use to identify the best solution among the candidate solutions that meet or exceed ``likelihood_ratio_min`` (if ``mode`` is 'best'). Either 'likelihood_ratio' (mean likelihood ratio) or 'corr_coef' (maximum Pearson correlation coefficient); defalts to 'corr_coef'.
+
+    split_environments: bool
+        Whether to insert breaks between different depositional environments (using 'Depositional Environment' column in ``sample_df``). Defaults to ``True``.
 
     proxy: str, optional
         Proxy to downsample. Defaults to 'd13c'.
@@ -845,7 +848,7 @@ def downsample(sample_df, ages_df, N = 5000, likelihood_ratio_min = 0.5, proxy =
 
         if len(heights) > 2:
             # grab required boundaries (changes in depositional environment, superposition, depositional ages)
-            required_boundaries = get_boundaries(sample_df, ages_df, proxy, section)
+            required_boundaries = get_boundaries(sample_df, ages_df, proxy, section, environment = split_environments)
 
             # make height grid to evaluate likelihood at original heights
             height_grid = heights
@@ -963,40 +966,40 @@ def downsample(sample_df, ages_df, N = 5000, likelihood_ratio_min = 0.5, proxy =
 
                     corr_coef[i] = np.corrcoef(proxy_grid, interp_proxy)[0, 1]
 
-                above = (mean_likelihood_ratio >= likelihood_ratio_min[section])
+            above = (mean_likelihood_ratio >= likelihood_ratio_min[section])
 
-                # solutions that meet minimum criteria
-                keep_idx_list = np.argwhere(above)
+            # solutions that meet minimum criteria
+            keep_idx_list = np.argwhere(above)
 
-                if len(keep_idx_list) == 0:
-                    print('Try running with higher N; no viable solutions found after resampling')
+            if len(keep_idx_list) == 0:
+                print('Try running with higher N; no viable solutions found after resampling')
 
-                # if size can be flexible (+1 larger than the minimum) (applies for both 'best' and 'random' modes)
-                if flexible_n:
-                    n_data_idx = np.where((n_data_points[keep_idx_list] == min_n_data) | (n_data_points[keep_idx_list] == min_n_data + 1))[0]
+            # if size can be flexible (+1 larger than the minimum) (applies for both 'best' and 'random' modes)
+            if flexible_n:
+                n_data_idx = np.where((n_data_points[keep_idx_list] == min_n_data) | (n_data_points[keep_idx_list] == min_n_data + 1))[0]
 
-                else:
-                    # get indices (within candidate list) where number of clusters is equal to the minimum
-                    n_data_idx = np.where(n_data_points[keep_idx_list] == min_n_data)[0]
+            else:
+                # get indices (within candidate list) where number of clusters is equal to the minimum
+                n_data_idx = np.where(n_data_points[keep_idx_list] == min_n_data)[0]
 
-                # use user-specified criteria (either corr coef or mean likelihood ratio) to pick the best solution
-                if (keep == 'best') or (len(n_data_idx) == 1):
-                    # out of the viable solutions, choose the one with the highest correlation coefficient
-                    if best_criteria == 'corr_coef':
-                        best_idx_temp = np.nanargmax(corr_coef[keep_idx_list][n_data_idx])
+            # use user-specified criteria (either corr coef or mean likelihood ratio) to pick the best solution
+            if (keep == 'best') or (len(n_data_idx) == 1):
+                # out of the viable solutions, choose the one with the highest correlation coefficient
+                if best_criteria == 'corr_coef':
+                    best_idx_temp = np.nanargmax(corr_coef[keep_idx_list][n_data_idx])
 
-                    # out of the viable solutions, choose the one with the lowest (mean) residuals between the interpolated signal and the excluded data points
-                    elif best_criteria == 'likelihood_ratio':
-                        best_idx_temp = np.argmax(mean_likelihood_ratio[keep_idx_list][n_data_idx])
+                # out of the viable solutions, choose the one with the lowest (mean) residuals between the interpolated signal and the excluded data points
+                elif best_criteria == 'likelihood_ratio':
+                    best_idx_temp = np.argmax(mean_likelihood_ratio[keep_idx_list][n_data_idx])
 
-                    best_idx = keep_idx_list[n_data_idx[best_idx_temp]][0]
+                best_idx = keep_idx_list[n_data_idx[best_idx_temp]][0]
 
-                elif (keep == 'random') and (len(n_data_idx) > 1):
-                    keep_rng = np.random.default_rng(seed = keep_seed)
+            elif (keep == 'random') and (len(n_data_idx) > 1):
+                keep_rng = np.random.default_rng(seed = keep_seed)
 
-                    best_idx_temp = keep_rng.choice(n_data_idx, 1)[0]
+                best_idx_temp = keep_rng.choice(n_data_idx, 1)[0]
 
-                    best_idx = keep_idx_list[best_idx_temp][0]
+                best_idx = keep_idx_list[best_idx_temp][0]
 
             #solution_corr_coefs[section] = corr_coef[best_idx]
             solution_likelihood_ratios[section] = mean_likelihood_ratio[best_idx]
@@ -1032,13 +1035,13 @@ def get_boundaries(sample_df, ages_df, proxy, section, environment = True, depos
         Name of target section.
 
     environment: bool
-        Whether to insert breaks between different depositional environments.
+        Whether to insert breaks between different depositional environments (requires 'Depositional Environment' column in ``sample_df``). Defaults to ``True``.
 
     depositional_ages: bool
-        Whether to insert breaks around groups of samples with the same depositional age constraint.
+        Whether to insert breaks around groups of samples with the same depositional age constraint. Defaults to ``True``.
 
     superposition:
-        Whether to insert breaks around groups of samples without superposition information.
+        Whether to insert breaks around groups of samples without superposition information. Defaults to ``True``.
 
     Returns
     -------
@@ -1046,6 +1049,11 @@ def get_boundaries(sample_df, ages_df, proxy, section, environment = True, depos
         Array containing required cluster boundaries.
 
     """
+
+    if 'Depositional Environment' not in list(sample_df.columns):
+        sample_df['Depositional Environment'] = np.nan
+
+    sample_df['Depositional Environment'] = sample_df['Depositional Environment'].astype(str)
 
     section_df = sample_df[(sample_df['section']==section) & (~sample_df['Exclude?'].astype(bool))].dropna(subset = proxy)
     section_ages_df = ages_df[(ages_df['section']==section)  & (~ages_df['depositional?'])]

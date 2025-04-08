@@ -104,6 +104,9 @@ def test_synthetic_sections():
     # test without age constraints and with noise added to observations
     synthetic_sections(age_vector, signal_dict, num_sections, num_samples, section_thickness, noise = section_noise, noise_amp = section_noise_amp, seed = section_seed, proxies = proxies)
 
+    # test with single proxy passed as string and noise amplitude passed as float
+    synthetic_sections(age_vector, d13c_signal, num_sections, num_samples, section_thickness, noise = section_noise, noise_amp = 1, seed = section_seed, proxies = 'd13c')
+
 
 def test_synthetic_observations_from_prior():
 
@@ -161,7 +164,10 @@ def test_synthetic_signal_from_prior():
 
     signals, _ = synthetic_signal_from_prior(ages.ravel(), num_signals = num_signals, ls_dist = 'Wald', ls_min = 0, ls_mu = 20, ls_lambda = 50, ls_sigma = 50, var_sigma = 10, gp_mean_mu = 0, gp_mean_sigma = 5, seed = None)
 
+    signals_2, _ = synthetic_signal_from_prior(ages.ravel(), num_signals = num_signals, ls_dist = 'HalfNormal', ls_min = 3, ls_sigma = 50, var_sigma = 10, gp_mean_mu = 0, gp_mean_sigma = 5, seed = None)
+
     assert signals.shape == (len(ages), num_signals)
+    assert signals_2.shape == (len(ages), num_signals)
 
 
 def test_quantify_signal_recovery():
@@ -173,8 +179,13 @@ def test_quantify_signal_recovery():
 
     d13c_signal_recovery = quantify_signal_recovery(full_trace, d13c_signal_interp, proxy="d13c")
 
+    d13c_prior_signal_recovery = quantify_signal_recovery(full_trace, d13c_signal_interp, mode = 'prior', proxy="d13c")
+
     assert len(d13c_signal_recovery) == len(predict_ages)
     assert all(~np.isnan(d13c_signal_recovery))
+
+    assert len(d13c_prior_signal_recovery) == len(predict_ages)
+    assert all(~np.isnan(d13c_prior_signal_recovery))
 
 def test_sample_age_recovery():
     sample_df, _ = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', drop_excluded_samples = False)

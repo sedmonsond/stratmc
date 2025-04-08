@@ -3,7 +3,7 @@ import numpy as np
 from stratmc.config import PROJECT_ROOT
 from stratmc.data import load_data
 from stratmc.inference import get_trace
-from stratmc.model import build_model
+from stratmc.model import build_model, build_prior_age_model
 
 
 def test_custom_priors():
@@ -169,3 +169,96 @@ def test_hsgp():
                         sampler = 'blackjax',
                         approximate = True
                         )
+
+def test_prior_age_model():
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', proxies = ['d13c', 'd18o', 'd34s'], proxy_sigma_default = {'d13c': 0.1, 'd18o': 0.25, 'd34s': 0.5}, drop_excluded_samples = False)
+
+    _ = build_prior_age_model(sample_df, ages_df)
+
+
+def test_noise_offset_configurations():
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', proxies = ['d13c', 'd18o', 'd34s'], proxy_sigma_default = {'d13c': 0.1, 'd18o': 0.25, 'd34s': 0.5}, drop_excluded_samples = False)
+
+    _, _ = build_model(
+                        sample_df,
+                        ages_df,
+                        proxies = ['d13c', 'd18o'],
+                        ls_dist = 'Wald',
+                        ls_min = 1, # minimum RBF kernel lengthscale
+                        ls_mu = 5, # mean of Wald distribution used as RBF kernel lengthscale prior
+                        ls_lambda = 15, # lambda of Wald distribution used as RBF kernel lengthscale prior
+                        offset_type = 'none', # per-section offset with default prior
+                        noise_type = 'none', # per-section noise with default prior
+    )
+
+    _, _ = build_model(
+                        sample_df,
+                        ages_df,
+                        proxies = ['d13c', 'd18o'],
+                        ls_dist = 'Wald',
+                        ls_min = 1, # minimum RBF kernel lengthscale
+                        ls_mu = 5, # mean of Wald distribution used as RBF kernel lengthscale prior
+                        ls_lambda = 15, # lambda of Wald distribution used as RBF kernel lengthscale prior
+                        offset_type = 'none', # per-section offset with default prior
+                        noise_type = 'groups', # per-section noise with default prior
+                        noise_prior = 'HalfStudentT'
+    )
+
+    _, _ = build_model(
+                        sample_df,
+                        ages_df,
+                        proxies = ['d13c', 'd18o'],
+                        ls_dist = 'Wald',
+                        ls_min = 1, # minimum RBF kernel lengthscale
+                        ls_mu = 5, # mean of Wald distribution used as RBF kernel lengthscale prior
+                        ls_lambda = 15, # lambda of Wald distribution used as RBF kernel lengthscale prior
+                        offset_type = 'section', # per-section offset with default prior
+                        noise_type = 'none', # per-section noise with default prior
+    )
+
+    _, _ = build_model(
+                        sample_df,
+                        ages_df,
+                        proxies = ['d13c', 'd18o'],
+                        ls_dist = 'Wald',
+                        ls_min = 1, # minimum RBF kernel lengthscale
+                        ls_mu = 5, # mean of Wald distribution used as RBF kernel lengthscale prior
+                        ls_lambda = 15, # lambda of Wald distribution used as RBF kernel lengthscale prior
+                        offset_type = 'groups', # per-section offset with default prior
+                        noise_type = 'groups', # per-section noise with default prior
+    )
+
+def test_no_superposition_shuffling():
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', proxies = ['d13c', 'd18o', 'd34s'], proxy_sigma_default = {'d13c': 0.1, 'd18o': 0.25, 'd34s': 0.5}, drop_excluded_samples = False)
+
+    sample_df['superposition?'][sample_df['section'] == '0'] = False
+
+    _, _ = build_model(
+                        sample_df,
+                        ages_df,
+                        proxies = ['d13c', 'd18o'],
+                        ls_dist = 'Wald',
+                        ls_min = 1, # minimum RBF kernel lengthscale
+                        ls_mu = 5, # mean of Wald distribution used as RBF kernel lengthscale prior
+                        ls_lambda = 15, # lambda of Wald distribution used as RBF kernel lengthscale prior
+                        offset_type = 'section', # per-section offset with default prior
+                        noise_type = 'section', # per-section noise with default prior
+    )
+
+def test_superposition_dict():
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', proxies = ['d13c', 'd18o', 'd34s'], proxy_sigma_default = {'d13c': 0.1, 'd18o': 0.25, 'd34s': 0.5}, drop_excluded_samples = False)
+
+    superposition_dict = {'0': '3'} # section 3 must be older than section 0
+
+    _, _ = build_model(
+                        sample_df,
+                        ages_df,
+                        proxies = ['d13c', 'd18o'],
+                        ls_dist = 'Wald',
+                        ls_min = 1, # minimum RBF kernel lengthscale
+                        ls_mu = 5, # mean of Wald distribution used as RBF kernel lengthscale prior
+                        ls_lambda = 15, # lambda of Wald distribution used as RBF kernel lengthscale prior
+                        offset_type = 'section', # per-section offset with default prior
+                        noise_type = 'section', # per-section noise with default prior
+                        superposition_dict = superposition_dict
+    )
