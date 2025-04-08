@@ -23,7 +23,7 @@ warnings.filterwarnings("ignore")
 # -- Project information -----------------------------------------------------
 
 project = "StratMC"
-copyright = "2024, Stacey Edmonsond"
+copyright = "2025, Stacey Edmonsond"
 author = "Stacey Edmonsond"
 
 # The short X.Y version
@@ -134,9 +134,9 @@ html_theme_options = {
             "icon": "fab fa-github-square",
         },
         {
-            "name": "Twitter",
-            "url": "https://twitter.com/StaceyEdmonsond",
-            "icon": "fab fa-twitter-square",
+            "name": "Personal Webpage",
+            "url": "https://staceyedmonsond.com",
+            "icon": "fa-regular fa-circle-user",
         },
     ],
     "show_prev_next": False,

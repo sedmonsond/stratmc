@@ -6,7 +6,9 @@ from stratmc.data import (
     combine_data,
     combine_duplicates,
     combine_traces,
+    downsample,
     drop_chains,
+    load_data,
     load_object,
     load_trace,
     thin_trace,
@@ -61,3 +63,13 @@ def test_thin_trace():
     thinned_trace = thin_trace(full_trace, drop_freq = 2)
 
     assert len(thinned_trace.posterior.draw.values) == 5
+
+
+def test_downsample():
+    sample_df, ages_df = load_data(str(PROJECT_ROOT) + '/examples/test_sample_df', str(PROJECT_ROOT) + '/examples/test_ages_df', proxies = ['d13c', 'd18o', 'd34s'], proxy_sigma_default = {'d13c': 0.1, 'd18o': 0.25, 'd34s': 0.5}, drop_excluded_samples = False)
+
+    _, _, _ =  downsample(sample_df, ages_df)
+
+    _, _, _ =  downsample(sample_df, ages_df, keep = 'random', split_environments = False, flexible_n = False)
+
+    _, _, _ =  downsample(sample_df, ages_df, resample_with_lowest_n = False)
