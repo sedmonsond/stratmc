@@ -820,7 +820,6 @@ def downsample(sample_df, ages_df, N = 5000, likelihood_ratio_min = 0.5, proxy =
     """
 
     sample_df_downsampled = sample_df.copy()
-    sample_df_downsampled['cluster'] = np.nan
 
     if 'sections' in kwargs:
             sections = list(kwargs['sections'])
@@ -1046,7 +1045,7 @@ def get_boundaries(sample_df, ages_df, proxy, section, environment = True, depos
     Returns
     -------
     boundary_heights: numpy.array
-        Array containing required cluster boundaries.
+        Array containing required boundaries.
 
     """
 
