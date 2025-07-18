@@ -714,11 +714,11 @@ def build_model(sample_df, ages_df, proxies = ['d13c'], proxy_sigma_default = 0.
                     superposition(radiometric_age_tensor, age_dist_names, model, section_age_df, section)
 
                 # if there are samples below the basal age constraint, throw an error
-                if (heights[0] < age_heights[0]):
+                if (heights[0] < age_heights[0]) or np.isnan(age_heights[0]):
                     sys.exit(f"Section {section} does not have a basal age constraint. Add a maximum section age to ages_df.")
 
                 # if the section has no upper age constraint, throw an error
-                if heights[-1] >= age_heights[-1]:
+                if (heights[-1] >= age_heights[-1]) or np.isnan(age_heights[-1]):
                     sys.exit(f"Section {section} does not have an upper age constraint. Add a minimum section age to ages_df.")
 
                 # create sample age distributions for section (by interval)
